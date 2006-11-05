@@ -1,3 +1,5 @@
+
+
 /* main page styles */
 body.body {
   font-family: sans-serif, Arial, Helvetica;
@@ -14,111 +16,98 @@ a[href], a[href]:link {
   text-decoration: none;
 }
 
-table.body {
-  border: 0;
-  padding: 0;
-  border-spacing: 0;
-  border-collapse: separate;
+#menu ul.level-two a.nomargin { /* Very, very, specific! :-) */
+  display: inline;
+  margin: 0px;
 }
 
-td.page-header-left {
-  padding: 5px;
-  border-bottom: 1px solid #444;
-}
-td.sidebar {
-  padding: 1px 0 0 1px;
-  white-space: nowrap;
+#menu ul.level-three li {
+    margin-left: 0px;
+    border: thin solid red;
 }
 
-/* don't display the sidebar when printing */
-@media print {
-    td.page-header-left {
-        display: none;
-    }
-    td.sidebar {
-        display: none;
-    }
-    .index-controls {
-        display: none;
-    }
-    #searchbox {
-        display: none;
-    }
+
+@media print 
+{
+  .index-controls { display: none;}
+    #searchbox { display: none;}
 }
 
-td.page-header-top {
-  padding: 5px;
-  border-bottom: 1px solid #444;
-}
-#searchbox {
-    float: right;
-}
+#searchbox { float: right;}
 
 div#body-title {
   float: left;
 }
 
 
-div#searchbox {
+div#searchbox 
+{
   float: right;
   padding-top: 1em;
 }
 
-div#searchbox input#search-text {
+div#searchbox input#search-text 
+{
   width: 10em;
 }
 
+#menu ul.level-two li
+{
+  background-image: none;
+  background-color: transparent;
+  display: block;
+  border: 0;
+  border-top: 1px solid #DDD;
+  padding: 0.1em;
+  margin: 0 3em 0px 1.5em;
+  color: #3C4B7B;
+  background: none;
+  width: 11em !important;
+  width /**/: 3.2em;  
+  font-family: Arial, Verdana, Geneva, "Bitstream Vera Sans", Helvetica, sans-serif;
+  text-transform: none;
+}
+
+#menu ul.level-three li
+{
+    margin: 0px;
+    padding: 0px;
+}
+
 form {
-  margin: 0;
+  margin: 0px;
 }
 
 textarea {
-    font-family: monospace;
-}
-
-td.sidebar p.classblock {
-  padding: 2px 5px 2px 5px;
-  margin: 1px;
-  border: 1px solid #444;
-  background-color: #eee;
-}
-
-td.sidebar p.userblock {
-  padding: 2px 5px 2px 5px;
-  margin: 1px 1px 1px 1px;
-  border: 1px solid #444;
-  background-color: #eef;
+  font-family: monospace;
 }
 
 .form-small {
-  padding: 0;
+  padding: 0px;
   font-size: 75%;
 }
 
-
-td.content {
-  padding: 1px 5px 1px 5px;
-  vertical-align: top;
-  width: 100%;
-}
 
 td.date, th.date { 
   white-space: nowrap;
 }
 
-p.ok-message {
+p.ok-message 
+{
   background-color: #22bb22;
   padding: 5px;
   color: white;
   font-weight: bold;
 }
-p.error-message {
+p.error-message 
+{
   background-color: #bb2222;
   padding: 5px;
   color: white;
   font-weight: bold;
 }
-p.error-message a[href] {
+p.error-message a[href] 
+{
   color: white;
   text-decoration: underline;
 }
@@ -138,12 +127,15 @@ ul.search-checkboxes > li {
 
 /* style for forms */
 table.form {
+  border: #ddd solid 1px;
   padding: 2px;
   border-spacing: 0;
-  border-collapse: separate;
+  border-collapse: collapse;
+  background-color: #f5f5f5;
 }
 
 table.form th {
+  border: #ddd solid 1px;
   color: #338;
   text-align: right;
   vertical-align: top;
@@ -153,7 +145,6 @@ table.form th {
 
 table.form th.header {
   font-weight: bold;
-  background-color: #eef;
   text-align: left;
 }
 
@@ -185,8 +176,8 @@ table.list {
 
 table.list th {
   padding: 0 4px 0 4px;
-  color: #404070;
-  background-color: #eef;
+  color: #234764;
+  background-color: #f5f5f5;
   border: 1px solid white;
   vertical-align: top;
   empty-cells: show;
@@ -194,16 +185,17 @@ table.list th {
 table.list th a[href]:hover { color: #404070 }
 table.list th a[href]:link { color: #404070 }
 table.list th a[href] { color: #404070 }
-table.list th.group {
-  background-color: #f4f4ff;
+table.list th.group 
+{
+  background-color: #f5f5f5;
   text-align: center;
 }
 
 table.list td {
   padding: 0 4px 0 4px;
   border: 1px solid white;
-  color: #404070;
-  background-color: #efefef;
+  color: #234764;
+/*  background-color: #efefef;*/
   vertical-align: top;
   empty-cells: show;
 }
@@ -421,3 +413,4 @@ table.otherinfo th {
   font-weight: bold;
   text-align: left;
 }
+/* SHA: a055019fd4171164d8b3651575c38a33ef90511a */

@@ -5,7 +5,7 @@
  i18n:translate="">Issue searching</span>
 <td class="content" metal:fill-slot="content">
 
-<form method="GET" name="itemSynopsis"
+<form method="get" name="itemSynopsis"
       tal:attributes="action request/classname">
 
 <table class="form" tal:define="
@@ -75,7 +75,7 @@
                 db_content string:username;"
     tal:condition="db/user/is_view_ok">
   <th i18n:translate="">Creator:</th>
-  <td metal:use-macro="search_select">
+  <td metal:use-macro="search_input">
     <option metal:fill-slot="extra_options" i18n:translate=""
             tal:attributes="value request/user/id">created by me</option>
   </td>
@@ -97,7 +97,7 @@
                 db_content string:username;"
     tal:condition="db/user/is_view_ok">
   <th i18n:translate="">Actor:</th>
-  <td metal:use-macro="search_select">
+  <td metal:use-macro="search_input">
     <option metal:fill-slot="extra_options" i18n:translate=""
             tal:attributes="value request/user/id">done by me</option>
   </td>
@@ -125,8 +125,8 @@
   <th i18n:translate="">Status:</th>
   <td metal:use-macro="search_select">
     <tal:block metal:fill-slot="extra_options">
-      <option value="-1,1,2,3,4,5,6,7" i18n:translate=""
-              tal:attributes="selected python:value == '-1,1,2,3,4,5,6,7'">not resolved</option>
+      <option value="-1,1,2" i18n:translate=""
+              tal:attributes="selected python:value == '-1,1,2'">not closed</option>
       <option value="-1" i18n:translate=""
               tal:attributes="selected python:value == '-1'">not selected</option>
     </tal:block>
@@ -141,7 +141,7 @@
                 db_content string:username;"
     tal:condition="db/user/is_view_ok">
   <th i18n:translate="">Assigned to:</th>
-  <td metal:use-macro="search_select">
+  <td metal:use-macro="search_input">
     <tal:block metal:fill-slot="extra_options">
       <option tal:attributes="value request/user/id"
        i18n:translate="">assigned to me</option>
@@ -158,50 +158,50 @@
  <th i18n:translate="">No Sort or group:</th>
  <td>&nbsp;</td>
  <td>&nbsp;</td>
- <td><input type="radio" name="@sort" value=""></td>
- <td><input type="radio" name="@group" value=""></td>
+ <td><input type="radio" name="@sort" value=""/></td>
+ <td><input type="radio" name="@group" value=""/></td>
 </tr>
 
 <tr>
 <th i18n:translate="">Pagesize:</th>
 <td><input name="@pagesize" size="3" value="50"
-           tal:attributes="value request/form/@pagesize/value | default"></td>
+           tal:attributes="value request/form/@pagesize/value | default"/></td>
 </tr>
 
 <tr>
 <th i18n:translate="">Start With:</th>
 <td><input name="@startwith" size="3" value="0"
-           tal:attributes="value request/form/@startwith/value | default"></td>
+           tal:attributes="value request/form/@startwith/value | default"/></td>
 </tr>
 
 <tr>
 <th i18n:translate="">Sort Descending:</th>
 <td><input type="checkbox" name="@sortdir"
-           tal:attributes="checked python:request.sort[0] == '-' or request.sort[0] is None">
+           tal:attributes="checked python:request.sort[0] == '-' or request.sort[0] is None"/>
 </td>
 </tr>
 
 <tr>
 <th i18n:translate="">Group Descending:</th>
 <td><input type="checkbox" name="@groupdir"
-           tal:attributes="checked python:request.group[0] == '-'">
+           tal:attributes="checked python:request.group[0] == '-'"/>
 </td>
 </tr>
 
 <tr tal:condition="python:request.user.hasPermission('Edit', 'query')">
  <th i18n:translate="">Query name**:</th>
  <td tal:define="value request/form/@queryname/value | nothing">
-  <input name="@queryname" tal:attributes="value value">
-  <input type="hidden" name="@old-queryname" tal:attributes="value value">
+  <input name="@queryname" tal:attributes="value value"/>
+  <input type="hidden" name="@old-queryname" tal:attributes="value value"/>
  </td>
 </tr>
 
 <tr>
   <td>
    &nbsp;
-   <input type="hidden" name="@action" value="search">
+   <input type="hidden" name="@action" value="search"/>
   </td>
-  <td><input type="submit" value="Search" i18n:attributes="value"></td>
+  <td><input type="submit" value="Search" i18n:attributes="value"/></td>
 </tr>
 
 <tr><td>&nbsp;</td>
@@ -223,3 +223,4 @@
 </td>
 
 </tal:block>
+<!-- SHA: f0c86e97d4e43a1e3cc5f9e08ec4b918719ab6b8 -->

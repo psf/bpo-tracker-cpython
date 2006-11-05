@@ -25,6 +25,12 @@
 
 <td class="content" metal:fill-slot="content">
 
+<p tal:condition="python: context.id and context.imported_from_sf"><a tal:attributes="href
+     python:'http://sourceforge.net/support/tracker.php?aid='+context.id;">
+     Sourceforge tracker item</a> (for comparison)
+</p>
+
+
 <p tal:condition="not:context/is_view_ok" i18n:translate="">You are not
     allowed to view this page.</p>
 
@@ -41,10 +47,17 @@
 </tr>
 
 <tr>
+ <th i18n:translate="">Group</th>
+ <td tal:content="structure context/group/menu">group</td>
  <th class="required" i18n:translate="">Priority</th>
  <td tal:content="structure context/priority/menu">priority</td>
+</tr>
+
+<tr>
  <th i18n:translate="">Status</th>
  <td tal:content="structure context/status/menu">status</td>
+ <th i18n:translate="">Resolution</th>
+ <td tal:content="structure context/resolution/menu">resolution</td>
 </tr>
 
 <tr>
@@ -54,7 +67,8 @@
   <span tal:condition="context/is_edit_ok" tal:replace="structure python:db.issue.classhelp('id,title', property='superseder')" />
   <span tal:condition="context/superseder" tal:repeat="sup context/superseder">
    <br><span i18n:translate="">View: <a i18n:name="link" tal:content="sup/id"
-     tal:attributes="href string:issue${sup/id}"></a></span>
+     tal:attributes="href string:issue${sup/id};
+                     title sup/title;"></a></span>
   </span>
  </td>
  <th i18n:translate="">Nosy List</th>
@@ -67,7 +81,7 @@ python:db.user.classhelp('username,realname,address', property='nosy', width='60
 
 <tr>
  <th i18n:translate="">Assigned To</th>
- <td tal:content="structure context/assignedto/menu">assignedto menu</td>
+ <td tal:content="structure context/assignedto/field">assignedto field</td>
  <th i18n:translate="">Topics</th>
  <td>
   <span tal:replace="structure context/topic/field" />
@@ -156,7 +170,7 @@ python:db.user.classhelp('username,realname,address', property='nosy', width='60
 
 <table class="messages" tal:condition="context/messages">
  <tr><th colspan="4" class="header" i18n:translate="">Messages</th></tr>
- <tal:block tal:repeat="msg context/messages/reverse">
+ <tal:block tal:repeat="msg context/messages">
   <tr>
    <th><a tal:attributes="href string:msg${msg/id}"
     i18n:translate="">msg<tal:x replace="msg/id" i18n:name="id" /> (view)</a></th>
@@ -188,3 +202,4 @@ python:db.user.classhelp('username,realname,address', property='nosy', width='60
 </td>
 
 </tal:block>
+<!-- SHA: 52e1c51e8d17b8e8dd4ff54055b4f87ef0aa13bc -->

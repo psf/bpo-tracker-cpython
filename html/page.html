@@ -1,148 +1,184 @@
 <tal:block metal:define-macro="icing">
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-                               "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <title metal:define-slot="head_title">title goes here</title>
-<link rel="stylesheet" type="text/css" href="@@file/style.css">
+<link media="screen" href="http://python.org/styles/screen-switcher-default.css" type="text/css" id="screen-switcher-stylesheet" rel="stylesheet" />
+<link media="screen" href="http://python.org/styles/netscape4.css" type="text/css" rel="stylesheet" />
+<link media="print" href="http://python.org/styles/print.css" type="text/css" rel="stylesheet" />
+<link media="screen" href="http://python.org/styles/largestyles.css" type="text/css" rel="alternate stylesheet" title="large text" />
+<link media="screen" href="http://python.org/styles/defaultfonts.css" type="text/css" rel="alternate stylesheet" title="default fonts" />
+<link rel="stylesheet" type="text/css" href="@@file/style.css" />
 <meta http-equiv="Content-Type"
  tal:attributes="content string:text/html;; charset=${request/client/charset}" />
 <script tal:replace="structure request/base_javascript">
 </script>
 
 </head>
-<body class="body">
+<body>
+  <!--  Logo  -->
+  <h1 id="logoheader">
+<a accesskey="1" href="." id="logolink"><img src="http://python.org/images/python-logo.gif" alt="homepage" border="0" id="logo" /></a></h1>
+<div id="searchbox">
+ <form method="get" action="issue">
+   <input type="hidden" name="@columns"
+          value="id,activity,title,creator,assignedto,status"/>
+   <input type="hidden" name="@sort" value="activity"/>
+   <input type="hidden" name="@group" value="priority"/>
+   <input id="search-text" name="@search_text" size="10"/>
+   <input type="submit" id="submit" name="submit" value="Search" i18n:attributes="value"/>
+ </form>
+</div>
 
-<table class="body">
-
-<tr>
- <td class="page-header-left">&nbsp;</td>
- <td class="page-header-top">
-   <div id="body-title">
-     <h2><span metal:define-slot="body_title">body title</span></h2>
-   </div>
-   <div id="searchbox">
-     <form method="GET" action="issue">
-       <input type="hidden" name="@columns"
-              value="id,activity,title,creator,assignedto,status"/>
-       <input type="hidden" name="@sort" value="activity"/>
-       <input type="hidden" name="@group" value="priority"/>
-       <input id="search-text" name="@search_text" size="10"/>
-       <input type="submit" id="submit" name="submit" value="Search" i18n:attributes="value"/>
-     </form>
-  </div>
- </td>
-</tr>
-
-<tr>
- <td rowspan="2" valign="top" class="sidebar">
-  <p class="classblock"
-     tal:condition="python:request.user.hasPermission('View', 'query')">
-   <span i18n:translate=""
-    ><b>Your Queries</b> (<a href="query?@template=edit">edit</a>)</span><br>
-   <tal:block tal:repeat="qs request/user/queries">
-    <a tal:attributes="href string:${qs/klass}?${qs/url}&@dispname=${qs/name}"
-       tal:content="qs/name">link</a><br>
-   </tal:block>
-  </p>
-
-  <form method="POST" tal:attributes="action request/base">
-   <p class="classblock"
-       tal:condition="python:request.user.hasPermission('View', 'issue')">
-    <b i18n:translate="">Issues</b><br>
-    <span tal:condition="python:request.user.hasPermission('Create', 'issue')">
-      <a href="issue?@template=item" i18n:translate="">Create New</a><br>
-    </span>
-    <a href="issue?@sort=-activity&@group=priority&@filter=status,assignedto&@columns=id,activity,title,creator,status&status=-1,1,2,3,4,5,6,7&assignedto=-1&@dispname=Show%20Unassigned"
-     i18n:translate="">Show Unassigned</a><br>
-    <a href="issue?@sort=-activity&@group=priority&@filter=status&@columns=id,activity,title,creator,assignedto,status&status=-1,1,2,3,4,5,6,7&@dispname=Show%20All"
-     i18n:translate="">Show All</a><br>
-    <a href="issue?@template=search" i18n:translate="">Search</a><br>
-    <input type="submit" class="form-small" value="Show issue:"
-     i18n:attributes="value"><input class="form-small" size="4"
-     type="text" name="@number">
-    <input type="hidden" name="@type" value="issue">
-    <input type="hidden" name="@action" value="show">
-   </p>
-  </form>
-
-  <p class="classblock"
-     tal:condition="python:request.user.hasPermission('Edit', 'keyword')
-        or request.user.hasPermission('Create', 'keyword')">
-   <b i18n:translate="">Keywords</b><br>
-   <span tal:condition="python:request.user.hasPermission('Create', 'keyword')">
-    <a href="keyword?@template=item" i18n:translate="">Create New</a><br>
-   </span>
-   <span tal:condition="python:db.keyword.list() and
-        request.user.hasPermission('Edit', 'keyword')">
-    <a href="keyword?@template=item" i18n:translate="">Edit Existing</a><br>
-   </span>
-  </p>
-
-  <p class="classblock"
-       tal:condition="python:request.user.hasPermission('View', 'user')">
-   <b i18n:translate="">Administration</b><br>
-   <span tal:condition="python:request.user.hasPermission('Edit', None)">
-    <a href="home?@template=classlist" i18n:translate="">Class List</a><br>
-   </span>
-   <span tal:condition="python:request.user.hasPermission('View', 'user')
-                            or request.user.hasPermission('Edit', 'user')">
-    <a href="user"  i18n:translate="">User List</a><br>
-   </span>
-   <a tal:condition="python:request.user.hasPermission('Create', 'user')"
-      href="user?@template=item" i18n:translate="">Add User</a>
-  </p>
-
-  <form method="POST" tal:condition="python:request.user.username=='anonymous'"
-        tal:attributes="action request/base">
-   <p class="userblock">
-    <b i18n:translate="">Login</b><br>
-    <input size="10" name="__login_name"><br>
-    <input size="10" type="password" name="__login_password"><br>
-    <input type="hidden" name="@action" value="Login">
-    <input type="checkbox" name="remember" id="remember">
-    <label for="remember" i18n:translate="">Remember me?</label><br>
-    <input type="submit" value="Login" i18n:attributes="value"><br>
-    <input type="hidden" name="__came_from" tal:attributes="value string:${request/base}${request/env/PATH_INFO}">
-    <span tal:replace="structure request/indexargs_form" />
-    <a href="user?@template=register"
-       tal:condition="python:request.user.hasPermission('Create', 'user')"
-     i18n:translate="">Register</a><br>
-    <a href="user?@template=forgotten" i18n:translate="">Lost&nbsp;your&nbsp;login?</a><br>
-   </p>
-  </form>
-
-  <p class="userblock" tal:condition="python:request.user.username != 'anonymous'">
+<div id="left-hand-navigation">
+  
+    <!--  Main Menu NEED LEVEL TWO HEADER AND FOOTER -->
+ <div id="menu">
+  <ul class="level-one">
+   <li class=""><a href="http://python.org/about" class="" title="About The Python Language">About</a></li>
+   <li class=""><a href="http://python.org/news" class="" title="">News</a></li>
+   <li class=""><a href="http://python.org/doc" class="" title="">Documentation</a></li>
+   <li class=""><a href="http://python.org/download" class="" title="">Download</a></li>
+   <li class=""><a href="http://python.org/community" class="" title="">Community</a></li>
+   <li class=""><a href="http://python.org/psf" class="" title="Python Software Foundation">PSF</a></li>
+   <li class=""><a href="http://python.org/links" class="" title="">Links</a></li>
+   <li class=""><a href="http://python.org/dev" class="" title="Python Core Language Development">Core Development</a></li>
+   <li class="selected"><a href="." class="selected" title="Python Issue Tracker">Issue Tracker</a>
+    <ul class="level-two">
+     <li tal:condition="python:request.user.hasPermission('View', 'issue')">
+      <b i18n:translate="">Issues</b>
+       <ul class="level-three">
+        <li tal:condition="python:request.user.hasPermission('Create', 'issue')">
+         <a href="issue?@template=item" i18n:translate="">Create New</a>
+        </li>
+        <li>
+         <a href="issue?@sort=-activity&@group=priority&@filter=status,assignedto&@columns=id,activity,title,creator,status&status=1,2&assignedto=-1&@dispname=Show%20Unassigned"
+            i18n:translate="">Show Unassigned</a>
+        </li>
+        <li>
+         <a href="issue?@sort=-activity&@group=priority&@filter=status&@columns=id,activity,title,creator,assignedto,status&status=1,2&@dispname=Show%20All"
+            i18n:translate="">Show All</a>
+        </li>
+        <li>
+         <a href="issue?@template=search" i18n:translate="">Search</a>
+        </li>
+        <li>
+         <form method="post" tal:attributes="action request/base">
+          <input type="submit" class="form-small" value="Show issue:"
+                 i18n:attributes="value"/>
+          <input class="form-small" size="4"
+                 type="text" name="@number"/>
+          <input type="hidden" name="@type" value="issue"/>
+          <input type="hidden" name="@action" value="show"/>
+         </form>
+        </li>
+       </ul>
+     </li>
+     <li tal:condition="python:request.user.hasPermission('Edit', 'keyword')
+                        or request.user.hasPermission('Create', 'keyword')">
+      <tal:block i18n:translate="">Keywords</tal:block>
+      <ul class="level-three">
+       <li tal:condition="python:request.user.hasPermission('Create', 'keyword')">
+        <a href="keyword?@template=item" i18n:translate="">Create New</a>
+       </li>
+       <li tal:condition="python:db.keyword.list() and
+           request.user.hasPermission('Edit', 'keyword')">
+        <a href="keyword?@template=item" i18n:translate="">Edit Existing</a>
+       </li>
+      </ul>
+     </li>
+     <li tal:condition="python:request.user.username=='anonymous'">
+      <form method="post" tal:attributes="action request/base">
+       <b i18n:translate="">Login</b><br/>
+       <ul class="level-three">
+      <li>
+       <input size="10" name="__login_name"/><br/>
+       <input size="10" type="password" name="__login_password"/><br/>
+       <input type="hidden" name="@action" value="Login"/>
+       <input type="checkbox" name="remember" id="remember"/>
+       <label for="remember" i18n:translate="">Remember me?</label><br/>
+       <input class="form-small" type="submit" value="Login" i18n:attributes="value"/><br/>
+       <input type="hidden" name="__came_from" tal:attributes="value string:${request/base}${request/env/PATH_INFO}"/>
+       <span tal:replace="structure request/indexargs_form" />
+       </li>
+       <li>
+       <a href="user?@template=register"
+          tal:condition="python:request.user.hasPermission('Create', 'user')"
+          i18n:translate="">Register</a>
+	</li>
+       <li><a href="user?@template=forgotten" i18n:translate="">Lost&nbsp;your&nbsp;login?</a>
+       </li>
+       </ul>
+      </form>
+     </li>
+     <li class="" 
+         tal:condition="python:request.user.username != 'anonymous'">
    <b i18n:translate="">Hello, <span i18n:name="user"
-    tal:replace="request/user/username">username</span></b><br>
-   <a tal:attributes="href string:issue?@sort=-activity&@group=priority&@filter=status,assignedto&@columns=id,activity,title,creator,status&status=-1,1,2,3,4,5,6,7&assignedto=${request/user/id}" i18n:translate="">Your Issues</a><br>
-   <a tal:attributes="href string:user${request/user/id}"
-    i18n:translate="">Your Details</a><br>
-   <a tal:attributes="href python:request.indexargs_url('',
-       {'@action':'logout'})" i18n:translate="">Logout</a>
-  </p>
-  <p class="userblock">
-   <b i18n:translate="">Help</b><br>
+    tal:replace="request/user/username">username</span></b><br/>
+    <ul class="level-three">
+    <li>
+      <a tal:attributes="href string:issue?@sort=-activity&@group=priority&@filter=status,assignedto&@columns=id,activity,title,creator,status&status=1,2&assignedto=${request/user/id}" i18n:translate="">Your Issues</a>
+    </li>
+    <li>
+       <a tal:attributes="href string:user${request/user/id}"
+          i18n:translate="">Your Details</a>
+    </li>
+    <li>
+       <a tal:attributes="href python:request.indexargs_url('',
+          {'@action':'logout'})" i18n:translate="">Logout</a>
+    </li>
+    </ul>
+    </li>
+     <li class=""
+         tal:condition="python:request.user.hasPermission('View', 'query')">
+   <span i18n:translate=""><b>Your Queries</b> (<a class="nomargin" href="query?@template=edit">edit</a>)</span><br/>
+   <ul class="level-three" tal:repeat="qs request/user/queries">
+    <li><a tal:attributes="href string:${qs/klass}?${qs/url}&@dispname=${qs/name}"
+       tal:content="qs/name">link</a></li>
+   </ul>
+     </li>
+     <li class=""
+         tal:condition="python:request.user.hasPermission('View', 'user')">
+   <b i18n:translate="">Administration</b>
+   <ul class="level-three">
+   <li tal:condition="python:request.user.hasPermission('Edit', None)">
+    <a href="home?@template=classlist" i18n:translate="">Class List</a>
+   </li>
+   <li tal:condition="python:request.user.hasPermission('View', 'user')
+                            or request.user.hasPermission('Edit', 'user')">
+    <a href="user"  i18n:translate="">User List</a>
+   </li>
+   <li tal:condition="python:request.user.hasPermission('Create', 'user')"><a href="user?@template=item" i18n:translate="">Add User</a>
+   </li>
+   </ul>
+     </li>
+     <li class="">
+   <b i18n:translate="">Help</b><br/>
    <a href="http://roundup.sourceforge.net/doc-1.0/"
     i18n:translate="">Roundup docs</a>
-  </p>
- </td>
- <td>
-  <p tal:condition="options/error_message | nothing" class="error-message"
-     tal:repeat="m options/error_message" tal:content="structure m" />
-  <p tal:condition="options/ok_message | nothing" class="ok-message">
-    <span tal:repeat="m options/ok_message"
-       tal:content="structure string:$m <br/ > " />
-     <a class="form-small" tal:attributes="href request/current_url"
-        i18n:translate="">clear this message</a>
-  </p>
- </td>
-</tr>
-<tr>
- <td class="content" metal:define-slot="content">Page content goes here</td>
-</tr>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </div> <!-- menu -->
+</div> <!-- left-hand-navigation -->
 
-</table>
+<div id="content-body">
+<div id="body-main">
+<div id="content">
+<div id="breadcrumb"><span metal:define-slot="body_title">body title</span></div>
+ <p tal:condition="options/error_message | nothing" class="error-message"
+    tal:repeat="m options/error_message" tal:content="structure m" />
+ <p tal:condition="options/ok_message | nothing" class="ok-message">
+  <span tal:repeat="m options/ok_message"
+        tal:content="structure string:$m <br/ > " />
+  <a class="form-small" tal:attributes="href request/current_url"
+     i18n:translate="">clear this message</a>
+ </p>
+ <tal:block metal:define-slot="content">Page content goes here</tal:block>
+</div> <!-- content-body -->
+</div> <!-- body-main -->
+</div> <!-- content -->
 
 <pre tal:condition="request/form/debug | nothing" tal:content="request">
 </pre>
@@ -161,7 +197,7 @@ See issue.search.html in the classic template for examples.
 -->
 <td metal:define-macro="search_input">
   <input tal:attributes="value python:request.form.getvalue(name) or nothing;
-                         name name">
+                         name name"/>
 </td>
 
 <td metal:define-macro="search_popup">
@@ -170,7 +206,7 @@ See issue.search.html in the classic template for examples.
     string (eg. "id,title" or "id,name,description") as well as name
   -->
   <input tal:attributes="value python:request.form.getvalue(name) or nothing;
-                         name name">
+                         name name"/>
   <span tal:replace="structure python:db.issue.classhelp(columns,
                                       property=name)" />
 </td>
@@ -189,7 +225,7 @@ See issue.search.html in the classic template for examples.
 
 <td metal:define-macro="search_multiselect">
   <input tal:attributes="value python:request.form.getvalue(name) or nothing;
-                         name name">
+                         name name"/>
   <span tal:replace="structure python:db[db_klass].classhelp(db_content,
                                         property=name, width='600')" />
 </td>
@@ -215,18 +251,17 @@ See issue.search.html in the classic template for examples.
 <td metal:define-macro="column_input">
   <input type="checkbox" name="@columns"
          tal:attributes="value name;
-                         checked python:name in cols">
+                         checked python:name in cols"/>
 </td>
 
 <td metal:define-macro="sort_input">
   <input type="radio" name="@sort"
          tal:attributes="value name;
-                         checked python:name == sort_on">
+                         checked python:name == sort_on"/>
 </td>
 
 <td metal:define-macro="group_input">
   <input type="radio" name="@group"
          tal:attributes="value name;
-                         checked python:name == group_on">
+                         checked python:name == group_on"/>
 </td>
-

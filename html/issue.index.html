@@ -97,7 +97,7 @@
 <a tal:attributes="href python:request.indexargs_url('issue',
             {'@action':'export_csv'})" i18n:translate="">Download as CSV</a>
 
-<form method="GET" class="index-controls"
+<form method="get" class="index-controls"
     tal:attributes="action request/classname">
 
  <table class="form">
@@ -115,7 +115,7 @@
    </td>
    <th i18n:translate="">Descending:</th>
    <td><input type="checkbox" name="@sortdir"
-              tal:attributes="checked python:request.sort[0] == '-'">
+              tal:attributes="checked python:request.sort[0] == '-'"/>
    </td>
   </tr>
   <tr>
@@ -132,11 +132,11 @@
    </td>
    <th i18n:translate="">Descending:</th>
    <td><input type="checkbox" name="@groupdir"
-              tal:attributes="checked python:request.group[0] == '-'">
+              tal:attributes="checked python:request.group[0] == '-'"/>
    </td>
   </tr>
   <tr><td colspan="4">
-              <input type="submit" value="Redisplay" i18n:attributes="value">
+              <input type="submit" value="Redisplay" i18n:attributes="value"/>
               <tal:block tal:replace="structure
                 python:request.indexargs_form(sort=0, group=0)" />
   </td></tr>
@@ -147,3 +147,4 @@
 
 </td>
 </tal:block>
+<!-- SHA: 8a7f0580114904917683796f76dde4da8cc80d3b -->

@@ -21,6 +21,20 @@ stat = Class(db, "status",
                 order=Number())
 stat.setkey("name")
 
+# Resolution
+resolution = Class(db, "resolution",
+                   name=String(),
+                   order=Number())
+resolution.setkey('name')
+
+# Groups
+group = Class(db, "group",
+              name=String(),
+              order=Number())
+group.setkey("name")
+            
+              
+
 # Keywords
 keyword = Class(db, "keyword",
                 name=String())
@@ -73,7 +87,10 @@ issue = IssueClass(db, "issue",
                 assignedto=Link("user"),
                 topic=Multilink("keyword"),
                 priority=Link("priority"),
-                status=Link("status"))
+                group=Link("group"),
+                status=Link("status"),
+                resolution=Link("resolution"),
+                imported_from_sf=Boolean())
 
 #
 # TRACKER SECURITY SETTINGS
@@ -94,7 +111,7 @@ for cl in 'issue', 'file', 'msg', 'keyword':
     db.security.addPermissionToRole('User', 'View', cl)
     db.security.addPermissionToRole('User', 'Edit', cl)
     db.security.addPermissionToRole('User', 'Create', cl)
-for cl in 'priority', 'status':
+for cl in 'priority', 'status', 'resolution', 'group':
     db.security.addPermissionToRole('User', 'View', cl)
 
 # May users view other user information? Comment these lines out
@@ -155,7 +172,7 @@ db.security.addPermissionToRole('Anonymous', 'Create', 'user')
 
 # Allow anonymous users access to view issues (and the related, linked
 # information)
-for cl in 'issue', 'file', 'msg', 'keyword', 'priority', 'status':
+for cl in 'issue', 'file', 'msg', 'keyword', 'priority', 'status', 'resolution', 'group':
     db.security.addPermissionToRole('Anonymous', 'View', cl)
 
 # [OPTIONAL]
@@ -167,3 +184,4 @@ for cl in 'issue', 'file', 'msg', 'keyword', 'priority', 'status':
 
 
 # vim: set filetype=python sts=4 sw=4 et si :
+
