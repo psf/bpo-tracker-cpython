@@ -1,0 +1,48 @@
+<tal:block metal:use-macro="templates/page/macros/icing">
+<title metal:fill-slot="head_title" i18n:translate="">File display - <span
+ i18n:name="tracker" tal:replace="config/TRACKER_NAME" /></title>
+<span metal:fill-slot="body_title" tal:omit-tag="python:1"
+ i18n:translate="">File display</span>
+
+<td class="content" metal:fill-slot="content">
+
+<p tal:condition="not:context/is_view_ok" i18n:translate="">You are not
+    allowed to view this page.</p>
+
+<form method="POST" onSubmit="return submit_once()"
+      enctype="multipart/form-data" tal:condition="context/is_view_ok"
+      tal:attributes="action context/designator">
+
+<table class="form">
+ <tr>
+  <th i18n:translate="">Name</th>
+  <td tal:content="structure context/name/field"></td>
+ </tr>
+ <tr>
+  <th i18n:translate="">Content Type</th>
+  <td tal:content="structure context/type/field"></td>
+ </tr>
+
+ <tr>
+  <td>
+   &nbsp;
+   <input type="hidden" name="@template" value="item">
+   <input type="hidden" name="@required" value="name,type">
+   <input type="hidden" name="@multilink"
+          tal:condition="python:request.form.has_key('@multilink')"
+          tal:attributes="value request/form/@multilink/value">
+  </td>
+  <td tal:content="structure context/submit">submit button here</td>
+ </tr>
+</table>
+</form>
+
+<a tal:condition="python:context.id and context.is_view_ok()"
+ tal:attributes="href string:file${context/id}/${context/name}"
+ i18n:translate="">download</a>
+
+<tal:block tal:condition="context/id" tal:replace="structure context/history" />
+
+</td>
+
+</tal:block>

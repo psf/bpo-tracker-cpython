@@ -1,0 +1,55 @@
+<!-- dollarId: keyword.item,v 1.3 2002/05/22 00:32:34 richard Exp dollar-->
+<tal:block metal:use-macro="templates/page/macros/icing">
+<title metal:fill-slot="head_title" i18n:translate="">Keyword editing - <span
+ i18n:name="tracker" tal:replace="config/TRACKER_NAME" /></title>
+<span metal:fill-slot="body_title" tal:omit-tag="python:1"
+ i18n:translate="">Keyword editing</span>
+<td class="content" metal:fill-slot="content">
+
+<table class="otherinfo" tal:define="keywords db/keyword/list"
+       tal:condition="keywords">
+ <tr><th colspan="4" class="header" i18n:translate="">Existing Keywords</th></tr>
+ <tr tal:repeat="start python:range(0, len(keywords), 4)">
+  <td width="25%" tal:define="batch python:utils.Batch(keywords, 4, start)"
+      tal:repeat="keyword batch">
+    <a tal:attributes="href string:keyword${keyword/id}"
+       tal:content="keyword/name">keyword here</a>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="4" style="border-top: 1px solid gray" i18n:translate="">
+   To edit an existing keyword (for spelling or typing errors),
+   click on its entry above.
+  </td>
+ </tr>
+</table>
+
+<p class="help" tal:condition="not:context/id" i18n:translate="">
+ To create a new keyword, enter it below and click "Submit New Entry".
+</p>
+
+<form method="POST" onSubmit="return submit_once()"
+      enctype="multipart/form-data"
+      tal:attributes="action context/designator">
+
+ <table class="form">
+  <tr>
+   <th i18n:translate="">Keyword</th>
+   <td tal:content="structure context/name/field">name</td>
+  </tr>
+
+  <tr>
+   <td>
+    &nbsp;
+    <input type="hidden" name="@required" value="name">
+    <input type="hidden" name="@template" value="item">
+   </td>
+   <td colspan=3 tal:content="structure context/submit">
+    submit button will go here
+   </td>
+  </tr>
+ </table>
+</form>
+</td>
+
+</tal:block>
