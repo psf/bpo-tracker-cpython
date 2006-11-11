@@ -16,7 +16,15 @@
 <metal:x define-slot="more-javascript" />
 
 </head>
-<body>
+<body
+tal:define="
+kw_edit python:request.user.hasPermission('Edit', 'keyword');
+kw_create python:request.user.hasPermission('Create', 'keyword');
+kw_edit_link python:kw_edit and db.keyword.list();
+columns string:id,activity,title,creator,status;
+columns_showall string:id,activity,title,creator,assignedto,status;
+status_notresolved string:-1,1,2,3,4,5,6,7;
+">
   <!--  Logo  -->
   <h1 id="logoheader">
 <a accesskey="1" href="." id="logolink"><img src="http://python.org/images/python-logo.gif" alt="homepage" border="0" id="logo" /></a></h1>
@@ -26,7 +34,8 @@
           value="id,activity,title,creator,assignedto,status"/>
    <input type="hidden" name="@sort" value="activity"/>
    <input type="hidden" name="@group" value="priority"/>
-   <input id="search-text" name="@search_text" size="10"/>
+   <input id="search-text" name="@search_text" size="10"
+          tal:attributes="value request/search_text"/>
    <input type="submit" id="submit" name="submit" value="Search" i18n:attributes="value"/>
  </form>
 </div>
@@ -53,13 +62,29 @@
          <a href="issue?@template=item" i18n:translate="">Create New</a>
         </li>
         <li>
-         <a href="issue?@sort=-activity&@group=priority&@filter=status,assignedto&@columns=id,activity,title,creator,status&status=1,2&assignedto=-1&@dispname=Show%20Unassigned"
-            i18n:translate="">Show Unassigned</a>
-        </li>
-        <li>
-         <a href="issue?@sort=-activity&@group=priority&@filter=status&@columns=id,activity,title,creator,assignedto,status&status=1,2&@dispname=Show%20All"
-            i18n:translate="">Show All</a>
-        </li>
+    <li><a href="#"
+       tal:attributes="href python:request.indexargs_url('issue', {
+      '@sort': '-activity',
+      '@group': 'priority',
+      '@filter': 'status,assignedto',
+      '@columns': columns,
+      '@search_text': '',
+      'status': status_notresolved,
+      'assignedto': '-1',
+      '@dispname': i18n.gettext('Show Unassigned'),
+     })"
+       i18n:translate="">Show Unassigned</a></li>
+    <li><a href="#"
+       tal:attributes="href python:request.indexargs_url('issue', {
+      '@sort': '-activity',
+      '@group': 'priority',
+      '@filter': 'status',
+      '@columns': columns_showall,
+      '@search_text': '',
+      'status': status_notresolved,
+      '@dispname': i18n.gettext('Show All'),
+     })"
+       i18n:translate="">Show All</a></li>
         <li>
          <a href="issue?@template=search" i18n:translate="">Search</a>
         </li>
@@ -118,7 +143,18 @@
     tal:replace="request/user/username">username</span></b><br/>
     <ul class="level-three">
     <li>
-      <a tal:attributes="href string:issue?@sort=-activity&@group=priority&@filter=status,assignedto&@columns=id,activity,title,creator,status&status=1,2&assignedto=${request/user/id}" i18n:translate="">Your Issues</a>
+    <a href="#"
+       tal:attributes="href python:request.indexargs_url('issue', {
+      '@sort': '-activity',
+      '@group': 'priority',
+      '@filter': 'status,assignedto',
+      '@columns': 'id,activity,title,creator,status',
+      '@search_text': '',
+      'status': status_notresolved,
+      'assignedto': request.user.id,
+      '@dispname': i18n.gettext('Your Issues'),
+     })"
+    i18n:translate="">Your Issues</a>
     </li>
     <li>
        <a tal:attributes="href string:user${request/user/id}"

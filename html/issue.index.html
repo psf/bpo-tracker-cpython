@@ -1,4 +1,4 @@
-<!-- $Id: issue.index.html,v 1.25 2006/09/18 00:03:02 tobias-herp Exp $ -->
+<!-- $Id: issue.index.html,v 1.27 2006/11/09 01:26:28 richard Exp $ -->
 <tal:block metal:use-macro="templates/page/macros/icing">
 <title metal:fill-slot="head_title" >
   <span tal:omit-tag="true" i18n:translate="" >List of issues</span>
@@ -13,8 +13,13 @@
 </span>
 <td class="content" metal:fill-slot="content">
 
-<p tal:condition="not:context/is_view_ok" i18n:translate="">You are not
-  allowed to view this page.</p>
+<p tal:condition="python:not (context.is_view_ok()
+ or request.user.hasRole('Anonymous'))" i18n:translate="">
+ You are not allowed to view this page.</p>
+
+<p tal:condition="python:not context.is_view_ok()
+ and request.user.hasRole('Anonymous')" i18n:translate="">
+ Please login with your username and password.</p>
 
 <tal:block tal:define="batch request/batch" tal:condition="context/is_view_ok">
  <table class="list">
@@ -99,7 +104,7 @@
 <a tal:attributes="href python:request.indexargs_url('issue',
             {'@action':'export_csv'})" i18n:translate="">Download as CSV</a>
 
-<form method="get" class="index-controls"
+<form method="GET" class="index-controls"
     tal:attributes="action request/classname">
 
  <table class="form" tal:define="n_sort python:2">
@@ -119,8 +124,8 @@
     </select>
    </td>
    <th i18n:translate="">Descending:</th>
-   <td><input type="checkbox" name="@sortdir"
-              tal:attributes="checked python:key and key[0] == '-'">
+   <td><input type="checkbox" tal:attributes="name python:'@sortdir%d'%n;
+              checked python:key and key[0] == '-'">
    </td>
   </tr>
   </tal:block>
@@ -140,8 +145,8 @@
     </select>
    </td>
    <th i18n:translate="">Descending:</th>
-   <td><input type="checkbox" name="@groupdir"
-              tal:attributes="checked python:key and key[0] == '-'">
+   <td><input type="checkbox" tal:attributes="name python:'@groupdir%d'%n;
+              checked python:key and key[0] == '-'">
    </td>
   </tr>
   </tal:block>
