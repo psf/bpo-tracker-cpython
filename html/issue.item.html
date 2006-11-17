@@ -52,14 +52,18 @@
 </tr>
 
 <tr>
- <th i18n:translate="">Group</th>
+ <th i18n:translate="">
+   <span tal:replace="structure python:db.group.classhelp('id,name,description',label='Group')" />
+ </th>
  <td tal:content="structure context/group/menu">group</td>
  <th class="required" i18n:translate="">Priority</th>
  <td tal:content="structure context/priority/menu">priority</td>
 </tr>
 
 <tr>
- <th i18n:translate="">Status</th>
+ <th i18n:translate="">
+   <span tal:replace="structure python:db.status.classhelp('id,name,description',label='Status')" />
+ </th>
  <td tal:content="structure context/status/menu">status</td>
  <th i18n:translate="">Resolution</th>
  <td tal:content="structure context/resolution/menu">resolution</td>
@@ -88,7 +92,7 @@ python:db.user.classhelp('username,realname,address', property='nosy', width='60
 
 <tr>
  <th i18n:translate="">Assigned To</th>
- <td tal:content="structure context/assignedto/field">assignedto field</td>
+ <td tal:content="structure context/assignedto/menu">assignedto field</td>
  <th i18n:translate="">Topics</th>
  <td>
   <span tal:replace="structure context/topic/field" />
@@ -100,7 +104,7 @@ python:db.user.classhelp('username,realname,address', property='nosy', width='60
  <th i18n:translate="">Change Note</th>
  <td colspan=3>
   <textarea tal:content="request/form/@note/value | default"
-            name="@note" wrap="hard" rows="5" cols="80"></textarea>
+            name="@note" wrap="hard" rows="5" cols="72"></textarea>
  </td>
 </tr>
 

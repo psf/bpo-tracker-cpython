@@ -11,25 +11,29 @@
 
 # Priorities
 pri = Class(db, "priority",
-                name=String(),
-                order=Number())
+            name=String(),
+            description=String(),
+            order=Number())
 pri.setkey("name")
 
 # Statuses
 stat = Class(db, "status",
-                name=String(),
-                order=Number())
+             name=String(),
+             description=String(),
+             order=Number())
 stat.setkey("name")
 
 # Resolution
 resolution = Class(db, "resolution",
                    name=String(),
+                   description=String(),
                    order=Number())
 resolution.setkey('name')
 
 # Groups
 group = Class(db, "group",
               name=String(),
+              description=String(),
               order=Number())
 group.setkey("name")
             
