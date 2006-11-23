@@ -22,7 +22,7 @@ kw_edit python:request.user.hasPermission('Edit', 'keyword');
 kw_create python:request.user.hasPermission('Create', 'keyword');
 kw_edit_link python:kw_edit and db.keyword.list();
 columns string:id,activity,title,creator,status;
-columns_showall string:id,activity,title,creator,assignedto,status;
+columns_showall string:id,activity,title,creator,assignee,status;
 status_notresolved string:-1,1,2,3,4,5,6,7;
 ">
   <!--  Logo  -->
@@ -54,11 +54,11 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
        tal:attributes="href python:request.indexargs_url('bug', {
       '@sort': '-activity',
       '@group': 'severity',
-      '@filter': 'status,assignedto',
+      '@filter': 'status,assignee',
       '@columns': columns,
       '@search_text': '',
       'status': status_notresolved,
-      'assignedto': '-1',
+      'assignee': '-1',
       '@dispname': i18n.gettext('Show Unassigned'),
      })"
        i18n:translate="">Show Unassigned</a></li>
@@ -122,11 +122,11 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
        tal:attributes="href python:request.indexargs_url('bug', {
       '@sort': '-activity',
       '@group': 'severity',
-      '@filter': 'status,assignedto',
+      '@filter': 'status,assignee',
       '@columns': 'id,activity,title,creator,status',
       '@search_text': '',
       'status': status_notresolved,
-      'assignedto': request.user.id,
+      'assignee': request.user.id,
       '@dispname': i18n.gettext('Your Bugs'),
      })"
     i18n:translate="">Your Bugs</a>
