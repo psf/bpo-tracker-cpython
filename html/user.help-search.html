@@ -20,7 +20,7 @@ qs request/env/QUERY_STRING;
 qs python:'&'.join([a for a in qs.split('&') if not a.startswith('@template=')])"
 >
     <pre tal:content="request/env/QUERY_STRING" tal:condition=false />
-    <form method="GET" name="itemSynopsis"
+    <form method="get" name="itemSynopsis"
       target="list"
       tal:attributes="action request/classname"
       tal:define="

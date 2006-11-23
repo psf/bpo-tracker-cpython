@@ -68,6 +68,21 @@ div#searchbox input#search-text
   text-transform: none;
 }
 
+#menu ul.level-three form
+{
+  display: block;
+  border: 0;
+  padding: 0.1em;
+  margin: 0 3em 0px 1.8em;
+  padding-left:1em;
+  color: #5E72A5;
+  background-image: none;
+  width: 10em !important;
+  width /**/: 11.4em;  
+  font-family: Arial, Verdana, Geneva, "Bitstream Vera Sans", Helvetica, sans-serif;
+  font-size: 95%;
+}
+
 #menu ul.level-three li
 {
     margin: 0px;
@@ -127,15 +142,18 @@ ul.search-checkboxes > li {
 
 /* style for forms */
 table.form {
-  border: #ddd solid 1px;
+/*  border: #ddd solid 1px;*/
   padding: 2px;
-  border-spacing: 0;
+  border-spacing: 5px;
   border-collapse: collapse;
-  background-color: #f5f5f5;
+/* background-color: #f5f5f5; */  
+  margin: 5px;
 }
 
 table.form th {
-  border: #ddd solid 1px;
+  border-left: #ddd solid 1px;
+  border-top: #ddd solid 1px;
+  border-bottom: #ddd solid 1px;
   color: #338;
   text-align: right;
   vertical-align: top;
@@ -153,9 +171,13 @@ table.form th.required {
 }
 
 table.form td {
+  border-right: #ddd solid 1px;
+  border-top: #ddd solid 1px;
+  border-bottom: #ddd solid 1px;
   color: #333;
   empty-cells: show;
   vertical-align: top;
+  padding: 5px;
 }
 
 table.form td.optional {

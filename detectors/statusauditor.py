@@ -1,85 +1,95 @@
-# Copyright (c) 2002 ekit.com Inc (http://www.ekit-inc.com/)
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-#   The above copyright notice and this permission notice shall be included in
-#   all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-#
-#$Id: statusauditor.py,v 1.5 2004/03/27 00:01:48 richard Exp $
+def init_status(db, cl, nodeid, newvalues):
+    """ Make sure the status is set on new bugs"""
 
-def chatty(db, cl, nodeid, newvalues):
-    ''' If the issue is currently 'unread', 'resolved', 'done-cbb' or None,
-        then set it to 'chatting'
-    '''
-    # don't fire if there's no new message (ie. chat)
-    if not newvalues.has_key('messages'):
-        return
-    if newvalues['messages'] == cl.get(nodeid, 'messages'):
-        return
-
-    # get the chatting state ID
-    try:
-        chatting_id = db.status.lookup('chatting')
-    except KeyError:
-        # no chatting state, ignore all this stuff
-        return
-
-    # get the current value
-    current_status = cl.get(nodeid, 'status')
-
-    # see if there's an explicit change in this transaction
-    if newvalues.has_key('status'):
-        # yep, skip
-        return
-
-    # determine the id of 'unread', 'resolved' and 'chatting'
-    fromstates = []
-    for state in 'unread resolved done-cbb'.split():
-        try:
-            fromstates.append(db.status.lookup(state))
-        except KeyError:
-            pass
-
-    # ok, there's no explicit change, so check if we are in a state that
-    # should be changed
-    if current_status in fromstates + [None]:
-        # yep, we're now chatting
-        newvalues['status'] = chatting_id
-
-
-def presetunread(db, cl, nodeid, newvalues):
-    ''' Make sure the status is set on new issues
-    '''
     if newvalues.has_key('status') and newvalues['status']:
         return
 
-    # get the unread state ID
-    try:
-        unread_id = db.status.lookup('unread')
-    except KeyError:
-        # no unread state, ignore all this stuff
+    new_id = db.status.lookup('new')
+    newvalues['status'] = new_id
+
+
+def block_resolution(db, cl, nodeid, newvalues):
+    """ If the issue has blockers, don't allow it to be resolved."""
+
+    if nodeid is None:
+        dependencies = []
+    else:
+        dependencies = cl.get(nodeid, 'dependencies')
+    dependencies = newvalues.get('dependencies', dependencies)
+
+    # don't do anything if there's no blockers or the status hasn't
+    # changed
+    if not dependencies or not newvalues.has_key('status'):
         return
 
-    # ok, do it
-    newvalues['status'] = unread_id
+    # format the info
+    u = db.config.TRACKER_WEB
+    s = ', '.join(['<a href="%sbug%s">%s</a>'%(u,id,id) for id in dependencies])
+    if len(dependencies) == 1:
+        s = 'bug %s is'%s
+    else:
+        s = 'bugs %s are'%s
+
+    # ok, see if we're trying to resolve
+    if newvalues.get('status') and newvalues['status'] == db.status.lookup('closed'):
+        raise ValueError, "This bug can't be closed until %s closed."%s
+
+
+def resolve(db, cl, nodeid, newvalues):
+    """Make sure status, resolution, and superseder values match."""
+
+    status_change = newvalues.get('status')
+    status_close = status_change and newvalues['status'] == db.status.lookup('closed')
+
+    # Make sure resolution and superseder get only set when status->close
+    if not status_change or not status_close:
+        if newvalues.get('resolution') or newvalues.get('superseder'):
+            raise ValueError, "resolution and superseder must only be set when a bug is closed"
+
+    # Make sure resolution is set when status->close
+    if status_close:
+        if not newvalues.get('resolution'):
+            raise ValueError, "resolution must be set when a bug is closed"
+
+        # Make sure superseder is set when resolution->duplicate
+        if newvalues['resolution'] == db.resolution.lookup('duplicate'):
+            if not newvalues.get('superseder'):
+                raise ValueError, "please provide a superseder when closing a bug as 'duplicate'"
+
+
+
+def resolve_dependencies(db, cl, nodeid, oldvalues):
+    """ When we resolve an issue that's a blocker, remove it from the
+    blockers list of the issue(s) it blocks."""
+
+    newstatus = cl.get(nodeid,'status')
+
+    # no change?
+    if oldvalues.get('status', None) == newstatus:
+        return
+
+    closed_id = db.status.lookup('closed')
+
+    # interesting?
+    if newstatus != closed_id:
+        return
+
+    # yes - find all the dependend issues, if any, and remove me from
+    # their dependency list
+    bugs = cl.find(dependencies=nodeid)
+    for bugid in bugs:
+        dependencies = cl.get(bugid, 'dependencies')
+        if nodeid in dependencies:
+            dependencies.remove(nodeid)
+            cl.set(bugid, dependencies=dependencies)
 
 
 def init(db):
     # fire before changes are made
-    db.issue.audit('set', chatty)
-    db.issue.audit('create', presetunread)
+    db.bug.audit('create', init_status)
+    db.bug.audit('create', block_resolution)
+    db.bug.audit('set', block_resolution)
+    db.bug.audit('set', resolve)
 
-# vim: set filetype=python ts=4 sw=4 et si
+    # adjust after changes are committed
+    db.bug.react('set', resolve_dependencies)

@@ -1,24 +1,4 @@
-#
-# Copyright (c) 2001 Bizar Software Pty Ltd (http://www.bizarsoftware.com.au/)
-# This module is free software, and you may redistribute it and/or modify
-# under the same terms as Python, so long as this copyright message and
-# disclaimer are retained in their original form.
-#
-# IN NO EVENT SHALL BIZAR SOFTWARE PTY LTD BE LIABLE TO ANY PARTY FOR
-# DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING
-# OUT OF THE USE OF THIS CODE, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-#
-# BIZAR SOFTWARE PTY LTD SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING,
-# BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-# FOR A PARTICULAR PURPOSE.  THE CODE PROVIDED HEREUNDER IS ON AN "AS IS"
-# BASIS, AND THERE IS NO OBLIGATION WHATSOEVER TO PROVIDE MAINTENANCE,
-# SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
-# 
-#$Id: nosyreaction.py,v 1.4 2005/04/04 08:47:14 richard Exp $
-
 import sets
-
 from roundup import roundupdb, hyperdb
 
 def nosyreaction(db, cl, nodeid, oldvalues):
@@ -26,7 +6,7 @@ def nosyreaction(db, cl, nodeid, oldvalues):
         "messages" property.
         
         When a new message is added, the detector sends it to all the users on
-        the "nosy" list for the issue that are not already on the "recipients"
+        the "nosy" list for the bug that are not already on the "recipients"
         list of the message.
         
         Those users are then appended to the "recipients" property on the
@@ -52,12 +32,12 @@ def determineNewMessages(cl, nodeid, oldvalues):
         # the action was a create, so use all the messages in the create
         messages = cl.get(nodeid, 'messages')
     elif oldvalues.has_key('messages'):
-        # the action was a set (so adding new messages to an existing issue)
+        # the action was a set (so adding new messages to an existing bug)
         m = {}
         for msgid in oldvalues['messages']:
             m[msgid] = 1
         messages = []
-        # figure which of the messages now on the issue weren't there before
+        # figure which of the messages now on the bug weren't there before
         for msgid in cl.get(nodeid, 'messages'):
             if not m.has_key(msgid):
                 messages.append(msgid)
@@ -107,7 +87,7 @@ def updatenosy(db, cl, nodeid, newvalues):
             messages = newvalues['messages']
         else:
             ok = ('yes',)
-            # figure which of the messages now on the issue weren't
+            # figure which of the messages now on the bug weren't
             oldmessages = cl.get(nodeid, 'messages')
             messages = []
             for msgid in newvalues['messages']:
@@ -135,9 +115,7 @@ def updatenosy(db, cl, nodeid, newvalues):
         newvalues['nosy'] = list(new_nosy)
 
 def init(db):
-    db.issue.react('create', nosyreaction)
-    db.issue.react('set', nosyreaction)
-    db.issue.audit('create', updatenosy)
-    db.issue.audit('set', updatenosy)
-
-# vim: set filetype=python ts=4 sw=4 et si
+    db.bug.react('create', nosyreaction)
+    db.bug.react('set', nosyreaction)
+    db.bug.audit('create', updatenosy)
+    db.bug.audit('set', updatenosy)

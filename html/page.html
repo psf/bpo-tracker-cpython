@@ -28,18 +28,6 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
   <!--  Logo  -->
   <h1 id="logoheader">
 <a accesskey="1" href="." id="logolink"><img src="http://python.org/images/python-logo.gif" alt="homepage" border="0" id="logo" /></a></h1>
-<div id="searchbox">
- <form method="get" action="issue">
-   <input type="hidden" name="@columns"
-          value="id,activity,title,creator,assignedto,status"/>
-   <input type="hidden" name="@sort" value="activity"/>
-   <input type="hidden" name="@group" value="priority"/>
-   <input id="search-text" name="@search_text" size="10"
-          tal:attributes="value request/search_text"/>
-   <input type="submit" id="submit" name="submit" value="Search" i18n:attributes="value"/>
- </form>
-</div>
-
 <div id="left-hand-navigation">
   
     <!--  Main Menu NEED LEVEL TWO HEADER AND FOOTER -->
@@ -53,19 +41,19 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
    <li class=""><a href="http://python.org/psf" class="" title="Python Software Foundation">PSF</a></li>
    <li class=""><a href="http://python.org/links" class="" title="">Links</a></li>
    <li class=""><a href="http://python.org/dev" class="" title="Python Core Language Development">Core Development</a></li>
-   <li class="selected"><a href="." class="selected" title="Python Issue Tracker">Issue Tracker</a>
+   <li class="selected"><a href="." class="selected" title="Python Bug Tracker">Bug Tracker</a>
     <ul class="level-two">
-     <li tal:condition="python:request.user.hasPermission('View', 'issue')">
-      <b i18n:translate="">Issues</b>
+     <li tal:condition="python:request.user.hasPermission('View', 'bug')">
+      <b i18n:translate="">Bugs</b>
        <ul class="level-three">
-        <li tal:condition="python:request.user.hasPermission('Create', 'issue')">
-         <a href="issue?@template=item" i18n:translate="">Create New</a>
+        <li tal:condition="python:request.user.hasPermission('Create', 'bug')">
+         <a href="bug?@template=item" i18n:translate="">Create New</a>
         </li>
         <li>
     <li><a href="#"
-       tal:attributes="href python:request.indexargs_url('issue', {
+       tal:attributes="href python:request.indexargs_url('bug', {
       '@sort': '-activity',
-      '@group': 'priority',
+      '@group': 'severity',
       '@filter': 'status,assignedto',
       '@columns': columns,
       '@search_text': '',
@@ -75,9 +63,9 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
      })"
        i18n:translate="">Show Unassigned</a></li>
     <li><a href="#"
-       tal:attributes="href python:request.indexargs_url('issue', {
+       tal:attributes="href python:request.indexargs_url('bug', {
       '@sort': '-activity',
-      '@group': 'priority',
+      '@group': 'severity',
       '@filter': 'status',
       '@columns': columns_showall,
       '@search_text': '',
@@ -86,38 +74,26 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
      })"
        i18n:translate="">Show All</a></li>
         <li>
-         <a href="issue?@template=search" i18n:translate="">Search</a>
+         <a href="bug?@template=search" i18n:translate="">Search</a>
         </li>
         <li>
          <form method="post" tal:attributes="action request/base">
-          <input type="submit" class="form-small" value="Show issue:"
+          <input type="submit" class="form-small" value="Show bug:"
                  i18n:attributes="value"/>
           <input class="form-small" size="4"
                  type="text" name="@number"/>
-          <input type="hidden" name="@type" value="issue"/>
+          <input type="hidden" name="@type" value="bug"/>
           <input type="hidden" name="@action" value="show"/>
          </form>
         </li>
        </ul>
      </li>
-     <li tal:condition="python:request.user.hasPermission('Edit', 'keyword')
-                        or request.user.hasPermission('Create', 'keyword')">
-      <tal:block i18n:translate="">Keywords</tal:block>
-      <ul class="level-three">
-       <li tal:condition="python:request.user.hasPermission('Create', 'keyword')">
-        <a href="keyword?@template=item" i18n:translate="">Create New</a>
-       </li>
-       <li tal:condition="python:db.keyword.list() and
-           request.user.hasPermission('Edit', 'keyword')">
-        <a href="keyword?@template=item" i18n:translate="">Edit Existing</a>
-       </li>
-      </ul>
-     </li>
      <li tal:condition="python:request.user.username=='anonymous'">
+      <b i18n:translate="">User</b>
       <form method="post" tal:attributes="action request/base">
-       <b i18n:translate="">Login</b><br/>
        <ul class="level-three">
       <li>
+       <tal:span i18n:translate="">Login</tal:span><br/>
        <input size="10" name="__login_name"/><br/>
        <input size="10" type="password" name="__login_password"/><br/>
        <input type="hidden" name="@action" value="Login"/>
@@ -137,24 +113,23 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
        </ul>
       </form>
      </li>
-     <li class="" 
-         tal:condition="python:request.user.username != 'anonymous'">
+     <li tal:condition="python:request.user.username != 'anonymous'">
    <b i18n:translate="">Hello, <span i18n:name="user"
     tal:replace="request/user/username">username</span></b><br/>
     <ul class="level-three">
     <li>
     <a href="#"
-       tal:attributes="href python:request.indexargs_url('issue', {
+       tal:attributes="href python:request.indexargs_url('bug', {
       '@sort': '-activity',
-      '@group': 'priority',
+      '@group': 'severity',
       '@filter': 'status,assignedto',
       '@columns': 'id,activity,title,creator,status',
       '@search_text': '',
       'status': status_notresolved,
       'assignedto': request.user.id,
-      '@dispname': i18n.gettext('Your Issues'),
+      '@dispname': i18n.gettext('Your Bugs'),
      })"
-    i18n:translate="">Your Issues</a>
+    i18n:translate="">Your Bugs</a>
     </li>
     <li>
        <a tal:attributes="href string:user${request/user/id}"
@@ -230,7 +205,7 @@ The following macros are intended to be used in search pages.
 The invoking context must define a "name" variable which names the
 property being searched.
 
-See issue.search.html in the classic template for examples.
+See bug.search.html in the classic template for examples.
 -->
 
 <!-- creates a th and a label: -->
@@ -244,15 +219,15 @@ See issue.search.html in the classic template for examples.
 <td metal:define-macro="search_input">
   <input tal:attributes="value python:request.form.getvalue(name) or nothing;
                          name name;
-                         id name">
+                         id name"/>
 </td>
 
 <td metal:define-macro="search_date">
   <input tal:attributes="value python:request.form.getvalue(name) or nothing;
                          name name;
-                         id name">
+                         id name"/>
   <a class="classhelp"
-	 tal:attributes="href python:'''javascript:help_window('issue?@template=calendar&property=%s&form=itemSynopsis', 300, 200)'''%name">(cal)</a>
+	 tal:attributes="href python:'''javascript:help_window('bug?@template=calendar&property=%s&form=itemSynopsis', 300, 200)'''%name">(cal)</a>
 </td>
 
 <td metal:define-macro="search_popup">
@@ -262,8 +237,8 @@ See issue.search.html in the classic template for examples.
   -->
   <input tal:attributes="value python:request.form.getvalue(name) or nothing;
                          name name;
-                         id name">
-  <span tal:replace="structure python:db.issue.classhelp(columns,
+                         id name"/>
+  <span tal:replace="structure python:db.bug.classhelp(columns,
                                       property=name)" />
 </td>
 
@@ -310,7 +285,7 @@ Could extend it (METAL 1.1 attribute "extend-macro")
 <td metal:define-macro="search_multiselect">
   <input tal:attributes="value python:request.form.getvalue(name) or nothing;
                          name name;
-                         id name">
+                         id name"/>
   <span tal:replace="structure python:db[db_klass].classhelp(db_content,
                                         property=name, width='600')" />
 </td>
@@ -366,14 +341,14 @@ See user.item.html in the classic template for examples.
 <input metal:define-macro="user_src_input"
     type="text" tal:attributes="onblur python:edit_ok and 'split_name(this)';
     id name; name name; value value; readonly not:edit_ok"
-    value="heinz.kunz">
+    value="heinz.kunz"/>
 <!-- normal: no re-using -->
 <input metal:define-macro="user_normal_input" type="text"
     tal:attributes="id name; name name; value value; readonly not:edit_ok"
-    value="heinz">
+    value="heinz"/>
 <!-- password: type; no initial value -->
     <input metal:define-macro="user_pw_input" type="password"
-    tal:attributes="id name; name name; readonly not:edit_ok" value="">
+    tal:attributes="id name; name name; readonly not:edit_ok" value=""/>
     <input metal:define-macro="user_confirm_input" type="password"
-    tal:attributes="id name; name string:@confirm@$name; readonly not:edit_ok" value="">
+    tal:attributes="id name; name string:@confirm@$name; readonly not:edit_ok" value=""/>
 

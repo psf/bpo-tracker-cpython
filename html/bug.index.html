@@ -1,17 +1,16 @@
-<!-- $Id: issue.index.html,v 1.27 2006/11/09 01:26:28 richard Exp $ -->
 <tal:block metal:use-macro="templates/page/macros/icing">
 <title metal:fill-slot="head_title" >
-  <span tal:omit-tag="true" i18n:translate="" >List of issues</span>
+  <span tal:omit-tag="true" i18n:translate="" >List of bugs</span>
   <span tal:condition="request/dispname"
    tal:replace="python:' - %s '%request.dispname"
   /> - <span tal:replace="config/TRACKER_NAME" />
 </title>
 <span metal:fill-slot="body_title" tal:omit-tag="true">
-  <span tal:omit-tag="true" i18n:translate="" >List of issues</span>
+  <span tal:omit-tag="true" i18n:translate="" >List of bugs</span>
   <span tal:condition="request/dispname"
    tal:replace="python:' - %s' % request.dispname" />
 </span>
-<td class="content" metal:fill-slot="content">
+<tal:block metal:fill-slot="content">
 
 <p tal:condition="python:not (context.is_view_ok()
  or request.user.hasRole('Anonymous'))" i18n:translate="">
@@ -24,16 +23,15 @@
 <tal:block tal:define="batch request/batch" tal:condition="context/is_view_ok">
  <table class="list">
   <tr>
-   <th tal:condition="request/show/priority" i18n:translate="">Priority</th>
+   <th tal:condition="request/show/severity" i18n:translate="">Severity</th>
    <th tal:condition="request/show/id" i18n:translate="">ID</th>
    <th tal:condition="request/show/creation" i18n:translate="">Creation</th>
    <th tal:condition="request/show/activity" i18n:translate="">Activity</th>
    <th tal:condition="request/show/actor" i18n:translate="">Actor</th>
-   <th tal:condition="request/show/topic" i18n:translate="">Topic</th>
    <th tal:condition="request/show/title" i18n:translate="">Title</th>
    <th tal:condition="request/show/status" i18n:translate="">Status</th>
    <th tal:condition="request/show/creator" i18n:translate="">Creator</th>
-   <th tal:condition="request/show/assignedto" i18n:translate="">Assigned&nbsp;To</th>
+   <th tal:condition="request/show/assignee" i18n:translate="">Assigned&nbsp;To</th>
   </tr>
  <tal:block tal:repeat="i batch" condition=true>
   <tr tal:define="group python:[r[1] for r in request.group]"
@@ -46,8 +44,8 @@
   </tr>
 
   <tr>
-   <td tal:condition="request/show/priority"
-       tal:content="python:i.priority.plain() or default">&nbsp;</td>
+   <td tal:condition="request/show/severity"
+       tal:content="python:i.severity.plain() or default">&nbsp;</td>
    <td tal:condition="request/show/id" tal:content="i/id">&nbsp;</td>
    <td class="date" tal:condition="request/show/creation"
        tal:content="i/creation/reldate">&nbsp;</td>
@@ -55,18 +53,16 @@
        tal:content="i/activity/reldate">&nbsp;</td>
    <td class="date" tal:condition="request/show/actor"
        tal:content="python:i.actor.plain() or default">&nbsp;</td>
-   <td tal:condition="request/show/topic"
-       tal:content="python:i.topic.plain() or default">&nbsp;</td>
    <td tal:condition="request/show/title">
-    <a tal:attributes="href string:issue${i/id}"
+    <a tal:attributes="href string:bug${i/id}"
 		tal:content="python:str(i.title.plain(hyperlink=0)) or '[no title]'">title</a>
    </td>
    <td tal:condition="request/show/status"
        tal:content="python:i.status.plain() or default">&nbsp;</td>
    <td tal:condition="request/show/creator"
        tal:content="python:i.creator.plain() or default">&nbsp;</td>
-   <td tal:condition="request/show/assignedto"
-       tal:content="python:i.assignedto.plain() or default">&nbsp;</td>
+   <td tal:condition="request/show/assignee"
+       tal:content="python:i.assignee.plain() or default">&nbsp;</td>
   </tr>
 
  </tal:block>
@@ -101,10 +97,10 @@
  </metal:index>
 </table>
 
-<a tal:attributes="href python:request.indexargs_url('issue',
+<a tal:attributes="href python:request.indexargs_url('bug',
             {'@action':'export_csv'})" i18n:translate="">Download as CSV</a>
 
-<form method="GET" class="index-controls"
+<form method="get" class="index-controls"
     tal:attributes="action request/classname">
 
  <table class="form" tal:define="n_sort python:2">
@@ -125,7 +121,7 @@
    </td>
    <th i18n:translate="">Descending:</th>
    <td><input type="checkbox" tal:attributes="name python:'@sortdir%d'%n;
-              checked python:key and key[0] == '-'">
+              checked python:key and key[0] == '-'"/>
    </td>
   </tr>
   </tal:block>
@@ -146,7 +142,7 @@
    </td>
    <th i18n:translate="">Descending:</th>
    <td><input type="checkbox" tal:attributes="name python:'@groupdir%d'%n;
-              checked python:key and key[0] == '-'">
+              checked python:key and key[0] == '-'"/>
    </td>
   </tr>
   </tal:block>
@@ -159,6 +155,5 @@
 </form>
 
 </tal:block>
-
-</td>
+</tal:block>
 </tal:block>

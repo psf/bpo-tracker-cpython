@@ -4,42 +4,51 @@ from roundup.password import Password
 # TRACKER INITIAL PRIORITY AND STATUS VALUES
 #
 
-pri = db.getclass('priority')
-pri.create(name='9', order='1')
-pri.create(name='8', order='2')
-pri.create(name='7', order='3')
-pri.create(name='6', order='4')
-pri.create(name='5', order='5')
-pri.create(name='4', order='6')
-pri.create(name='3', order='7')
-pri.create(name='2', order='8')
-pri.create(name='1', order='9')
+bug_type = db.getclass('bug_type')
+bug_type.create(name='crash', order='1')
+bug_type.create(name='compile error', order='2')
+bug_type.create(name='resource usage', order='3')
+bug_type.create(name='security', order='4')
+bug_type.create(name='behavior', order='5')
+bug_type.create(name='rfe', order='6')
 
-stat = db.getclass('status')
-stat.create(name='Open', order='1')
-stat.create(name='Pending', order='2')
-stat.create(name='Closed', order='3')
-stat.create(name='Deleted', order='4')
+component = db.getclass('component')
+component.create(name='core', order='1')
+component.create(name='distutils', order='2')
+component.create(name='stdlib', order='3')
 
-group = db.getclass('group')
-group.create(name='third_party', order='1')
-group.create(name='AST', order='2')
-group.create(name='feature_request', order='3')
-group.create(name='irreproducible', order='4')
-group.create(name='python3k', description='This bug relates to python 3000', order='5')
+platform = db.getclass('platform')
+platform.create(name='GNU/Linux', order='1')
+platform.create(name='Solaris', order='2')
+platform.create(name='WinXP', order='3')
 
+version = db.getclass('version')
+version.create(name='2.5', order='1')
+version.create(name='3k', order='2')
 
+severity = db.getclass('severity')
+severity.create(name='critical', order='1')
+severity.create(name='urgent', order='2')
+severity.create(name='major', order='2')
+severity.create(name='normal', order='2')
+severity.create(name='minor', order='2')
+
+status = db.getclass('status')
+status.create(name='new', order='1')
+status.create(name='open', order='2')
+status.create(name='pending', description='user feedback required', order='3')
+status.create(name='closed', order='4')
+
+resolution = db.getclass('resolution')
+resolution.create(name='fixed', order='1')
+resolution.create(name='invalid', order='2')
+resolution.create(name='duplicate', order='3')
 
 #
 # create the two default users
 user = db.getclass('user')
-user.create(username="admin", password=adminpw,
-    address=admin_email, roles='Admin')
+user.create(username="admin", password=adminpw, address=admin_email, roles='Admin')
 user.create(username="anonymous", roles='Anonymous')
-
-# add any additional database creation steps here - but only if you
-# haven't initialised the database with the admin "initialise" command
-
 user.create(username="user", password=Password("user"), roles="User")
-
-# vim: set filetype=python sts=4 sw=4 et si
+user.create(username="devel", password=Password("devel"), roles="Developer")
+user.create(username="coord", password=Password("coord"), roles="Coordinator")
