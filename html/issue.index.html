@@ -1,12 +1,12 @@
 <tal:block metal:use-macro="templates/page/macros/icing">
 <title metal:fill-slot="head_title" >
-  <span tal:omit-tag="true" i18n:translate="" >List of bugs</span>
+  <span tal:omit-tag="true" i18n:translate="" >List of issues</span>
   <span tal:condition="request/dispname"
    tal:replace="python:' - %s '%request.dispname"
   /> - <span tal:replace="config/TRACKER_NAME" />
 </title>
 <span metal:fill-slot="body_title" tal:omit-tag="true">
-  <span tal:omit-tag="true" i18n:translate="" >List of bugs</span>
+  <span tal:omit-tag="true" i18n:translate="" >List of issues</span>
   <span tal:condition="request/dispname"
    tal:replace="python:' - %s' % request.dispname" />
 </span>
@@ -54,7 +54,7 @@
    <td class="date" tal:condition="request/show/actor"
        tal:content="python:i.actor.plain() or default">&nbsp;</td>
    <td tal:condition="request/show/title">
-    <a tal:attributes="href string:bug${i/id}"
+    <a tal:attributes="href string:issue${i/id}"
 		tal:content="python:str(i.title.plain(hyperlink=0)) or '[no title]'">title</a>
    </td>
    <td tal:condition="request/show/status"
@@ -97,7 +97,7 @@
  </metal:index>
 </table>
 
-<a tal:attributes="href python:request.indexargs_url('bug',
+<a tal:attributes="href python:request.indexargs_url('issue',
             {'@action':'export_csv'})" i18n:translate="">Download as CSV</a>
 
 <form method="get" class="index-controls"

@@ -103,7 +103,7 @@
 </tr>
 
 <tr tal:define="name string:type;
-                db_klass string:bug_type;
+                db_klass string:issue_type;
                 db_content string:name;">
   <th i18n:translate="">Type:</th>
   <td metal:use-macro="search_select_translated">
@@ -168,7 +168,7 @@
 </tr>
 
 <tr tal:define="name string:dependencies;
-                db_klass string:bug;
+                db_klass string:issue;
                 db_content string:id;">
   <th i18n:translate="">Depends on:</th>
   <td metal:use-macro="search_select_translated">
@@ -268,7 +268,7 @@
 <tr><td>&nbsp;</td>
  <td colspan="4" class="help">
   <span i18n:translate="" tal:omit-tag="true">
-   *: The "all text" field will look in message bodies and bug titles
+   *: The "all text" field will look in message bodies and issue titles
   </span><br>
   <span tal:condition="python:request.user.hasPermission('Edit', 'query')"
    i18n:translate="" tal:omit-tag="true"

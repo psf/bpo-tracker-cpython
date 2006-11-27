@@ -6,7 +6,7 @@ def nosyreaction(db, cl, nodeid, oldvalues):
         "messages" property.
         
         When a new message is added, the detector sends it to all the users on
-        the "nosy" list for the bug that are not already on the "recipients"
+        the "nosy" list for the issue that are not already on the "recipients"
         list of the message.
         
         Those users are then appended to the "recipients" property on the
@@ -32,12 +32,12 @@ def determineNewMessages(cl, nodeid, oldvalues):
         # the action was a create, so use all the messages in the create
         messages = cl.get(nodeid, 'messages')
     elif oldvalues.has_key('messages'):
-        # the action was a set (so adding new messages to an existing bug)
+        # the action was a set (so adding new messages to an existing issue)
         m = {}
         for msgid in oldvalues['messages']:
             m[msgid] = 1
         messages = []
-        # figure which of the messages now on the bug weren't there before
+        # figure which of the messages now on the issue weren't there before
         for msgid in cl.get(nodeid, 'messages'):
             if not m.has_key(msgid):
                 messages.append(msgid)
@@ -87,7 +87,7 @@ def updatenosy(db, cl, nodeid, newvalues):
             messages = newvalues['messages']
         else:
             ok = ('yes',)
-            # figure which of the messages now on the bug weren't
+            # figure which of the messages now on the issue weren't
             oldmessages = cl.get(nodeid, 'messages')
             messages = []
             for msgid in newvalues['messages']:
@@ -115,7 +115,7 @@ def updatenosy(db, cl, nodeid, newvalues):
         newvalues['nosy'] = list(new_nosy)
 
 def init(db):
-    db.bug.react('create', nosyreaction)
-    db.bug.react('set', nosyreaction)
-    db.bug.audit('create', updatenosy)
-    db.bug.audit('set', updatenosy)
+    db.issue.react('create', nosyreaction)
+    db.issue.react('set', nosyreaction)
+    db.issue.audit('create', updatenosy)
+    db.issue.audit('set', updatenosy)

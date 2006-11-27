@@ -43,15 +43,15 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
    <li class=""><a href="http://python.org/dev" class="" title="Python Core Language Development">Core Development</a></li>
    <li class="selected"><a href="." class="selected" title="Python Bug Tracker">Bug Tracker</a>
     <ul class="level-two">
-     <li tal:condition="python:request.user.hasPermission('View', 'bug')">
-      <b i18n:translate="">Bugs</b>
+     <li tal:condition="python:request.user.hasPermission('View', 'issue')">
+      <b i18n:translate="">Issues</b>
        <ul class="level-three">
-        <li tal:condition="python:request.user.hasPermission('Create', 'bug')">
-         <a href="bug?@template=item" i18n:translate="">Create New</a>
+        <li tal:condition="python:request.user.hasPermission('Create', 'issue')">
+         <a href="issue?@template=item" i18n:translate="">Create New</a>
         </li>
         <li>
     <li><a href="#"
-       tal:attributes="href python:request.indexargs_url('bug', {
+       tal:attributes="href python:request.indexargs_url('issue', {
       '@sort': '-activity',
       '@group': 'severity',
       '@filter': 'status,assignee',
@@ -63,7 +63,7 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
      })"
        i18n:translate="">Show Unassigned</a></li>
     <li><a href="#"
-       tal:attributes="href python:request.indexargs_url('bug', {
+       tal:attributes="href python:request.indexargs_url('issue', {
       '@sort': '-activity',
       '@group': 'severity',
       '@filter': 'status',
@@ -74,15 +74,15 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
      })"
        i18n:translate="">Show All</a></li>
         <li>
-         <a href="bug?@template=search" i18n:translate="">Search</a>
+         <a href="issue?@template=search" i18n:translate="">Search</a>
         </li>
         <li>
          <form method="post" tal:attributes="action request/base">
-          <input type="submit" class="form-small" value="Show bug:"
+          <input type="submit" class="form-small" value="Show issue:"
                  i18n:attributes="value"/>
           <input class="form-small" size="4"
                  type="text" name="@number"/>
-          <input type="hidden" name="@type" value="bug"/>
+          <input type="hidden" name="@type" value="issue"/>
           <input type="hidden" name="@action" value="show"/>
          </form>
         </li>
@@ -119,7 +119,7 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
     <ul class="level-three">
     <li>
     <a href="#"
-       tal:attributes="href python:request.indexargs_url('bug', {
+       tal:attributes="href python:request.indexargs_url('issue', {
       '@sort': '-activity',
       '@group': 'severity',
       '@filter': 'status,assignee',
@@ -127,9 +127,9 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
       '@search_text': '',
       'status': status_notresolved,
       'assignee': request.user.id,
-      '@dispname': i18n.gettext('Your Bugs'),
+      '@dispname': i18n.gettext('Your Issues'),
      })"
-    i18n:translate="">Your Bugs</a>
+    i18n:translate="">Your Issues</a>
     </li>
     <li>
        <a tal:attributes="href string:user${request/user/id}"
@@ -192,7 +192,7 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
 </div> <!-- body-main -->
 </div> <!-- content -->
 
-<pre tal:condition="request/form/debug | nothing" tal:content="request">
+<pre tal:condition="request/form/deissue | nothing" tal:content="request">
 </pre>
 
 </body>
@@ -205,7 +205,7 @@ The following macros are intended to be used in search pages.
 The invoking context must define a "name" variable which names the
 property being searched.
 
-See bug.search.html in the classic template for examples.
+See issue.search.html in the classic template for examples.
 -->
 
 <!-- creates a th and a label: -->
@@ -227,7 +227,7 @@ See bug.search.html in the classic template for examples.
                          name name;
                          id name"/>
   <a class="classhelp"
-	 tal:attributes="href python:'''javascript:help_window('bug?@template=calendar&property=%s&form=itemSynopsis', 300, 200)'''%name">(cal)</a>
+	 tal:attributes="href python:'''javascript:help_window('issue?@template=calendar&property=%s&form=itemSynopsis', 300, 200)'''%name">(cal)</a>
 </td>
 
 <td metal:define-macro="search_popup">
@@ -238,7 +238,7 @@ See bug.search.html in the classic template for examples.
   <input tal:attributes="value python:request.form.getvalue(name) or nothing;
                          name name;
                          id name"/>
-  <span tal:replace="structure python:db.bug.classhelp(columns,
+  <span tal:replace="structure python:db.issue.classhelp(columns,
                                       property=name)" />
 </td>
 

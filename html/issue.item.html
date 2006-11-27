@@ -52,7 +52,7 @@
 
 <tr>
  <th class="required" i18n:translate="">
-   <span tal:replace="structure python:db.bug_type.classhelp('id,name,description',label='Type')" />:
+   <span tal:replace="structure python:db.issue_type.classhelp('id,name,description',label='Type')" />:
  </th>
  <td tal:content="structure context/type/menu">type</td>
  <th i18n:translate="">
@@ -94,18 +94,18 @@
  <th>
   <tal:block i18n:translate="">Dependencies</tal:block>:
   <span tal:condition="context/dependencies/is_edit_ok"
-        tal:replace="structure python:db.bug.classhelp('id,title', filter='status=0,1', property='dependencies')" />
+        tal:replace="structure python:db.issue.classhelp('id,title', filter='status=0,1', property='dependencies')" />
  </th>
  <td>
   <span tal:replace="structure python:context.dependencies.field(showid=1,size=20)" />
   <span tal:condition="context/dependencies" tal:repeat="d context/dependencies">
-   <br/>View: <a tal:attributes="href string:bug${d/id}" tal:content="d/id"></a>
+   <br/>View: <a tal:attributes="href string:issue${d/id}" tal:content="d/id"></a>
   </span>
  </td>
  <th i18n:translate="">
   <tal:block i18n:translate="">Superseder</tal:block>:
   <span tal:condition="context/superseder/is_edit_ok"
-        tal:replace="structure python:db.bug.classhelp('id,title', filter='status=0,1', property='superseder')" />
+        tal:replace="structure python:db.issue.classhelp('id,title', filter='status=0,1', property='superseder')" />
  </th>
  <td>
   <span tal:replace="structure python:context.superseder.field(showid=1, size=20)" />
@@ -113,7 +113,7 @@
    <br><span i18n:translate="">View</span>:
      <a tal:repeat="sup context/superseder"
         tal:content="python:sup['id'] + ', '*(not repeat['sup'].end)"
-        tal:attributes="href string:bug${sup/id}; title sup/title;"></a>
+        tal:attributes="href string:issue${sup/id}; title sup/title;"></a>
   </span>
  </td>
  </tr>
@@ -202,7 +202,7 @@
   </td>
   <td>
    <form style="padding:0" tal:condition="context/is_edit_ok"
-         tal:attributes="action string:bug${context/id}">
+         tal:attributes="action string:issue${context/id}">
     <input type="hidden" name="@remove@files" tal:attributes="value file/id">
     <input type="hidden" name="@action" value="edit">
     <input type="submit" value="remove" i18n:attributes="value">
@@ -223,7 +223,7 @@
        i18n:name="date" /></th>
    <th>
     <form style="padding:0" tal:condition="context/is_edit_ok"
-          tal:attributes="action string:bug${context/id}">
+          tal:attributes="action string:issue${context/id}">
      <input type="hidden" name="@remove@messages" tal:attributes="value msg/id">
      <input type="hidden" name="@action" value="edit">
      <input type="submit" value="remove" i18n:attributes="value">

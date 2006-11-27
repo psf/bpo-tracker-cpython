@@ -4,13 +4,13 @@ from roundup.password import Password
 # TRACKER INITIAL PRIORITY AND STATUS VALUES
 #
 
-bug_type = db.getclass('bug_type')
-bug_type.create(name='crash', order='1')
-bug_type.create(name='compile error', order='2')
-bug_type.create(name='resource usage', order='3')
-bug_type.create(name='security', order='4')
-bug_type.create(name='behavior', order='5')
-bug_type.create(name='rfe', order='6')
+issue_type = db.getclass('issue_type')
+issue_type.create(name='crash', order='1')
+issue_type.create(name='compile error', order='2')
+issue_type.create(name='resource usage', order='3')
+issue_type.create(name='security', order='4')
+issue_type.create(name='behavior', order='5')
+issue_type.create(name='rfe', order='6')
 
 component = db.getclass('component')
 component.create(name='core', order='1')

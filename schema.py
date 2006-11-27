@@ -9,12 +9,12 @@
 #   creator = Link('user')
 #   actor = Link('user')
 
-# Bug Type
-bug_type = Class(db, 'bug_type',
-                 name=String(),
-                 description=String(),
-                 order=Number())
-bug_type.setkey('name')
+# Issue Type
+issue_type = Class(db, 'issue_type',
+                   name=String(),
+                   description=String(),
+                   order=Number())
+issue_type.setkey('name')
 
 # Component
 component = Class(db, 'component',
@@ -100,18 +100,18 @@ file = FileClass(db, "file",
 #   messages = Multilink("msg")
 #   files = Multilink("file")
 #   nosy = Multilink("user")
-#   superseder = Multilink("bug")
-bug = IssueClass(db, "bug",
-                 type=Link('bug_type'),
-                 components=Multilink('component'),
-                 platforms=Multilink('platform'),
-                 versions=Multilink('version'),
-                 severity=Link('severity'),
-                 dependencies=Multilink('bug'),
-                 assignee=Link('user'),
-                 status=Link('status'),
-                 resolution=Link('resolution'),
-                 superseder=Link('bug'))
+#   superseder = Multilink("issue")
+issue = IssueClass(db, "issue",
+                   type=Link('issue_type'),
+                   components=Multilink('component'),
+                   platforms=Multilink('platform'),
+                   versions=Multilink('version'),
+                   severity=Link('severity'),
+                   dependencies=Multilink('issue'),
+                   assignee=Link('user'),
+                   status=Link('status'),
+                   resolution=Link('resolution'),
+                   superseder=Link('issue'))
 
 #
 # TRACKER SECURITY SETTINGS
@@ -133,51 +133,51 @@ for r in 'User', 'Developer', 'Coordinator':
 ##########################
 # User permissions
 ##########################
-for cl in ('bug_type', 'severity', 'component', 'platform',
-           'version', 'status', 'resolution', 'bug', 'file', 'msg'):
+for cl in ('issue_type', 'severity', 'component', 'platform',
+           'version', 'status', 'resolution', 'issue', 'file', 'msg'):
     db.security.addPermissionToRole('User', 'View', cl)
 
 for cl in 'file', 'msg':
     db.security.addPermissionToRole('User', 'Create', cl)
 
-p = db.security.addPermission(name='Create', klass='bug',
+p = db.security.addPermission(name='Create', klass='issue',
                               properties=('title', 'type',
                                           'components', 'platforms', 'versions',
                                           'severity',
                                           'messages', 'files', 'nosy'),
-                              description='User can report and discuss bugs')
+                              description='User can report and discuss issues')
 db.security.addPermissionToRole('User', p)
 
-p = db.security.addPermission(name='Edit', klass='bug',
+p = db.security.addPermission(name='Edit', klass='issue',
                               properties=('type',
                                           'components', 'platforms', 'versions',
                                           'severity',
                                           'messages', 'files', 'nosy'),
-                              description='User can report and discuss bugs')
+                              description='User can report and discuss issues')
 db.security.addPermissionToRole('User', p)
 
 
 ##########################
 # Developer permissions
 ##########################
-for cl in ('bug_type', 'severity', 'component', 'platform',
-           'version', 'status', 'resolution', 'bug', 'file', 'msg'):
+for cl in ('issue_type', 'severity', 'component', 'platform',
+           'version', 'status', 'resolution', 'issue', 'file', 'msg'):
     db.security.addPermissionToRole('Developer', 'View', cl)
 
-for cl in ('bug', 'file', 'msg'):
+for cl in ('issue', 'file', 'msg'):
     db.security.addPermissionToRole('Developer', 'Edit', cl)
     db.security.addPermissionToRole('Developer', 'Create', cl)
 
-p = db.security.addPermission(name='Debugger', klass='bug',
-                              description='User can be assigned bugs')
+p = db.security.addPermission(name='Debugger', klass='issue',
+                              description='User can be assigned issues')
 db.security.addPermissionToRole('Developer', p)
 
 
 ##########################
 # Coordinator permissions
 ##########################
-for cl in ('bug_type', 'severity', 'component', 'platform',
-           'version', 'status', 'resolution', 'bug', 'file', 'msg'):
+for cl in ('issue_type', 'severity', 'component', 'platform',
+           'version', 'status', 'resolution', 'issue', 'file', 'msg'):
     db.security.addPermissionToRole('Coordinator', 'View', cl)
     db.security.addPermissionToRole('Coordinator', 'Edit', cl)
     db.security.addPermissionToRole('Coordinator', 'Create', cl)
@@ -193,6 +193,7 @@ db.security.addPermissionToRole('Coordinator', 'View', 'user')
 # limited to only the situation where the Viewed or Edited item is their own.
 def own_record(db, userid, itemid):
     '''Determine whether the userid matches the item being accessed.'''
+    print 'own record', userid, itemid
     return userid == itemid
 p = db.security.addPermission(name='View', klass='user', check=own_record,
     description="User is allowed to view their own user details")
@@ -246,15 +247,15 @@ db.security.addPermissionToRole('Anonymous', 'Web Access')
 # - Allow anonymous users to register
 db.security.addPermissionToRole('Anonymous', 'Create', 'user')
 
-# Allow anonymous users access to view bugs (and the related, linked
+# Allow anonymous users access to view issues (and the related, linked
 # information)
-for cl in 'bug', 'file', 'msg', 'severity', 'status', 'resolution':
+for cl in 'issue', 'file', 'msg', 'severity', 'status', 'resolution':
     db.security.addPermissionToRole('Anonymous', 'View', cl)
 
 # [OPTIONAL]
-# Allow anonymous users access to create or edit "bug" items (and the
+# Allow anonymous users access to create or edit "issue" items (and the
 # related file and message items)
-#for cl in 'bug', 'file', 'msg':
+#for cl in 'issue', 'file', 'msg':
 #   db.security.addPermissionToRole('Anonymous', 'Create', cl)
 #   db.security.addPermissionToRole('Anonymous', 'Edit', cl)
 
