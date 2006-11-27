@@ -44,6 +44,13 @@ severity = Class(db, 'severity',
                  order=Number())
 severity.setkey('name')
 
+# Priority
+priority = Class(db, 'priority',
+                 name=String(),
+                 description=String(),
+                 order=Number())
+severity.setkey('name')
+
 # Status
 status = Class(db, "status",
                name=String(),
@@ -107,6 +114,7 @@ issue = IssueClass(db, "issue",
                    platforms=Multilink('platform'),
                    versions=Multilink('version'),
                    severity=Link('severity'),
+                   priority=Link('priority'),
                    dependencies=Multilink('issue'),
                    assignee=Link('user'),
                    status=Link('status'),
@@ -134,7 +142,7 @@ for r in 'User', 'Developer', 'Coordinator':
 # User permissions
 ##########################
 for cl in ('issue_type', 'severity', 'component', 'platform',
-           'version', 'status', 'resolution', 'issue', 'file', 'msg'):
+           'version', 'priority', 'status', 'resolution', 'issue', 'file', 'msg'):
     db.security.addPermissionToRole('User', 'View', cl)
 
 for cl in 'file', 'msg':
@@ -161,7 +169,7 @@ db.security.addPermissionToRole('User', p)
 # Developer permissions
 ##########################
 for cl in ('issue_type', 'severity', 'component', 'platform',
-           'version', 'status', 'resolution', 'issue', 'file', 'msg'):
+           'version', 'priority', 'status', 'resolution', 'issue', 'file', 'msg'):
     db.security.addPermissionToRole('Developer', 'View', cl)
 
 for cl in ('issue', 'file', 'msg'):
@@ -177,7 +185,7 @@ db.security.addPermissionToRole('Developer', p)
 # Coordinator permissions
 ##########################
 for cl in ('issue_type', 'severity', 'component', 'platform',
-           'version', 'status', 'resolution', 'issue', 'file', 'msg'):
+           'version', 'priority', 'status', 'resolution', 'issue', 'file', 'msg'):
     db.security.addPermissionToRole('Coordinator', 'View', cl)
     db.security.addPermissionToRole('Coordinator', 'Edit', cl)
     db.security.addPermissionToRole('Coordinator', 'Create', cl)
