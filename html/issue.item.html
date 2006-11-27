@@ -140,7 +140,13 @@
   <span tal:replace="structure context/nosy/field" />
  </td>
 </tr>
-
+<tr>
+ <th i18n:translate="">
+   <span tal:replace="structure python:db.priority.classhelp('id,name,description',label='Priority')" />:
+ </th>
+ <td tal:content="structure context/priority/menu">priority</td>
+ <td></td><td></td>
+</tr>
 <tr tal:condition="context/is_edit_ok">
  <th><tal:block i18n:translate="">Change Note</tal:block>:</th>
  <td colspan="3">
