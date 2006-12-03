@@ -49,7 +49,7 @@ priority = Class(db, 'priority',
                  name=String(),
                  description=String(),
                  order=Number())
-severity.setkey('name')
+priority.setkey('name')
 
 # Status
 status = Class(db, "status",
