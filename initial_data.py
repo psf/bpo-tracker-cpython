@@ -17,11 +17,6 @@ component.create(name='core', order='1')
 component.create(name='distutils', order='2')
 component.create(name='stdlib', order='3')
 
-platform = db.getclass('platform')
-platform.create(name='GNU/Linux', order='1')
-platform.create(name='Solaris', order='2')
-platform.create(name='WinXP', order='3')
-
 version = db.getclass('version')
 version.create(name='2.5', order='1')
 version.create(name='3k', order='2')

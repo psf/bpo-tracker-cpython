@@ -42,9 +42,9 @@
 <table class="form">
 <tr>
  <th class="required" i18n:translate="">Title:</th>
- <td colspan="5" tal:condition="context/title/is_edit_ok"
+ <td colspan="3" tal:condition="context/title/is_edit_ok"
      tal:content="structure python:context.title.field(size=60)">title</td>
- <td colspan="5" tal:condition="not:context/title/is_edit_ok">
+ <td colspan="3" tal:condition="not:context/title/is_edit_ok">
   <span tal:content="structure context/title/plain"/>
 <!--  <input type="hidden" name="title" tal:attributes="value context/title">-->
  </td>
@@ -59,7 +59,6 @@
    <span tal:replace="structure python:db.severity.classhelp('id,name,description',label='Severity')" />:
  </th>
  <td tal:content="structure context/severity/menu">severity</td>
- <th></th><td></td>
 </tr>
 
 <tr>
@@ -71,10 +70,6 @@
    <span tal:replace="structure python:db.version.classhelp('id,name,description',label='Versions')" />:
  </th>
  <td tal:content="structure context/versions/menu">versions</td>
- <th i18n:translate="">
-   <span tal:replace="structure python:db.platform.classhelp('id,name,description',label='Platforms')" />:
- </th>
- <td tal:content="structure context/platforms/menu">platform</td>
 </tr>
 </table>
 </fieldset>

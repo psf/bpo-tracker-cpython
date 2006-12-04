@@ -23,13 +23,6 @@ component = Class(db, 'component',
                   order=Number())
 component.setkey('name')
 
-# Platform
-platform = Class(db, 'platform',
-                 name=String(),
-                 description=String(),
-                 order=Number())
-platform.setkey('name')
-
 # Version
 version = Class(db, 'version',
                 name=String(),
