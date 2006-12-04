@@ -104,7 +104,6 @@ file = FileClass(db, "file",
 issue = IssueClass(db, "issue",
                    type=Link('issue_type'),
                    components=Multilink('component'),
-                   platforms=Multilink('platform'),
                    versions=Multilink('version'),
                    severity=Link('severity'),
                    priority=Link('priority'),
@@ -134,7 +133,7 @@ for r in 'User', 'Developer', 'Coordinator':
 ##########################
 # User permissions
 ##########################
-for cl in ('issue_type', 'severity', 'component', 'platform',
+for cl in ('issue_type', 'severity', 'component',
            'version', 'priority', 'status', 'resolution', 'issue', 'file', 'msg'):
     db.security.addPermissionToRole('User', 'View', cl)
 
@@ -143,7 +142,7 @@ for cl in 'file', 'msg':
 
 p = db.security.addPermission(name='Create', klass='issue',
                               properties=('title', 'type',
-                                          'components', 'platforms', 'versions',
+                                          'components', 'versions',
                                           'severity',
                                           'messages', 'files', 'nosy'),
                               description='User can report and discuss issues')
@@ -151,7 +150,7 @@ db.security.addPermissionToRole('User', p)
 
 p = db.security.addPermission(name='Edit', klass='issue',
                               properties=('type',
-                                          'components', 'platforms', 'versions',
+                                          'components', 'versions',
                                           'severity',
                                           'messages', 'files', 'nosy'),
                               description='User can report and discuss issues')
@@ -161,7 +160,7 @@ db.security.addPermissionToRole('User', p)
 ##########################
 # Developer permissions
 ##########################
-for cl in ('issue_type', 'severity', 'component', 'platform',
+for cl in ('issue_type', 'severity', 'component',
            'version', 'priority', 'status', 'resolution', 'issue', 'file', 'msg'):
     db.security.addPermissionToRole('Developer', 'View', cl)
 
@@ -177,7 +176,7 @@ db.security.addPermissionToRole('Developer', p)
 ##########################
 # Coordinator permissions
 ##########################
-for cl in ('issue_type', 'severity', 'component', 'platform',
+for cl in ('issue_type', 'severity', 'component',
            'version', 'priority', 'status', 'resolution', 'issue', 'file', 'msg'):
     db.security.addPermissionToRole('Coordinator', 'View', cl)
     db.security.addPermissionToRole('Coordinator', 'Edit', cl)
