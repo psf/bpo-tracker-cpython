@@ -46,7 +46,7 @@
      tal:content="structure python:context.title.field(size=60)">title</td>
  <td colspan="3" tal:condition="not:context/title/is_edit_ok">
   <span tal:content="structure context/title/plain"/>
-<!--  <input type="hidden" name="title" tal:attributes="value context/title">-->
+  <input type="hidden" name="title" tal:attributes="value context/title">
  </td>
 </tr>
 
