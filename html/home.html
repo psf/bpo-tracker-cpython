@@ -7,4 +7,4 @@
 <span tal:replace="structure python:db.issue.renderWith('index',
     sort=[('-', 'activity')], group=[('+', 'severity')], filter=['status'],
     columns=['id','activity','title','creator','assignee', 'status'],
-    filterspec={'status':['1','2']})" />
+    filterspec={'status':['1','3']})" />
