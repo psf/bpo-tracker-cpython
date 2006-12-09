@@ -156,7 +156,7 @@ status_notresolved string:-1,1,2,3,4,5,6,7;
    </li>
    <li tal:condition="python:request.user.hasPermission('View', 'user')
                             or request.user.hasPermission('Edit', 'user')">
-    <a href="user"  i18n:translate="">User List</a>
+    <a href="user?@sort=username"  i18n:translate="">User List</a>
    </li>
    <li tal:condition="python:request.user.hasPermission('Create', 'user')"><a href="user?@template=item" i18n:translate="">Add User</a>
    </li>
