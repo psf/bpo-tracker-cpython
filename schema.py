@@ -168,10 +168,6 @@ for cl in ('issue', 'file', 'msg'):
     db.security.addPermissionToRole('Developer', 'Edit', cl)
     db.security.addPermissionToRole('Developer', 'Create', cl)
 
-p = db.security.addPermission(name='Debugger', klass='issue',
-                              description='User can be assigned issues')
-db.security.addPermissionToRole('Developer', p)
-
 
 ##########################
 # Coordinator permissions
