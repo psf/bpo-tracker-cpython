@@ -158,10 +158,7 @@
                 db_klass string:issue;
                 db_content string:id;">
   <th i18n:translate="">Depends on:</th>
-  <td metal:use-macro="search_select_translated">
-    <option metal:fill-slot="extra_options" value="-1" i18n:translate=""
-            tal:attributes="selected python:value == '-1'">not selected</option>
-  </td>
+  <td metal:use-macro="search_input"/>
   <td metal:use-macro="column_input"></td>
   <td metal:use-macro="sort_input"></td>
   <td metal:use-macro="group_input"></td>
@@ -210,6 +207,16 @@
               tal:attributes="selected python:value == '-1'">not selected</option>
     </tal:block>
   </td>
+  <td metal:use-macro="column_input"></td>
+  <td metal:use-macro="sort_input"></td>
+  <td metal:use-macro="group_input"></td>
+</tr>
+
+<tr tal:define="name string:resolution;
+                db_klass string:resolution;
+                db_content string:name;">
+  <th i18n:translate="">Resolution:</th>
+  <td metal:use-macro="search_select_translated"/>
   <td metal:use-macro="column_input"></td>
   <td metal:use-macro="sort_input"></td>
   <td metal:use-macro="group_input"></td>
