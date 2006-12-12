@@ -30,6 +30,9 @@ discussionMax = 10
 # Smallest number of messages to be eligible for 'most discussed'.
 discussionThreshold = 3 
 
+# Date format per time.strftime
+dateFormat="%x"   #locale-appropriate
+
 ##### END CONFIGURATION; ALSO SEE CUSTOMIZATION BELOW
 
 usage = """%prog trackerHome [--mail mailTo] 
@@ -104,10 +107,8 @@ instance = roundup.instance.open(instanceHome)
 db = instance.open('admin')
 
 # CUSTOMIZATION
-dateWidth = len('30 September 2006')
-intervalWidth = len('31 days ago')
-userNameWidth = 8 
-titleWidth = 60 #zero means no limit
+dateWidth = len(roundup.date.Date('30 September 2006').pretty(format=dateFormat))
+titleWidth = 72 #zero means no limit
 durationWidth = len('9999 days')
 
 def formatDuration(duration):
@@ -152,64 +153,35 @@ def F(**args):
 #     record, and the integer indent indicates an indentation for the next line.
 #     If used, titles are omitted.
 # In html mode, <br> is ignored.
+
+### Text Tables
 # The 'Created or Repopened' table, text mode.
 createdTable = """
     titles:
-        'Title (Date)', 0
+        'Title', 0
         '<br>', 0
         'Status', len('CLOSED')
         'issueRef', issueRefWidth
         'Action', actionWidth
         'By', userNameWidth
     records:
-        titleDate
-        closedOrBlank(statusID)
-        issueRef
-        reopened or 'created'
-        reopener or creator
-"""
-# The 'Created or Repopened' table, html mode.
-htmlCreatedTable = """
-    titles:
-        'ID', issueRefWidth
-        'Title', titleWidth
-        'Status', len('CLOSED')
-        'Date', dateWidth
-        'Action', actionWidth
-        'By', userNameWidth
-    records:
-        issueRef
         title
         closedOrBlank(statusID)
-        (reopenedDate or creation).pretty()
-        reopened or 'created'
+        link(issueID)
+        (reopenedDate or creation).pretty(format=dateFormat)
         reopener or creator
 """
 # The table of closed issues, text mode.
 closedTable = """
     titles:
-        'Title (Date)', 0
+        'Title', 0
         '<br>', len('CLOSED')
         'Issue', issueRefWidth 
         'By', userNameWidth
         'Duration', durationWidth
     records:
-        titleDate
+        title
         issueRef 
-        actor
-        formatDuration(duration)
-"""
-# The table of closed issues, html mode.
-htmlClosedTable = """
-    titles:
-        'Issue', issueRefWidth 
-        'Title (Date)', 0
-        '<br>', len('CLOSED')
-        'By', userNameWidth
-        'Duration', durationWidth
-    records:
-        issueRef 
-        titleDate
         actor
         formatDuration(duration)
 """
@@ -217,7 +189,7 @@ htmlClosedTable = """
 discussedTable = """
     titles:
         'N', 3
-        'Title (Date)', 0
+        'Title', 0
         '<br>', 0
         'Status', statusWidth
         'Issue', issueRefWidth 
@@ -231,18 +203,44 @@ discussedTable = """
         actor
         formatDuration(duration)
 """
+
+### HTML Tables
+# The 'Created or Repopened' table, html mode.
+htmlCreatedTable = """
+    titles:
+        'Title', 0
+        'Status', len('CLOSED')
+        'Date', dateWidth
+        'Action', actionWidth
+        'By', userNameWidth
+    records:
+        hlink(issueID, title)
+        closedOrBlank(statusID)
+        (reopenedDate or creation).pretty(format=dateFormat)
+        reopened or 'created'
+        reopener or creator
+"""
+# The table of closed issues, html mode.
+htmlClosedTable = """
+    titles:
+        'Title', 0
+        'By', userNameWidth
+        'Duration', durationWidth
+    records:
+        hlink(title, issueID)
+        actor
+        formatDuration(duration)
+"""
 # The table of most discussed issues, text mode.
 htmlDiscussedTable = """
     titles:
         'N', 3
-        'Issue', issueRefWidth 
-        'Title (Date)', 0
+        'Title', 0
         'Status', statusWidth
         'Duration', durationWidth
     records:
         numberOfMessages
-        issueRef 
-        title
+        hlink(title, issueID)
         status
         formatDuration(duration)
 """
@@ -254,13 +252,6 @@ def getIssueAttributes (issueID):
     """Return dictionaries with the issue's title, etc.
        Assumes issue was created no later than to_value
     """
-    issueNumber = str(issueID)
-    issueRef = link(issueID)
-    issueHRef = '<a href="%s">%s</a>' % (issueRef, issueID)
-    title = db.issue.get(issueID, 'title')
-    creation = db.issue.get(issueID, 'creation')
-    creatorID = db.issue.get(issueID, 'creator')
-    creator = userMap[creatorID]
     reopened = ''
     reopener = ''
     reopenedDate = ''
@@ -316,26 +307,33 @@ def getIssueAttributes (issueID):
                     status2 = status1 
 
     messages.append((numberOfMessages, issueID))
-    if titleWidth:
-        t = title[0:titleWidth].strip()
-    else:
-        t = title.strip()
-    titleDate = t + ' (' + (reopenedDate or creation).pretty().strip() + ')'
 # get these set if not done before
     statusID = statusID or status2
     activity = activity or activity2
     actorID = actorID or actor2
-#
+# calculate the fields for the reports (consider delaying this part
+# so as to do it only for reported-upon issues)
     status = statusMap[statusID]
     actor = userMap[actorID]
     duration = activity - (reopenedDate or creation)
+    title = db.issue.get(issueID, 'title')
+    creation = db.issue.get(issueID, 'creation')
+    creatorID = db.issue.get(issueID, 'creator')
+    creator = userMap[creatorID]
+# out of a sense of neatness
     del status1, status2, actor2, activity2
     del x, ts, userid, act, data, t, journal
+# return the dictionary of local values for use in evals of table values.
     return locals()
 
 ### Utility
 def link (issueID):
+    "url of issue whose ID is issueID"
     return "%sissue%s" % (db.config.TRACKER_WEB, issueID)
+
+def hlink (issueID, title):
+    "html link to url/title of issue whose ID is issueID"
+    return '''<a href="%s">%s</a>''' %(link(issueID), title)
 
 def statusCompare (x, y):
     """Compare two statusIDs by order."""
@@ -569,8 +567,8 @@ class htmlTable (Table):
 # Summary writers 
 def htmlSummary(body, caption):
     "Print html summary"
-    print >>body, '<h2>ACTIVITY SUMMARY ('+ from_value.pretty() + \
-                  ' - ' + to_value.pretty() + ')</h2>'
+    print >>body, '<h2>ACTIVITY SUMMARY ('+ from_value.pretty(format=dateFormat) + \
+                  ' - ' + to_value.pretty(format=dateFormat) + ')</h2>'
     print >>body, '<h3>%s at %s</h3>' % (db.config.TRACKER_NAME, 
                                          db.config.TRACKER_WEB)
     print >>body, '<p>'
@@ -604,8 +602,8 @@ def htmlSummary(body, caption):
 def textSummary(body, caption):
     "Print text summary"
     print >>body
-    print >>body, 'ACTIVITY SUMMARY ('+ from_value.pretty() + \
-                  ' - ' + to_value.pretty() + ')'
+    print >>body, 'ACTIVITY SUMMARY ('+ from_value.pretty(format=dateFormat) + \
+                  ' - ' + to_value.pretty(format=dateFormat) + ')'
     print >>body, '%s at %s' % (db.config.TRACKER_NAME, db.config.TRACKER_WEB)
     print >>body, '''
 To view or respond to any of the issues listed below, click on the issue 
@@ -778,10 +776,7 @@ if allIssueIDS:
    maxIssueID = allIssueIDS[-1]
 else:
    maxIssueID = 1000
-
 issueRefWidth = len(link(maxIssueID))
-issueNumberWidth = max(len(str(maxIssueID)),5)
-
 messages = []
 statusReport = {}
 issueAttributes = {}
