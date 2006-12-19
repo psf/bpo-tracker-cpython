@@ -58,6 +58,13 @@ resolution = Class(db, "resolution",
                    order=Number())
 resolution.setkey('name')
 
+# Keyword
+keyword = Class(db, "keyword",
+                name=String(),
+                description=String())
+keyword.setkey("name")
+                
+
 # User-defined saved searches
 query = Class(db, "query",
               klass=String(),
@@ -111,7 +118,8 @@ issue = IssueClass(db, "issue",
                    assignee=Link('user'),
                    status=Link('status'),
                    resolution=Link('resolution'),
-                   superseder=Link('issue'))
+                   superseder=Link('issue'),
+                   keywords=Multilink("keyword"))
 
 #
 # TRACKER SECURITY SETTINGS
@@ -134,7 +142,8 @@ for r in 'User', 'Developer', 'Coordinator':
 # User permissions
 ##########################
 for cl in ('issue_type', 'severity', 'component',
-           'version', 'priority', 'status', 'resolution', 'issue', 'file', 'msg'):
+           'version', 'priority', 'status', 'resolution',
+           'issue', 'file', 'msg', 'keyword'):
     db.security.addPermissionToRole('User', 'View', cl)
 
 for cl in 'file', 'msg':
@@ -161,10 +170,11 @@ db.security.addPermissionToRole('User', p)
 # Developer permissions
 ##########################
 for cl in ('issue_type', 'severity', 'component',
-           'version', 'priority', 'status', 'resolution', 'issue', 'file', 'msg'):
+           'version', 'priority', 'status', 'resolution',
+           'issue', 'file', 'msg', 'keyword'):
     db.security.addPermissionToRole('Developer', 'View', cl)
 
-for cl in ('issue', 'file', 'msg'):
+for cl in ('issue', 'file', 'msg', 'keyword'):
     db.security.addPermissionToRole('Developer', 'Edit', cl)
     db.security.addPermissionToRole('Developer', 'Create', cl)
 

@@ -160,6 +160,9 @@ status_notresolved string:-1,1,3;
    </li>
    <li tal:condition="python:request.user.hasPermission('Create', 'user')"><a href="user?@template=item" i18n:translate="">Add User</a>
    </li>
+   <li tal:condition="python:request.user.hasPermission('Edit',
+ 'keyword')"><a href="keyword" i18n:translate="">Edit Keywords</a>
+   </li>
    </ul>
      </li>
      <li class="">

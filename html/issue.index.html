@@ -35,6 +35,7 @@
    <th tal:condition="request/show/resolution" i18n:translate="">Resolution</th>
    <th tal:condition="request/show/creator" i18n:translate="">Creator</th>
    <th tal:condition="request/show/assignee" i18n:translate="">Assigned&nbsp;To</th>
+   <th tal:condition="request/show/keywords" i18n:translate="">Keywords</th>
   </tr>
  <tal:block tal:repeat="i batch" condition=true>
   <tr tal:define="group python:[r[1] for r in request.group]"
@@ -72,6 +73,8 @@
        tal:content="python:i.creator.plain() or default">&nbsp;</td>
    <td tal:condition="request/show/assignee"
        tal:content="python:i.assignee.plain() or default">&nbsp;</td>
+   <td tal:condition="request/show/keywords"
+       tal:content="python:i.keywords.plain() or default">&nbsp;</td>
   </tr>
 
  </tal:block>
