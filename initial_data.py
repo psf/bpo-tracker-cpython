@@ -76,6 +76,9 @@ resolution.create(name='remind', order='9')
 resolution.create(name='wont fix', order='10')
 resolution.create(name='works for me', order='11')
 
+keyword = db.getclass("keyword")
+keyword.create(name="py3k", description="Python 3000 bugs")
+
 #
 # create the two default users
 user = db.getclass('user')
