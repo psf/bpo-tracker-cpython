@@ -145,6 +145,7 @@ for cl in ('issue_type', 'severity', 'component',
            'version', 'priority', 'status', 'resolution',
            'issue', 'file', 'msg', 'keyword'):
     db.security.addPermissionToRole('User', 'View', cl)
+    db.security.addPermissionToRole('Anonymous', 'View', cl)
 
 for cl in 'file', 'msg':
     db.security.addPermissionToRole('User', 'Create', cl)
