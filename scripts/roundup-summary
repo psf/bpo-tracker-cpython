@@ -1,9 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # Make sure you are using the python that has the roundup runtime used by the 
 # tracker. Requires Python 2.3 or later.
 #
 # Script to create a tracker summary by Richard Jones and Paul Dubois
 import sys, math
+# kludge
+sys.path.insert(1,'/home/roundup/roundup/lib/python2.4/site-packages')
+#
 import roundup
 import roundup.date, roundup.instance
 import optparse , datetime
