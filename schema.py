@@ -159,7 +159,7 @@ p = db.security.addPermission(name='Create', klass='issue',
 db.security.addPermissionToRole('User', p)
 
 p = db.security.addPermission(name='Edit', klass='issue',
-                              properties=('type',
+                              properties=('title', 'type',
                                           'components', 'versions',
                                           'severity',
                                           'messages', 'files', 'nosy'),
