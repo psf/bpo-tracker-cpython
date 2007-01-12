@@ -68,8 +68,7 @@
 
 <tr tal:define="name string:creator;
                 db_klass string:user;
-                db_content string:username;"
-    tal:condition="db/user/is_view_ok">
+                db_content string:username;">
   <th i18n:translate="">Creator:</th>
   <td metal:use-macro="search_input">
     <option metal:fill-slot="extra_options" i18n:translate=""
@@ -90,8 +89,7 @@
 
 <tr tal:define="name string:actor;
                 db_klass string:user;
-                db_content string:username;"
-    tal:condition="db/user/is_view_ok">
+                db_content string:username;">
   <th i18n:translate="">Actor:</th>
   <td metal:use-macro="search_input">
     <option metal:fill-slot="extra_options" i18n:translate=""
@@ -166,8 +164,7 @@
 
 <tr tal:define="name string:assignee;
                 db_klass string:user;
-                db_content string:username;"
-    tal:condition="db/user/is_view_ok">
+                db_content string:username;">
   <th i18n:translate="">Assigned to:</th>
   <td metal:use-macro="search_input">
     <tal:block metal:fill-slot="extra_options">
