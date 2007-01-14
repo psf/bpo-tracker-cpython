@@ -26,7 +26,7 @@ def busyreaction(db, cl, nodeid, oldvalues):
     ''' busybody mail
     '''
     try:
-        sendto = db.config.detectors['BUSYBODY_EMAIL'].split()
+        sendto = db.config.detectors['BUSYBODY_EMAIL'].split(",")
     except KeyError:
         return
 
