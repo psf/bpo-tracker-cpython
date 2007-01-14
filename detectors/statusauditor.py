@@ -4,7 +4,7 @@ def init_status(db, cl, nodeid, newvalues):
     if newvalues.has_key('status') and newvalues['status']:
         return
 
-    new_id = db.status.lookup('new')
+    new_id = db.status.lookup('open')
     newvalues['status'] = new_id
 
 
