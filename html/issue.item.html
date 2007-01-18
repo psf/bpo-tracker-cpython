@@ -117,7 +117,7 @@
  <td tal:condition="context/status/is_edit_ok">
   <select name="assignee">
    <option value="-1">nobody</option>
-   <tal:block tal:repeat="userdata python:db._db.user.filter_sql('select id,_username from _user where _roles like \'%Developer%\'')">
+   <tal:block tal:repeat="userdata python:db._db.user.filter_sql('select id,_username from _user where _roles like \'%Developer%\' order by _username')">
     <option tal:attributes="value python:userdata[0]; 
                             selected python:str(userdata[0]) == context.assignee._value"
             tal:content="python:userdata[1]"></option>
