@@ -141,7 +141,7 @@
  </th>
  <td tal:content="structure context/priority/menu">priority</td>
  <th i18n:translate="">Keywords:</th>
- <td tal:content="structure context/keywords/menu">keywords</td>
+ <td tal:content="structure python:context['keywords'].menu(height=3)">keywords</td>
 
 
 </tr>
