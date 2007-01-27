@@ -156,7 +156,6 @@ table.form th {
   border-bottom: #ddd solid 1px;
   color: #338;
   text-align: right;
-  vertical-align: top;
   font-weight: normal;
   white-space: nowrap;
 }
@@ -176,7 +175,6 @@ table.form td {
   border-bottom: #ddd solid 1px;
   color: #333;
   empty-cells: show;
-  vertical-align: top;
   padding: 5px;
 }
 
