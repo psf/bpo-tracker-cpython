@@ -189,12 +189,15 @@ for cl in ('issue_type', 'severity', 'component',
     db.security.addPermissionToRole('Coordinator', 'Edit', cl)
     db.security.addPermissionToRole('Coordinator', 'Create', cl)
 
-
 # May users view other user information? Comment these lines out
 # if you don't want them to
 db.security.addPermissionToRole('User', 'View', 'user')
 db.security.addPermissionToRole('Developer', 'View', 'user')
 db.security.addPermissionToRole('Coordinator', 'View', 'user')
+
+# Allow Coordinator to edit any user, including their roles.
+db.security.addPermissionToRole('Coordinator', 'Edit', 'user')
+db.security.addPermissionToRole('Coordinator', 'Web Roles')
 
 # Users should be able to edit their own details -- this permission is
 # limited to only the situation where the Viewed or Edited item is their own.
@@ -207,8 +210,14 @@ p = db.security.addPermission(name='View', klass='user', check=own_record,
 for r in 'User', 'Developer', 'Coordinator':
     db.security.addPermissionToRole(r, p)
 p = db.security.addPermission(name='Edit', klass='user', check=own_record,
-    description="User is allowed to edit their own user details")
-for r in 'User', 'Developer', 'Coordinator':
+    description="User is allowed to edit their own user details",
+    properties=('username', 'password',
+                'address', 'realname',
+                'phone', 'organization',
+                'alternate_addresses',
+                'queries',
+                'timezone')) # Note: 'roles' excluded - users should not be able to edit their own roles. 
+for r in 'User', 'Developer':
     db.security.addPermissionToRole(r, p)
 
 # Users should be able to edit and view their own queries. They should also
