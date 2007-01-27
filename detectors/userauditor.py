@@ -35,7 +35,7 @@ def audit_user_fields(db, cl, nodeid, newvalues):
             if not db.security.role.has_key(rolename):
                 raise ValueError, 'Role "%s" does not exist'%rolename
 
-        if "admin" in roles:
+        if None != nodeid and "admin" in roles:
             if not "admin" in [x.lower().strip() for x in cl.get(nodeid, 'roles')]:
                 raise ValueError, "Only Admins may assign the Admin role!"
 
