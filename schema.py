@@ -203,7 +203,6 @@ db.security.addPermissionToRole('Coordinator', 'Web Roles')
 # limited to only the situation where the Viewed or Edited item is their own.
 def own_record(db, userid, itemid):
     '''Determine whether the userid matches the item being accessed.'''
-    print 'own record', userid, itemid
     return userid == itemid
 p = db.security.addPermission(name='View', klass='user', check=own_record,
     description="User is allowed to view their own user details")
