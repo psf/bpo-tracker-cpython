@@ -5,6 +5,8 @@
  i18n:translate="">Password reset request</span>
 <td class="content" metal:fill-slot="content">
 
+<tal:askforinfo tal:condition="python:options['error_message'] or not request.form.has_key('@action')"> 
+
 <p i18n:translate="">You have two options if you have forgotten your password.
 If you know the email address you registered with, enter it below.</p>
 
@@ -46,6 +48,9 @@ the same username as your sourceforge username.</p>
 
 <p i18n:translate="">A confirmation email will be sent to you -
 please follow the instructions within it to complete the reset process.</p>
-</td>
 
+</tal:askforinfo>
+
+</td>
+g
 </tal:block>
