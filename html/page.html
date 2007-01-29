@@ -75,7 +75,7 @@ status_notresolved string:-1,1,3;
          <a href="issue?@template=search&status=1" i18n:translate="">Search</a>
         </li>
         <li>
-         <form method="post" tal:attributes="action request/base">
+         <form method="post" action="#">
           <input type="submit" class="form-small" value="Show issue:"
                  i18n:attributes="value"/>
           <input class="form-small" size="4"
@@ -88,7 +88,7 @@ status_notresolved string:-1,1,3;
      </li>
      <li tal:condition="python:request.user.username=='anonymous'">
       <b i18n:translate="">User</b>
-      <form method="post" tal:attributes="action request/base">
+      <form method="post" action="#">
        <ul class="level-three">
       <li>
        <tal:span i18n:translate="">Login</tal:span><br/>
@@ -98,7 +98,7 @@ status_notresolved string:-1,1,3;
        <input type="checkbox" name="remember" id="remember"/>
        <label for="remember" i18n:translate="">Remember me?</label><br/>
        <input class="form-small" type="submit" value="Login" i18n:attributes="value"/><br/>
-       <input type="hidden" name="__came_from" tal:attributes="value string:${request/base}${request/env/PATH_INFO}"/>
+       <input type="hidden" name="__came_from" tal:attributes="value string:${request/env/PATH_INFO}"/>
        <span tal:replace="structure request/indexargs_form" />
        </li>
        <li>

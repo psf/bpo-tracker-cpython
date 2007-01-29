@@ -29,7 +29,7 @@
 <div id="content">
 <div id="breadcrumb">Python Issue Tracker: Help - <tal:block tal:content="context/classname">item</tal:block></div>
 <tal:block tal:condition="python:request.form.has_key('property')">
- <form name="frm_help" tal:attributes="action request/base"
+ <form name="frm_help" action="#"
        tal:define="batch request/batch;
                    props python:request.form['properties'].value.split(',')">
 
