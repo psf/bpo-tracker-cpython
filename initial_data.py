@@ -78,6 +78,7 @@ resolution.create(name='works for me', order='11')
 
 keyword = db.getclass("keyword")
 keyword.create(name="py3k", description="Python 3000 bugs")
+keyword.create(name="patch", description="Contains patch")
 
 #
 # create the two default users
