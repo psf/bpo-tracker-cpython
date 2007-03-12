@@ -452,3 +452,11 @@ textarea:focus, select:focus {
 }
 
 
+#demowarning {
+   position: absolute;
+   top: 10px;
+   left: 260px;
+   font-weight: bold;
+   font-size: 110%;
+   color: red;
+}
