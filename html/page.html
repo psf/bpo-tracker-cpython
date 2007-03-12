@@ -61,6 +61,17 @@ status_notresolved string:-1,1,3;
        tal:attributes="href python:request.indexargs_url('issue', {
       '@sort': '-activity',
       '@group': 'severity',
+      '@filter': 'status',
+      '@columns': columns_showall,
+      '@search_text': '',
+      'status': status_notresolved,
+      '@dispname': i18n.gettext('Show All'),
+     })"
+       i18n:translate="">Show Open</a></li>
+    <li><a href="#"
+       tal:attributes="href python:request.indexargs_url('issue', {
+      '@sort': '-activity',
+      '@group': 'severity',
       '@filter': 'status,assignee',
       '@columns': columns,
       '@search_text': '',
@@ -69,17 +80,6 @@ status_notresolved string:-1,1,3;
       '@dispname': i18n.gettext('Show Unassigned'),
      })"
        i18n:translate="">Show Unassigned</a></li>
-    <li><a href="#"
-       tal:attributes="href python:request.indexargs_url('issue', {
-      '@sort': '-activity',
-      '@group': 'severity',
-      '@filter': 'status',
-      '@columns': columns_showall,
-      '@search_text': '',
-      'status': status_notresolved,
-      '@dispname': i18n.gettext('Show All'),
-     })"
-       i18n:translate="">Show All</a></li>
         <li>
          <a href="issue?@template=search&status=1" i18n:translate="">Search</a>
         </li>
