@@ -42,8 +42,13 @@ def busyreaction(db, cl, nodeid, oldvalues):
         except roundupdb.MessageSendError, message:
             raise roundupdb.DetectorError, message
     if not msgIDS:
+        # Find author associated with the last journal entry
+        journal = db.getjournal(cl.classname, nodeid)
+        authid = None
+        if [] != journal:
+            authid = journal[-1][2]
         try:
-            cl.send_message(nodeid, None, note, sendto)
+            cl.send_message(nodeid, None, note, sendto, authid=authid)
         except roundupdb.MessageSendError, message:
             raise roundupdb.DetectorError, message
 
