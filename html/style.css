@@ -267,6 +267,7 @@ table.messages td {
   border-right: 1px solid #afafaf;
   vertical-align: top;
   padding: 2px 5px 2px 5px;
+  max-width: 50em;
 }
 
 table.messages td:first-child {
