@@ -25,7 +25,9 @@
  </tr>
  <tr>
   <th i18n:translate="">Content Type</th>
-  <td tal:content="structure context/type/field"></td>
+  <td tal:content="structure context/type/field"/>
+  <td style="border: none" tal:condition="python: context.is_edit_ok()">Please note that
+  for security reasons, it's not permitted to set content type to <i>text/html</i>.</td>
  </tr>
 
  <tr>
