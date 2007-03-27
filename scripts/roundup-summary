@@ -844,8 +844,8 @@ def sendReport (recipient):
     writer = MimeWriter.MimeWriter(message)
     writer.addheader('Subject', 'Summary of %s Issues'%db.config.TRACKER_NAME)
     writer.addheader('To', recipient)
-    writer.addheader('From', '%s <%s>'%(db.config.TRACKER_NAME, db.config.ADMIN_EMAIL))
-    writer.addheader('Reply-To', '%s <%s>'%(db.config.TRACKER_NAME, 'DONOTREPLY@NOWHERE.ORG'))
+    writer.addheader('From', '%s <%s>'%(db.config.TRACKER_NAME, 'status@bugs.python.org'))
+    writer.addheader('Reply-To', '%s <%s>'%(db.config.TRACKER_NAME, 'status@bugs.python.org'))
     writer.addheader('MIME-Version', '1.0')
     writer.addheader('X-Roundup-Name', db.config.TRACKER_NAME)
 
