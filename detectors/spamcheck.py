@@ -21,20 +21,24 @@ HAM_CUTOFF = 0.2
 SPAM_CUTOFF = 0.85
 
 import xmlrpclib
+import socket
 
 from roundup.exceptions import Reject
 
-def check_spam(db, cl, nodeid, newvalues):
+def check_spam(_database, _klass, _nodeid, newvalues):
+    """Auditor to score a website submission."""
+
     uri = "http://%s:%s%s" % (HOST, PORT, PATH)
-    server = xmlrpclb.ServerProxy(uri, verbose=False)
+    server = xmlrpclib.ServerProxy(uri, verbose=False)
     try:
         prob = server.score(newvalues, [], {})
-    except (socket.error, xmlrpclib.Fault):
+    except (socket.error, xmlrpclib.Error):
         pass
     else:
-        if prob >= CUTOFF:
+        if prob >= SPAM_CUTOFF:
             raise Reject
 
-def init(db):
-    db.file.audit('create', check_spam)
-    db.file.audit('set', check_spam)
+def init(database):
+    """Initialize auditor."""
+    database.file.audit('create', check_spam)
+    database.file.audit('set', check_spam)
