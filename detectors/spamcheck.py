@@ -36,9 +36,11 @@ def check_spam(_database, _klass, _nodeid, newvalues):
         pass
     else:
         if prob >= SPAM_CUTOFF:
-            raise Reject
+            raise Reject("Looks like spam to me - prob=%.3f" % prob)
 
 def init(database):
     """Initialize auditor."""
+    database.issue.audit('create', check_spam)
+    database.issue.audit('set', check_spam)
     database.file.audit('create', check_spam)
     database.file.audit('set', check_spam)
