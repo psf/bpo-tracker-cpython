@@ -9,10 +9,8 @@ valid submissions at the expense of manual checks to correct spammy items
 which snuck by the screen.
 """
 
-# These must match the xmlrpc_{host,port,path} settings in the SpamBayes
-# server config.
-HOST = "localhost"
-PORT = "8001"
+HOST = "www.webfast.com"
+PORT = "80"
 PATH = "/sbrpc"
 
 # These must match the {ham,spam}_cutoff setting in the SpamBayes server
