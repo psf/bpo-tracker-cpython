@@ -56,11 +56,11 @@
 <p tal:condition="python:utils.sb_is_spam(context)" class="error-message">
    File has been classified as spam.</p>
 
-<a tal:condition="python:context.id and utils.sb_is_view_ok(context)"
+<a tal:condition="python:context.id and context.content.is_view_ok()"
  tal:attributes="href string:file${context/id}/${context/name}"
  i18n:translate="">download</a>
 
-<p tal:condition="python:context.id and not utils.sb_is_view_ok(context)">
+<p tal:condition="python:context.id and not context.content.is_view_ok()">
    Files classified as spam are not available for download by
    unathorized users. If you think the file has been misclassified,
    please login and click on the button for reclassification.

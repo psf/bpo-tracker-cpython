@@ -67,7 +67,8 @@
 
  <tr>
    <th class="header" i18n:translate="">Content</th>
-   <th class="header" tal:condition="python:utils.sb_may_classify(context)">
+   <th class="header"
+   tal:condition="python:request.user.hasPermission('SB: May Classify')">
      <form method="POST" onSubmit="return submit_once()"
        enctype="multipart/form-data"
        tal:attributes="action context/designator">
@@ -82,10 +83,11 @@
 
  <tr>
   <td class="content" colspan=2
-      tal:condition="python:utils.sb_is_view_ok(context)"><pre
+      tal:condition="python:context.content.is_view_ok()">
+      <pre
       tal:content="structure context/content/hyperlinked"></pre></td>
   <td class="content" colspan=2
-      tal:condition="python:not utils.sb_is_view_ok(context)">
+      tal:condition="python:not context.content.is_view_ok()">
             Message has been classified as spam and is therefore not
       available to unathorized users. If you think this is
       incorrect, please login and report the message as being

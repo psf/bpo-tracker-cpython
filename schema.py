@@ -134,6 +134,9 @@ issue = IssueClass(db, "issue",
 db.security.addRole(name='Developer', description='A developer')
 db.security.addRole(name='Coordinator', description='A coordinator')
 
+sb_may_classify  = db.security.addPermission(name="SB: May Classify")
+sb_may_report_misclassified = db.security.addPermission(name="SB: May Report Misclassified")
+
 #
 # REGULAR USERS
 #
@@ -166,15 +169,13 @@ class may_view_spam:
             return True
 
         if score > cutoff_score:
-            roles = set(db.user.get(userid, "roles").lower().split(","))
-            allowed = set(db.config.detectors['SPAMBAYES_MAY_VIEW_SPAM'].lower().split(","))
-            return bool(roles.intersection(allowed))
+            return False
 
         return True
 
 for cl in ('file', 'msg'):
     p = db.security.addPermission(name='View', klass=cl,
-                                  description="allowed to see metadata of file object regardless of spam status",
+                                  description="allowed to see metadata object regardless of spam status",
                                   properties=('creation', 'activity',
                                               'creator', 'actor',
                                               'name', 'spambayes_score',
@@ -185,21 +186,24 @@ for cl in ('file', 'msg'):
                                               ))
 
     db.security.addPermissionToRole('Anonymous', p)
-    db.security.addPermissionToRole('User', p)    
+    db.security.addPermissionToRole('User', p)
+
+    db.security.addPermissionToRole('User', 'Create', cl)
+
+    p = db.security.addPermission(name='View', klass=cl,
+                                  description="Allowed to see content of object regardless of spam status",
+                                  properties = ('content', 'summary'))
     
+    db.security.addPermissionToRole('User', p)        
     
     spamcheck = db.security.addPermission(name='View', klass=cl,
-                                          description="allowed to see metadata of file object regardless of spam status",
+                                          description="allowed to see content if not spam",
                                           properties=('content', 'summary'),
                                           check=may_view_spam(cl))
-    
-    db.security.addPermissionToRole('User', spamcheck)    
+
     db.security.addPermissionToRole('Anonymous', spamcheck)
 
     
-
-for cl in 'file', 'msg':
-    db.security.addPermissionToRole('User', 'Create', cl)
 
 p = db.security.addPermission(name='Create', klass='issue',
                               properties=('title', 'type',
@@ -216,6 +220,9 @@ p = db.security.addPermission(name='Edit', klass='issue',
                                           'messages', 'files', 'nosy'),
                               description='User can report and discuss issues')
 db.security.addPermissionToRole('User', p)
+
+db.security.addPermissionToRole('User', 'SB: May Report Misclassified')
+
 
 
 ##########################
@@ -239,6 +246,8 @@ for cl in ('issue_type', 'severity', 'component',
     db.security.addPermissionToRole('Coordinator', 'View', cl)
     db.security.addPermissionToRole('Coordinator', 'Edit', cl)
     db.security.addPermissionToRole('Coordinator', 'Create', cl)
+
+db.security.addPermissionToRole('Coordinator', 'SB: May Classify')
 
 # May users view other user information? Comment these lines out
 # if you don't want them to
@@ -314,7 +323,10 @@ db.security.addPermissionToRole('Anonymous', 'Web Access')
 db.security.addPermissionToRole('Anonymous', 'Create', 'user')
 
 # Allow anonymous users access to view issues (and the related, linked
-# information)
+# information).
+# Note permissions settings for file and msg above (due to spambayes
+# integration).
+
 for cl in 'issue', 'severity', 'status', 'resolution':
     db.security.addPermissionToRole('Anonymous', 'View', cl)
 
