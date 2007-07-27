@@ -243,7 +243,12 @@
   </tr>
   <tr>
    <td colspan="4" class="content">
-    <pre tal:content="structure msg/content/hyperlinked">content</pre>
+    <p class="error-message"
+       tal:condition="python:utils.sb_is_spam(msg)">
+       Message has been classified as spam.
+    </p>
+    <pre tal:condition="python:utils.sb_is_view_ok(msg)"
+         tal:content="structure msg/content/hyperlinked">content</pre>
    </td>
   </tr>
  </tal:block>

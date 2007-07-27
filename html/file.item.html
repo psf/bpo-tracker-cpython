@@ -29,8 +29,17 @@
   <td style="border: none" tal:condition="python: context.is_edit_ok()">Please note that
   for security reasons, it's not permitted to set content type to <i>text/html</i>.</td>
  </tr>
+ <tr>
+  <th i18n:translate="">SpamBayes Score</th>
+  <td tal:content="structure context/spambayes_score/plain"></td>
+ </tr>
 
  <tr>
+  <th i18n:translate="">Marked as misclassified</th>
+  <td tal:content="structure context/spambayes_misclassified/plain"></td>
+ </tr>
+
+ <tr tal:condition="python:context.is_edit_ok()">
   <td>
    &nbsp;
    <input type="hidden" name="@template" value="item">
@@ -44,9 +53,29 @@
 </table>
 </form>
 
-<a tal:condition="python:context.id and context.is_view_ok()"
+<p tal:condition="python:utils.sb_is_spam(context)" class="error-message">
+   File has been classified as spam.</p>
+
+<a tal:condition="python:context.id and utils.sb_is_view_ok(context)"
  tal:attributes="href string:file${context/id}/${context/name}"
  i18n:translate="">download</a>
+
+<p tal:condition="python:context.id and not utils.sb_is_view_ok(context)">
+   Files classified as spam are not available for download by
+   unathorized users. If you think the file has been misclassified,
+   please login and click on the button for reclassification.
+</p>
+
+
+     <form method="POST" onSubmit="return submit_once()"
+       enctype="multipart/form-data"
+       tal:attributes="action context/designator"
+       tal:condition="python:utils.sb_may_classify(context)">
+ 
+      <input type="hidden" name="@action" value="spambayes_classify">
+      <input type="submit" name="trainspam" value="Mark as SPAM" i18n:attributes="value">
+      <input type="submit" name="trainham" value="Mark as HAM (not SPAM)" i18n:attributes="value">
+     </form>
 
 <tal:block tal:condition="context/id" tal:replace="structure context/history" />
 

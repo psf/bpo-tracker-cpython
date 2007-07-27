@@ -22,6 +22,16 @@ import sets
 
 from roundup import roundupdb, hyperdb
 
+def is_spam(db, msgid):
+    cutoff_score = float(db.config.detectors['SPAMBAYES_SPAM_CUTOFF'])    
+
+    msg = db.getnode("msg", msgid)
+    if msg.has_key('spambayes_score') and \
+           msg['spambayes_score'] > cutoff_score:
+        return False
+    return True
+
+
 def busyreaction(db, cl, nodeid, oldvalues):
     ''' busybody mail
     '''
@@ -36,7 +46,7 @@ def busyreaction(db, cl, nodeid, oldvalues):
     else:
         note = cl.generateChangeNote(nodeid, oldvalues)
 
-    for msgid in msgIDS:
+    for msgid in filter(lambda x: is_spam(db, x), msgIDS):
         try:
             cl.send_message(nodeid, msgid, note, sendto)
         except roundupdb.MessageSendError, message:

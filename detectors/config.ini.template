@@ -12,3 +12,6 @@ spambayes_uri = http://www.webfast.com:80/sbrpc
 spambayes_ham_cutoff = 0.2
 spambayes_spam_cutoff = 0.85
 
+spambayes_may_view_spam = User,Coordinator,Developer
+spambayes_may_classify = Coordinator
+spambayes_may_report_misclassified = User,Coordinator,Developer
