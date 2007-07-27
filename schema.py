@@ -134,8 +134,8 @@ issue = IssueClass(db, "issue",
 db.security.addRole(name='Developer', description='A developer')
 db.security.addRole(name='Coordinator', description='A coordinator')
 
-sb_may_classify  = db.security.addPermission(name="SB: May Classify")
-sb_may_report_misclassified = db.security.addPermission(name="SB: May Report Misclassified")
+db.security.addPermission(name="SB: May Classify")
+db.security.addPermission(name="SB: May Report Misclassified")
 
 #
 # REGULAR USERS
