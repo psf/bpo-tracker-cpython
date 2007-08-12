@@ -194,7 +194,7 @@
  <tr>
   <th i18n:translate="">File name</th>
   <th i18n:translate="">Uploaded</th>
-  <th i18n:translate="">Type</th>
+  <th i18n:translate="">Description</th>
   <th i18n:translate="">Edit</th>
   <th i18n:translate="">Remove</th>
  </tr>
@@ -207,7 +207,7 @@
    <span tal:content="file/creator">creator's name</span>,
    <span tal:content="file/creation">creation date</span>
   </td>
-  <td tal:content="file/type" />
+  <td tal:content="file/description" />
   <td><a tal:condition="file/is_edit_ok"
           tal:attributes="href string:file${file/id}">edit</a>
   </td>

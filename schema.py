@@ -103,6 +103,7 @@ msg = FileClass(db, "msg",
 
 file = FileClass(db, "file",
                 name=String(),
+                description=String(indexme='yes'),
                 spambayes_score=Number(),
                 spambayes_misclassified=Boolean(),)
 
@@ -183,6 +184,7 @@ for cl in ('file', 'msg'):
                                               'author', 'recipients',
                                               'date', 'files', 'messageid',
                                               'inreplyto', 'type',
+                                              'description',
                                               ))
 
     db.security.addPermissionToRole('Anonymous', p)

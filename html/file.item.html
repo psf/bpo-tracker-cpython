@@ -24,6 +24,10 @@
   <td tal:content="structure context/name/field"></td>
  </tr>
  <tr>
+  <th i18n:translate="">Description</th>
+  <td tal:content="structure context/description/field"></td>
+ </tr>
+ <tr>
   <th i18n:translate="">Content Type</th>
   <td tal:content="structure context/type/field"/>
   <td style="border: none" tal:condition="python: context.is_edit_ok()">Please note that
