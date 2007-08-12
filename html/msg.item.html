@@ -85,7 +85,7 @@
   <td class="content" colspan=2
       tal:condition="python:context.content.is_view_ok()">
       <pre
-      tal:content="structure context/content/hyperlinked"></pre></td>
+      tal:content="structure python:utils.localReplace(context.content.hyperlinked())"></pre></td>
   <td class="content" colspan=2
       tal:condition="python:not context.content.is_view_ok()">
             Message has been classified as spam and is therefore not
