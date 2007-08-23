@@ -87,9 +87,9 @@ def resolve_dependencies(db, cl, nodeid, oldvalues):
 def init(db):
     # fire before changes are made
     db.issue.audit('create', init_status)
-    db.issue.audit('create', block_resolution)
-    db.issue.audit('set', block_resolution)
-    db.issue.audit('set', resolve)
+#    db.issue.audit('create', block_resolution)
+#    db.issue.audit('set', block_resolution)
+#    db.issue.audit('set', resolve)
 
     # adjust after changes are committed
-    db.issue.react('set', resolve_dependencies)
+#    db.issue.react('set', resolve_dependencies)
