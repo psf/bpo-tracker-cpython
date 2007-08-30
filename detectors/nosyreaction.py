@@ -44,7 +44,7 @@ def determineNewMessages(cl, nodeid, oldvalues):
     return messages
 
 def updatenosy(db, cl, nodeid, newvalues):
-    '''Update the nosy list for changes to the assignedto
+    '''Update the nosy list for changes to the assignee
     '''
     # nodeid will be None if this is a new node
     current_nosy = sets.Set()
@@ -69,15 +69,15 @@ def updatenosy(db, cl, nodeid, newvalues):
 
     new_nosy = sets.Set(current_nosy)
 
-    # add assignedto(s) to the nosy list
-    if newvalues.has_key('assignedto') and newvalues['assignedto'] is not None:
+    # add assignee(s) to the nosy list
+    if newvalues.has_key('assignee') and newvalues['assignee'] is not None:
         propdef = cl.getprops()
-        if isinstance(propdef['assignedto'], hyperdb.Link):
-            assignedto_ids = [newvalues['assignedto']]
-        elif isinstance(propdef['assignedto'], hyperdb.Multilink):
-            assignedto_ids = newvalues['assignedto']
-        for assignedto_id in assignedto_ids:
-            new_nosy.add(assignedto_id)
+        if isinstance(propdef['assignee'], hyperdb.Link):
+            assignee_ids = [newvalues['assignee']]
+        elif isinstance(propdef['assignee'], hyperdb.Multilink):
+            assignee_ids = newvalues['assignee']
+        for assignee_id in assignee_ids:
+            new_nosy.add(assignee_id)
 
     # see if there's any new messages - if so, possibly add the author and
     # recipient to the nosy
