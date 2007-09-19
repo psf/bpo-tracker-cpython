@@ -40,6 +40,7 @@ dateFormat="%x"   #locale-appropriate
 usage = """%prog trackerHome [--mail mailTo] 
                              [--dates 'date1;date2'] 
                              [--brief]
+			     [--text]
                         # less likely 
                              [--resolved 'status1,status2'] 
                              [--status 'status1,status2']
@@ -112,8 +113,9 @@ instance = roundup.instance.open(instanceHome)
 db = instance.open('admin')
 
 # CUSTOMIZATION
+columnWidth = 72  #for text report
 dateWidth = len(roundup.date.Date('2006-09-30').pretty(format=dateFormat))
-titleWidth = 72 #zero means no limit
+titleWidth = columnWidth - dateWidth #zero means no limit
 durationWidth = len('9999 days')
 tableStyle = 'border="1" cellspacing="0" cellpadding="3"'
 
@@ -128,21 +130,8 @@ def closedOrBlank(statusID):
     else:
         return ""
 
-# Additional filter(s) to use in picking out issues.
-# Depends on the schema.
-notThese = ('notices', 'faq', 'todo', 'feature', 'wish')
-try:
-    priorityIDS = db.priority.getnodeids(None, retired=None)
-    priorityNames = [db.priority.get(p, 'name') for p in priorityIDS]
-    acceptablePriorities = [priorityIDS[i] for i in range(len(priorityIDS)) if \
-                   priorityNames[i] not in notThese]
-except:  #for example, priority is not in the schema
-    acceptablePriorities = []
-
 def F(**args):
     "args is the dictionary to return, with additions if desired."
-    if acceptablePriorities:
-         args['priority'] = acceptablePriorities
     return args
 
 
@@ -160,13 +149,15 @@ def F(**args):
 # The 'Created or Repopened' table, text mode.
 createdTable = """
     titles:
-        'Title', titleWidth - dateWidth
+        'Title', titleWidth
         'Date', dateWidth
         '<br>', 0
         'Status', len('CLOSED')
         'Link', linkWidth
         'Action', actionWidth
         'By', userNameWidth
+        '<br>', len('CLOSED')
+	'Keywords', columnWidth
     records:
         title
         (reopenedDate or creation).pretty(format=dateFormat)
@@ -174,26 +165,30 @@ createdTable = """
         link(issueNumber)
         reopened or 'created'
         reopener or creator
+	keywords
 """
 # The table of closed issues, text mode.
 closedTable = """
     titles:
-        'Title', titleWidth - durationWidth
+        'Title', titleWidth
         'Duration', durationWidth
         '<br>', len('CLOSED')
         'Link', linkWidth 
         'By', userNameWidth
+	'<br>', len('CLOSED')
+	'Keywords', columnWidth
     records:
         title
         formatDuration(duration)
         link(issueNumber) 
         actor
+	keywords
 """
 # The table of most discussed issues, text mode.
 discussedTable = """
     titles:
         'N', -3
-        'Title', titleWidth - durationWidth
+        'Title', columnWidth - durationWidth
         'Duration', durationWidth
         '<br>', 0
         'Status', statusWidth
@@ -216,12 +211,14 @@ htmlCreatedTable = """
         'Date', dateWidth
         'Action', actionWidth
         'By', userNameWidth
+	'Keywords', 15
     records:
         hlink(issueNumber, title)
         closedOrBlank(statusID)
         (reopenedDate or creation).pretty(format=dateFormat)
         reopened or 'created'
         reopener or creator
+	keywords
 """
 # The table of closed issues, html mode.
 htmlClosedTable = """
@@ -229,10 +226,12 @@ htmlClosedTable = """
         'Title', 0
         'By', userNameWidth
         'Duration', durationWidth
+	'Keywords', 15
     records:
         hlink(issueNumber, title)
         actor
         formatDuration(duration)
+	keywords
 """
 # The table of most discussed issues, text mode.
 htmlDiscussedTable = """
@@ -248,8 +247,31 @@ htmlDiscussedTable = """
         formatDuration(duration)
 """
 ### END CUSTOMIZATION
-# well, except you might want to add to this...locals in this 
-# routine are usable in the 'records' section of tables.
+# well, except you might want to add to this...locals in getIssueAttributes 
+# are usable in the 'records' section of tables.
+# Keywords
+patchID = db.keyword.lookup('patch')
+keywordIDS = db.keyword.getnodeids(False)
+keywordsDict = {}
+for id in keywordIDS:
+    keywordsDict[id] = db.keyword.get(id, 'name')
+
+def isPatch(issueID):
+    keywordIDS = db.issue.get(issueID, 'keywords')
+    return patchID in keywordIDS
+
+def getKeywordString (issueID):
+    keywordIDS = db.issue.get(issueID, 'keywords')
+    sep = ''
+    keywords = ''
+    for id in keywordIDS:
+        try:
+	    k = keywordsDict[id]
+            keywords += (sep + k)
+	    sep = ', '
+	except KeyError:  #retired kw
+	    pass
+    return keywords
 
 def getIssueAttributes (issueID):
     """Return dictionaries with the issue's title, etc.
@@ -267,6 +289,7 @@ def getIssueAttributes (issueID):
     statusID = None
     actorID = None
     activity = None
+    keywords = getKeywordString(issueID)
 
 # programming note:
 # the journal records the OLD value of the status in the data field     
@@ -589,7 +612,9 @@ def htmlSummary(body, caption):
  (nOpen+nClosed)-(nOpenOld+nClosedOld))
     print >>body, '</p>'
     print >>body, "<p>"
-    print >>body, '<p></p>'
+    print >>body, "Open issues with patches: %5d" % nPatch
+    print >>body, '</p>'
+    print >>body, '<p>'
     print >>body, "Average duration of open issues:", "%3.0f" % averageDuration, "days."
     print >>body, '</p>'
     print >>body, "<p>"
@@ -626,6 +651,8 @@ number.  Do NOT respond to this message.
     print >>body, fmt % \
  (nOpen, nOpen-nOpenOld, nClosed, nClosed-nClosedOld, (nOpen+nClosed), 
  (nOpen+nClosed)-(nOpenOld+nClosedOld))
+    print >>body
+    print >>body, "Open issues with patches: %5d" % nPatch
     print >>body
     print >>body, "Average duration of open issues:", "%3.0f" % averageDuration, "days."
     print >>body, "Median duration of open issues:", "%3.0f" % medianDuration, "days."
@@ -702,7 +729,6 @@ whole_period = ';%s'%to_value
 ignoredStatuses = [s.strip() for s in options.ignore.split(',')]
 if options.debug:
     print >>bugfile, "from,to", from_value, to_value
-    print >>bugfile, 'acceptablePriorities', acceptablePriorities
     print >>bugfile, 'ignoredStatuses', ignoredStatuses
 
 # ...audit
@@ -824,8 +850,15 @@ nTotal = len(allIssueIDS)
 nTotalOld = len(earlyIssueIDS)
 nClosed = len(closedIssueIDS)
 nClosedOld = len(oldClosedIssueIDS)
+
 nOpen = nTotal - nClosed
 nOpenOld = nTotalOld - nClosedOld
+
+nPatch = 0
+for id in allIssueIDS:
+    if id in closedIssueIDS: continue
+    if isPatch(id):
+        nPatch += 1
 
 for sid in statusIDS:
     IDS = db.issue.filter(None, F(creation=whole_period, status=sid))
