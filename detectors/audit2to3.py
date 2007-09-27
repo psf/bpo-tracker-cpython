@@ -7,6 +7,7 @@ def update2to3(db, cl, nodeid, newvalues):
        assigned.
     '''
     # nodeid will be None if this is a new node
+    componentIDS=None
     if nodeid is not None:
         componentIDS = cl.get(nodeid, 'components')
     if newvalues.has_key('components'):
