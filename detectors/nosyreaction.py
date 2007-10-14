@@ -1,48 +1,6 @@
 import sets
 from roundup import roundupdb, hyperdb
 
-def nosyreaction(db, cl, nodeid, oldvalues):
-    ''' A standard detector is provided that watches for additions to the
-        "messages" property.
-        
-        When a new message is added, the detector sends it to all the users on
-        the "nosy" list for the issue that are not already on the "recipients"
-        list of the message.
-        
-        Those users are then appended to the "recipients" property on the
-        message, so multiple copies of a message are never sent to the same
-        user.
-        
-        The journal recorded by the hyperdatabase on the "recipients" property
-        then provides a log of when the message was sent to whom. 
-    '''
-    # send a copy of all new messages to the nosy list
-    for msgid in determineNewMessages(cl, nodeid, oldvalues):
-        try:
-            cl.nosymessage(nodeid, msgid, oldvalues)
-        except roundupdb.MessageSendError, message:
-            raise roundupdb.DetectorError, message
-
-def determineNewMessages(cl, nodeid, oldvalues):
-    ''' Figure a list of the messages that are being added to the given
-        node in this transaction.
-    '''
-    messages = []
-    if oldvalues is None:
-        # the action was a create, so use all the messages in the create
-        messages = cl.get(nodeid, 'messages')
-    elif oldvalues.has_key('messages'):
-        # the action was a set (so adding new messages to an existing issue)
-        m = {}
-        for msgid in oldvalues['messages']:
-            m[msgid] = 1
-        messages = []
-        # figure which of the messages now on the issue weren't there before
-        for msgid in cl.get(nodeid, 'messages'):
-            if not m.has_key(msgid):
-                messages.append(msgid)
-    return messages
-
 def updatenosy(db, cl, nodeid, newvalues):
     '''Update the nosy list for changes to the assignee
     '''
@@ -59,7 +17,8 @@ def updatenosy(db, cl, nodeid, newvalues):
             for value in nosy:
                 current_nosy.add(value)
 
-    # if the nosy list changed in this transaction, init from the new value
+    # if the nosy list changed in this transaction, init from the new
+    # value
     if newvalues.has_key('nosy'):
         nosy = newvalues.get('nosy', [])
         for value in nosy:
@@ -114,8 +73,17 @@ def updatenosy(db, cl, nodeid, newvalues):
         # that's it, save off the new nosy list
         newvalues['nosy'] = list(new_nosy)
 
+def addcreator(db, cl, nodeid, newvalues):
+    assert None == nodeid, "addcreator called for existing node"
+    nosy = newvalues.get('nosy', [])
+    if not db.getuid() in nosy:
+        nosy.append(db.getuid())
+        newvalues['nosy'] = nosy
+                         
+
 def init(db):
-    db.issue.react('create', nosyreaction)
-    db.issue.react('set', nosyreaction)
     db.issue.audit('create', updatenosy)
     db.issue.audit('set', updatenosy)
+
+    # Make sure creator of issue is added. Do this after 'updatenosy'. 
+    db.issue.audit('create', addcreator, priority=110)
