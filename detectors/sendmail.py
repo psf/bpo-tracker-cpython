@@ -82,15 +82,12 @@ def sendmail(db, cl, nodeid, oldvalues):
         for fid in added:
             url = db.config.TRACKER_WEB + "file%s/%s" % \
                   (fid, db.file.get(fid, "name"))
-            filemsg+="Added file: %s\n" % url
+            changenote+="\nAdded file: %s" % url
         for fid in removed:
             url = db.config.TRACKER_WEB + "file%s/%s" % \
                   (fid, db.file.get(fid, "name"))            
-            filemsg+="Removed file: %s" % url
+            changenote+="\nRemoved file: %s" % url
 
-        siglen = len(cl.email_signature(nodeid, None))
-        changenote = changenote[:-siglen] + filemsg + \
-                     changenote[-siglen:]
 
     authid = db.getuid()
 
