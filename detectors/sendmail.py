@@ -1,3 +1,5 @@
+from roundup import roundupdb
+
 def determineNewMessages(cl, nodeid, oldvalues):
     ''' Figure a list of the messages that are being added to the given
         node in this transaction.
@@ -66,8 +68,29 @@ def sendmail(db, cl, nodeid, oldvalues):
             sendto += db.config.detectors['TRIAGE_EMAIL'].split(",")
         except KeyError:
             pass
+        oldfiles = []
     else:
         changenote = cl.generateChangeNote(nodeid, oldvalues)
+        oldfiles = oldvalues.get('files', [])        
+
+    newfiles = db.issue.get(nodeid, 'files', [])
+    if oldfiles != newfiles:
+        added = [fid for fid in newfiles if fid not in oldfiles]
+        removed = [fid for fid in oldfiles if fid not in newfiles]
+        filemsg = ""
+
+        for fid in added:
+            url = db.config.TRACKER_WEB + "file%s/%s" % \
+                  (fid, db.file.get(fid, "name"))
+            filemsg+="Added file: %s\n" % url
+        for fid in removed:
+            url = db.config.TRACKER_WEB + "file%s/%s" % \
+                  (fid, db.file.get(fid, "name"))            
+            filemsg+="Removed file: %s" % url
+
+        siglen = len(cl.email_signature(nodeid, None))
+        changenote = changenote[:-siglen] + filemsg + \
+                     changenote[-siglen:]
 
     authid = db.getuid()
 
@@ -82,9 +105,88 @@ def sendmail(db, cl, nodeid, oldvalues):
         try:
             cl.send_message(nodeid, msgid, changenote, sendto,
                             authid=authid)
-            cl.nosymessage(nodeid, msgid, oldvalues)
+            nosymessage(db, nodeid, msgid, oldvalues, changenote)
         except roundupdb.MessageSendError, message:
             raise roundupdb.DetectorError, message
+
+def nosymessage(db, nodeid, msgid, oldvalues, note,
+                whichnosy='nosy',
+                from_address=None, cc=[], bcc=[]):
+    """Send a message to the members of an issue's nosy list.
+
+    The message is sent only to users on the nosy list who are not
+    already on the "recipients" list for the message.
+
+    These users are then added to the message's "recipients" list.
+
+    If 'msgid' is None, the message gets sent only to the nosy
+    list, and it's called a 'System Message'.
+
+    The "cc" argument indicates additional recipients to send the
+    message to that may not be specified in the message's recipients
+    list.
+
+    The "bcc" argument also indicates additional recipients to send the
+    message to that may not be specified in the message's recipients
+    list. These recipients will not be included in the To: or Cc:
+    address lists.
+    """
+    if msgid:
+        authid = db.msg.get(msgid, 'author')
+        recipients = db.msg.get(msgid, 'recipients', [])
+    else:
+        # "system message"
+        authid = None
+        recipients = []
+
+    sendto = []
+    bcc_sendto = []
+    seen_message = {}
+    for recipient in recipients:
+        seen_message[recipient] = 1
+
+    def add_recipient(userid, to):
+        # make sure they have an address
+        address = db.user.get(userid, 'address')
+        if address:
+            to.append(address)
+            recipients.append(userid)
+
+    def good_recipient(userid):
+        # Make sure we don't send mail to either the anonymous
+        # user or a user who has already seen the message.
+        return (userid and
+                (db.user.get(userid, 'username') != 'anonymous') and
+                not seen_message.has_key(userid))
+
+    # possibly send the message to the author, as long as they aren't
+    # anonymous
+    if (good_recipient(authid) and
+        (db.config.MESSAGES_TO_AUTHOR == 'yes' or
+         (db.config.MESSAGES_TO_AUTHOR == 'new' and not oldvalues))):
+        add_recipient(authid, sendto)
+
+    if authid:
+        seen_message[authid] = 1
+
+    # now deal with the nosy and cc people who weren't recipients.
+    for userid in cc + db.issue.get(nodeid, whichnosy):
+        if good_recipient(userid):
+            add_recipient(userid, sendto)
+
+    # now deal with bcc people.
+    for userid in bcc:
+        if good_recipient(userid):
+            add_recipient(userid, bcc_sendto)
+
+    # If we have new recipients, update the message's recipients
+    # and send the mail.
+    if sendto or bcc_sendto:
+        if msgid is not None:
+            db.msg.set(msgid, recipients=recipients)
+        db.issue.send_message(nodeid, msgid, note, sendto, from_address,
+                              bcc_sendto)
+
 
 def init(db):
     db.issue.react('set', sendmail)
