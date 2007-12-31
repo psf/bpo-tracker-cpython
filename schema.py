@@ -332,6 +332,14 @@ db.security.addPermissionToRole('Anonymous', 'Create', 'user')
 for cl in 'issue', 'severity', 'status', 'resolution':
     db.security.addPermissionToRole('Anonymous', 'View', cl)
 
+# Allow users to see the realname
+p = db.security.addPermission(name = 'View',
+                              description = 'View real name',
+                              klass = 'user',
+                              properties = ('realname',))
+db.security.addPermissionToRole('Anonymous', p)
+
+
 # [OPTIONAL]
 # Allow anonymous users access to create or edit "issue" items (and the
 # related file and message items)

@@ -231,8 +231,8 @@
   <tr>
    <th><a tal:attributes="href string:msg${msg/id}"
     i18n:translate="">msg<tal:x replace="msg/id" i18n:name="id" /> (view)</a></th>
-   <th i18n:translate="">Author: <tal:x replace="msg/author"
-       i18n:name="author" /></th>
+   <th i18n:translate="">Author: <tal:x replace="msg/author/realname"
+       i18n:name="author" /> (<tal:x replace="msg/author"/>)</th>
    <th i18n:translate="">Date: <tal:x replace="msg/date"
        i18n:name="date" /></th>
    <th>
