@@ -201,7 +201,7 @@
   <th i18n:translate="">Edit</th>
   <th i18n:translate="">Remove</th>
  </tr>
- <tr tal:repeat="file context/files">
+ <tr tal:repeat="file python:context.files.sorted('creation')">
   <td>
    <a tal:attributes="href file/download_url"
       tal:content="file/name">dld link</a>
