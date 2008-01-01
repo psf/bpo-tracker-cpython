@@ -100,6 +100,14 @@
   <td>&nbsp;</td>
 </tr>
 
+<tr tal:define="name string:nosy">
+  <th i18n:translate="">Nosy list member:</th>
+  <td metal:use-macro="search_input"></td>
+  <td metal:use-macro="column_input"></td>
+  <td metal:use-macro="sort_input"></td>
+  <td>&nbsp;</td>
+</tr>
+
 <tr tal:define="name string:type;
                 db_klass string:issue_type;
                 db_content string:name;">
