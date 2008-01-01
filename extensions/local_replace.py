@@ -4,6 +4,8 @@ substitutions = [ (re.compile('\#(?P<ws>\s*)(?P<id>\d+)'),
                    "<a href='issue\g<id>'>#\g<ws>\g<id></a>" ),
                   (re.compile('(?P<prews>\s+)revision(?P<ws>\s*)(?P<revision>\d+)'),
                    "\g<prews><a href='http://svn.python.org/view?rev=\g<revision>&view=rev'>revision\g<ws>\g<revision></a>"),
+                  (re.compile('(?P<prews>\s+)rev(?P<ws>\s*)(?P<revision>\d+)'),
+                   "\g<prews><a href='http://svn.python.org/view?rev=\g<revision>&view=rev'>rev\g<ws>\g<revision></a>"),
                   (re.compile('(?P<prews>\s+)(?P<revstr>r|r\s+)(?P<revision>\d+)'),
                    "\g<prews><a href='http://svn.python.org/view?rev=\g<revision>&view=rev'>\g<revstr>\g<revision></a>"),
                    ]
