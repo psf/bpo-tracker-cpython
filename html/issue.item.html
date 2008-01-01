@@ -165,7 +165,14 @@
 
 <tr tal:condition="context/is_edit_ok">
  <th><tal:block i18n:translate="">File</tal:block>:</th>
- <td colspan=3><input type="file" name="@file" size="40"></td>
+ <td colspan=3>
+   <input type="hidden" name="@link@files" value="file-1">
+   <input type="file" name="file-1@content" size="40">
+ </td>
+</tr>
+<tr tal:condition="context/is_edit_ok">
+ <th><tal:block i18n:translate="">File Description</tal:block>:</th>
+ <td colspan=3><input type="edit" name="file-1@description" size="40"></td>
 </tr>
 </table>
 </fieldset>
