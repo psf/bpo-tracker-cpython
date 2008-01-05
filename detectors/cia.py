@@ -34,9 +34,10 @@ TEMPLATE = """
 """
 
 
-def sendcia(db, cl, nodeid, newvalues):
-    messages = set(newvalues.get('messages',()))
-    messages -= set(cl.get(nodeid, 'messages'))
+def sendcia(db, cl, nodeid, oldvalues):
+    messages = set(cl.get(nodeid, 'messages'))
+    if oldvalues:
+        messages -= set(oldvalues.get('messages',()))
     if not messages:
         return
     messages = list(messages)
@@ -64,6 +65,6 @@ def sendcia(db, cl, nodeid, newvalues):
         pass
 
 def init(db):
-    db.issue.audit('create', sendcia)
-    db.issue.audit('set', sendcia)
+    db.issue.react('create', sendcia)
+    db.issue.react('set', sendcia)
 
