@@ -1,4 +1,7 @@
 # Reactor for sending changes to CIA.vc
+import xmlrpclib
+
+server = "http://CIA.vc"
 
 parameters = {
     'name':'Roundup Reactor for CIA',
@@ -38,7 +41,7 @@ def sendcia(db, cl, nodeid, newvalues):
         return
     messages = list(messages)
 
-    log = '[#%d] ' % nodeid
+    log = '[#%s] ' % nodeid
     for msg in messages:
         log += db.msg.get(msg, 'content')
     if len(log) > max_content:
@@ -51,7 +54,14 @@ def sendcia(db, cl, nodeid, newvalues):
 
     payload = TEMPLATE % params
 
-    open("/tmp/xxx", "w").write(payload)
+    try: 
+        rpc = xmlrpclib.ServerProxy(server)
+        rpc.hub.deliver(payload)
+    except:
+        # Ignore any errors in sending the CIA;
+        # if the server is down, that's just bad luck
+        # XXX might want to do some logging here
+        pass
 
 def init(db):
     db.issue.audit('create', sendcia)
