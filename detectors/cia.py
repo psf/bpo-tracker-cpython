@@ -46,7 +46,7 @@ def sendcia(db, cl, nodeid, oldvalues):
     for msg in messages:
         log += db.msg.get(msg, 'content')
     if len(log) > max_content:
-        log = log[:-4] + ' ...'
+        log = log[:max_content-4] + ' ...'
 
     params = parameters.copy()
     params['nodeid'] = nodeid
