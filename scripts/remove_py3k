@@ -8,7 +8,7 @@ tracker = roundup.instance.open('.')
 db = tracker.open('admin')
 
 py3k = db.keyword.lookup('py3k')
-py30 = db.version.lookup('Python 3.1')
+py30 = db.version.lookup('Python 3.0')
 
 using_py3k = db.issue.find(keywords={py3k:1})
 
