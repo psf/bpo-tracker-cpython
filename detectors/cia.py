@@ -44,7 +44,10 @@ def sendcia(db, cl, nodeid, oldvalues):
         return
     messages = list(messages)
 
-    oldstatus = oldvalues.get('status')
+    if oldvalues:
+        oldstatus = oldvalues['status']
+    else:
+        oldstatus = None
     newstatus = db.issue.get(nodeid, 'status')
     if oldstatus != newstatus:
         if oldvalues:
