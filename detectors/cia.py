@@ -52,7 +52,7 @@ def sendcia(db, cl, nodeid, oldvalues):
     log = log.replace('\n', ' ')
 
     params = parameters.copy()
-    params['files'] = db.msg.get(msg, 'title')
+    params['files'] = db.issue.get(nodeid, 'title')
     params['nodeid'] = nodeid
     params['author'] = db.user.get(db.getuid(), 'username')
     params['log'] = log
