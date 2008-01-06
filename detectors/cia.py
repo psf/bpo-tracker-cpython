@@ -7,7 +7,7 @@ parameters = {
     'name':'Roundup Reactor for CIA',
     'revision': "$Revision$"[11:-2],
     'project': 'python',
-    'module': 'Roundup',
+    'branch': 'Roundup',
     'urlprefix': 'http://bugs.python.org/issue',
 }
 
@@ -21,11 +21,13 @@ TEMPLATE = """
 </generator>
 <source>
   <project>%(project)s</project>
-  <module>%(module)s</module>
+  <module>%(nodeid)s</module>
+  <branch>%(branch)s</branch>
 </source>
 <body>
   <commit>
     <author>%(author)s</author>
+    <files>%(files)s</files>
     <log>%(log)s</log>
     <url>%(urlprefix)s%(nodeid)s</url>
   </commit>
@@ -42,13 +44,15 @@ def sendcia(db, cl, nodeid, oldvalues):
         return
     messages = list(messages)
 
-    log = '[#%s] ' % nodeid
+    log = ''
     for msg in messages:
         log += db.msg.get(msg, 'content')
     if len(log) > max_content:
         log = log[:max_content-4] + ' ...'
+    log = log.replace('\n', ' ')
 
     params = parameters.copy()
+    params['files'] = db.msg.get(msg, 'title')
     params['nodeid'] = nodeid
     params['author'] = db.user.get(db.getuid(), 'username')
     params['log'] = log
