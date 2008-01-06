@@ -1,0 +1,24 @@
+# This sample script changes all issues with the
+# py3k keyword to using the "Python 3.0" version instead.
+import sys
+sys.path.insert(1,'/home/roundup/roundup/lib/python2.4/site-packages')
+import roundup.instance
+
+tracker = roundup.instance.open('.')
+db = tracker.open('admin')
+
+py3k = db.keyword.lookup('py3k')
+py30 = db.version.lookup('Python 3.1')
+
+using_py3k = db.issue.find(keywords={py3k:1})
+
+for issue in using_py3k:
+    keywords = db.issue.get(issue, 'keywords')
+    keywords.remove(py3k)
+    versions = db.issue.get(issue, 'versions')
+    versions.append(py30)
+
+    # Use set_inner, so that auditors and reactors don't fire
+    db.issue.set_inner(issue, keywords=keywords, versions=versions)
+
+db.commit()
