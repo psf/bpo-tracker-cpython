@@ -21,13 +21,13 @@ TEMPLATE = """
 </generator>
 <source>
   <project>%(project)s</project>
-  <module>%(nodeid)s</module>
+  <module>#%(nodeid)s</module>
   <branch>%(branch)s</branch>
 </source>
 <body>
   <commit>
     <author>%(author)s</author>
-    <files>%(files)s</files>
+    <files><file>%(file)s</file></files>
     <log>%(log)s</log>
     <url>%(urlprefix)s%(nodeid)s</url>
   </commit>
@@ -44,7 +44,16 @@ def sendcia(db, cl, nodeid, oldvalues):
         return
     messages = list(messages)
 
-    log = ''
+    oldstatus = oldvalues.get('status')
+    newstatus = db.issue.get(nodeid, 'status')
+    if oldstatus != newstatus:
+        if oldvalues:
+            status = db.status.get(newstatus, 'name')
+        else:
+            status = 'new'
+        log = '[' + status + '] '
+    else:
+        log = ''
     for msg in messages:
         log += db.msg.get(msg, 'content')
     if len(log) > max_content:
@@ -52,14 +61,14 @@ def sendcia(db, cl, nodeid, oldvalues):
     log = log.replace('\n', ' ')
 
     params = parameters.copy()
-    params['files'] = db.issue.get(nodeid, 'title')
+    params['file'] = db.issue.get(nodeid, 'title')
     params['nodeid'] = nodeid
     params['author'] = db.user.get(db.getuid(), 'username')
     params['log'] = log
 
     payload = TEMPLATE % params
 
-    try: 
+    try:
         rpc = xmlrpclib.ServerProxy(server)
         rpc.hub.deliver(payload)
     except:
@@ -71,4 +80,3 @@ def sendcia(db, cl, nodeid, oldvalues):
 def init(db):
     db.issue.react('create', sendcia)
     db.issue.react('set', sendcia)
-
