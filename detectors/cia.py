@@ -1,13 +1,14 @@
 # Reactor for sending changes to CIA.vc
 import xmlrpclib
+import cgi
 
 server = "http://CIA.vc"
 
 parameters = {
     'name':'Roundup Reactor for CIA',
     'revision': "$Revision$"[11:-2],
-    'project': 'python',
-    'branch': 'Roundup',
+    'project': 'Python',
+    'branch': 'roundup',
     'urlprefix': 'http://bugs.python.org/issue',
 }
 
@@ -64,10 +65,10 @@ def sendcia(db, cl, nodeid, oldvalues):
     log = log.replace('\n', ' ')
 
     params = parameters.copy()
-    params['file'] = db.issue.get(nodeid, 'title')
+    params['file'] = cgi.escape(db.issue.get(nodeid, 'title'))
     params['nodeid'] = nodeid
     params['author'] = db.user.get(db.getuid(), 'username')
-    params['log'] = log
+    params['log'] = cgi.escape(log)
 
     payload = TEMPLATE % params
 
