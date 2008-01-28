@@ -190,6 +190,8 @@ status_notresolved string:-1,1,3;
    <li tal:condition="python:request.user.hasPermission('Edit',
  'keyword')"><a href="keyword" i18n:translate="">Edit Keywords</a>
    </li>
+   <li tal:condition="python:request.user.hasPermission('SB: May Classify',None)"><a href="msg?@sort=-spambayes_score">View Spam</a>
+   </li>
    </ul>
      </li>
      <li class="">
