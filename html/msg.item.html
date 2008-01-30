@@ -58,6 +58,16 @@
   <td tal:content="structure context/spambayes_misclassified/plain"></td>
  </tr>
 
+ <tr>
+  <th i18n:translate="">Messge-id</th>
+  <td tal:content="context/messageid"></td>
+ </tr>
+
+ <tr>
+  <th i18n:translate="">In-reply-to</th>
+  <td tal:content="context/inreplyto"></td>
+ </tr>
+
 </table>
 
 <p tal:condition="python:utils.sb_is_spam(context)" class="error-message">
