@@ -193,7 +193,7 @@
 </form>
 
 <p tal:condition="context/id" i18n:translate="">
- Created on <b><tal:x replace="context/creation" i18n:name="creation" /></b>
+ Created on <b><tal:x replace="python:context.creation.pretty('%Y-%m-%d %H:%M')" i18n:name="creation" /></b>
  by <b><tal:x replace="context/creator" i18n:name="creator" /></b>,
  last changed <b><tal:x replace="context/activity" i18n:name="activity" /></b>
  by <b><tal:x replace="context/actor" i18n:name="actor" /></b>.
@@ -215,7 +215,7 @@
   </td>
   <td>
    <span tal:content="file/creator">creator's name</span>,
-   <span tal:content="file/creation">creation date</span>
+   <span tal:content="python:file.creation.pretty('%Y-%m-%d %H:%M')">creation date</span>
   </td>
   <td tal:content="file/description" />
   <td><a tal:condition="file/is_edit_ok"
@@ -240,7 +240,7 @@
     i18n:translate="">msg<tal:x replace="msg/id" i18n:name="id" /> (view)</a></th>
    <th i18n:translate="">Author: <tal:x replace="msg/author/realname"
        i18n:name="author" /> (<tal:x replace="msg/author"/>)</th>
-   <th i18n:translate="">Date: <tal:x replace="msg/date"
+   <th i18n:translate="">Date: <tal:x replace="python:msg.date.pretty('%Y-%m-%d %H:%M')"
        i18n:name="date" /></th>
    <th>
     <form style="padding:0" tal:condition="msg/is_edit_ok"
