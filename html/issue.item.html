@@ -195,7 +195,7 @@
 <p tal:condition="context/id" i18n:translate="">
  Created on <b><tal:x replace="python:context.creation.pretty('%Y-%m-%d %H:%M')" i18n:name="creation" /></b>
  by <b><tal:x replace="context/creator" i18n:name="creator" /></b>,
- last changed <b><tal:x replace="context/activity" i18n:name="activity" /></b>
+ last changed <b><tal:x replace="python:context.activity.pretty('%Y-%m-%d %H:%M')" i18n:name="activity" /></b>
  by <b><tal:x replace="context/actor" i18n:name="actor" /></b>.
 </p>
 
