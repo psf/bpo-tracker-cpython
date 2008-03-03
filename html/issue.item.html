@@ -156,7 +156,7 @@
 
 </tr>
 <tr tal:condition="context/is_edit_ok">
- <th><tal:block i18n:translate="">Change Note</tal:block>:</th>
+ <th><tal:block i18n:translate="">Comment</tal:block>:</th>
  <td colspan="3">
   <textarea tal:content="request/form/@note/value | default"
             name="@note" wrap="hard" rows="5" cols="72"></textarea>
