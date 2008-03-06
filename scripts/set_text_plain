@@ -1,0 +1,17 @@
+# This sample script changes all files with the
+# extensions .diff/.patch/.py to the text/plain type
+import sys, posixpath
+sys.path.insert(1,'/home/roundup/roundup/lib/python2.4/site-packages')
+import roundup.instance
+
+tracker = roundup.instance.open('.')
+db = tracker.open('admin')
+
+tochange = []
+for fileid in db.file.getnodeids():
+    name = db.file.get(fileid, 'name')
+    if posixpath.splitext(name)[1] in ('.diff','.patch','.py'):
+        if db.file.get(fileid, 'type') != 'text/plain':
+            db.file.set_inner(fileid, type='text/plain')
+
+db.commit()
