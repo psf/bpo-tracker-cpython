@@ -20,7 +20,8 @@ issue_type.setkey('name')
 component = Class(db, 'component',
                   name=String(),
                   description=String(),
-                  order=Number())
+                  order=Number(),
+                  assign_to=Link('user'))
 component.setkey('name')
 
 # Version
