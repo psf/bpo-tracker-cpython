@@ -8,7 +8,7 @@ def summarygenerator(db, cl, nodeid, newvalues):
     if newvalues.has_key('summary') or not newvalues.has_key('content'):
         return
 
-    summary, content = parseContent(newvalues['content'], 1, 1)
+    summary, content = parseContent(newvalues['content'], config=db.config)
     newvalues['summary'] = summary
 
 
