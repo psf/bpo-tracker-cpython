@@ -55,16 +55,16 @@
    <span tal:replace="structure python:db.issue_type.classhelp('id,name,description',label='Type')" />:
  </th>
  <td tal:content="structure context/type/menu">type</td>
- <th i18n:translate="">
+ <!--th i18n:translate="">
    <span tal:replace="structure python:db.severity.classhelp('id,name,description',label='Severity')" />:
- </th>
+ </th-->
 <!-- Set severity to normal per default -->
-<td tal:condition="not: context/severity"
+<!--td tal:condition="not: context/severity"
      tal:content="structure
      python:context.severity.menu(value=db.severity.filter(filterspec={'name':'normal'})[0].id)">severity></td>
 
  <td tal:condition="context/severity"
-     tal:content="structure context/severity/menu">severity</td>
+     tal:content="structure context/severity/menu">severity</td-->
 
 </tr>
 
