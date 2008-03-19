@@ -206,7 +206,11 @@ for cl in ('file', 'msg'):
 
     db.security.addPermissionToRole('Anonymous', spamcheck)
 
-    
+def may_edit_file(db, userid, itemid):
+    return userid == db.file.get(itemid, "creator")
+p = db.security.addPermission(name='Edit', klass='file', check=may_edit_file,
+    description="User is allowed to remove their own files")
+db.security.addPermissionToRole('User', p)
 
 p = db.security.addPermission(name='Create', klass='issue',
                               properties=('title', 'type',
