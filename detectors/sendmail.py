@@ -100,7 +100,8 @@ def sendmail(db, cl, nodeid, oldvalues):
 
     for msgid in [msgid for msgid in new_messages if not is_spam(db, msgid)]:
         try:
-            cl.send_message(nodeid, msgid, changenote, sendto,
+            if sendto:
+                cl.send_message(nodeid, msgid, changenote, sendto,
                             authid=authid)
             nosymessage(db, nodeid, msgid, oldvalues, changenote)
         except roundupdb.MessageSendError, message:
