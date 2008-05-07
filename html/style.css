@@ -146,7 +146,7 @@ table.form {
   padding: 2px;
   border-spacing: 5px;
   border-collapse: collapse;
-/* background-color: #f5f5f5; */  
+/* background-color: #e0e0e0; */  
   margin: 5px;
 }
 
@@ -197,7 +197,7 @@ table.list {
 table.list th {
   padding: 0 4px 0 4px;
   color: #234764;
-  background-color: #f5f5f5;
+  background-color: #e0e0e0;
   border: 1px solid white;
   vertical-align: top;
   empty-cells: show;
@@ -207,8 +207,12 @@ table.list th a[href]:link { color: #404070 }
 table.list th a[href] { color: #404070 }
 table.list th.group 
 {
-  background-color: #f5f5f5;
+  background-color: #e0e0e0;
   text-align: center;
+}
+
+table.list tr.even td {
+  background-color: #f0f0f0;
 }
 
 table.list td {

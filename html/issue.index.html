@@ -49,7 +49,7 @@
    </th>
   </tr>
 
-  <tr>
+  <tr tal:attributes="class python:['even','odd'][repeat['i'].even()]">
    <td tal:condition="request/show/severity"
        tal:content="python:i.severity.plain() or default">&nbsp;</td>
    <td tal:condition="request/show/id" tal:content="i/id">&nbsp;</td>
