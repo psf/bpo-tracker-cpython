@@ -100,7 +100,7 @@
  </th>
  <td>
   <span tal:replace="structure python:context.dependencies.field(showid=1,size=20)" />
-  <span tal:condition="context/dependencies" tal:repeat="d context/dependencies">
+  <span tal:condition="context/dependencies" tal:repeat="d python:context.dependencies.sorted('creation')">
    <br/>View: <a tal:attributes="href string:issue${d/id}" tal:content="d/id"></a>
   </span>
  </td>
