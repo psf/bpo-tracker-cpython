@@ -4,6 +4,7 @@ import cgi
 
 server = "http://CIA.vc"
 
+# CHANGE THESE WHEN INTEGRATION THIS INTO YOUR TRACKER!!!!
 parameters = {
     'name':'Roundup Reactor for CIA',
     'revision': "$Revision$"[11:-2],
