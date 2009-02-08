@@ -836,6 +836,7 @@ if durations:
     if options.debug:
         print >>bugfile, 'Min duration:', durations[-1], '; max', durations[0]
     averageDuration = sum(durations)/len(durations)
+    durations.sort()
     medianDuration = durations[len(durations)/2]
 else:
     averageDuration = "N/A"
