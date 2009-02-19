@@ -21,7 +21,7 @@
 tal:define="
 kw_create python:request.user.hasPermission('Create', 'keyword');
 columns string:id,activity,title,creator,status;
-columns_showall string:id,activity,title,creator,assignee,status;
+columns_showall string:id,activity,title,creator,assignee,status,type;
 status_notresolved string:-1,1,3;
 ">
   <!--  Logo  -->
