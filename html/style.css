@@ -465,3 +465,16 @@ textarea:focus, select:focus {
    font-size: 110%;
    color: red;
 }
+
+
+.open {
+
+}
+
+.pending {
+
+}
+
+.closed {
+text-decoration: line-through !important;
+}

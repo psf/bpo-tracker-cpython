@@ -89,12 +89,12 @@
  <th>
   <tal:block i18n:translate="">Dependencies</tal:block>:
   <span tal:condition="context/dependencies/is_edit_ok"
-        tal:replace="structure python:db.issue.classhelp('id,title', filter='status=0,1', property='dependencies')" />
+        tal:replace="structure python:db.issue.classhelp('id,title,status', filter='status=0,1', property='dependencies')" />
  </th>
  <td>
   <span tal:replace="structure python:context.dependencies.field(showid=1,size=20)" />
   <span tal:condition="context/dependencies" tal:repeat="d python:context.dependencies.sorted('creation')">
-   <br/>View: <a tal:attributes="href string:issue${d/id}" tal:content="d/id"></a>
+   <br/>View: <a tal:attributes="href string:issue${d/id}; class string:${d/status}" tal:content="d/id"></a>
   </span>
  </td>
  <th i18n:translate="">
