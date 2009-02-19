@@ -57,6 +57,19 @@
   <td metal:use-macro="sort_input"></td>
   <td>&nbsp;</td>
 </tr>
+<tr tal:define="name string:stage;
+    db_klass string:stage;
+    db_content string:name;">
+    <th i18n:translate="">Stage:</th>
+    <td metal:use-macro="search_select_translated">
+        <option metal:fill-slot="extra_options" value="-1" i18n:translate=""
+            tal:attributes="selected python:value == '-1'">not selected</option>
+    </td>
+    <td metal:use-macro="column_input"></td>
+    <td metal:use-macro="sort_input"></td>
+    <td metal:use-macro="group_input"></td>
+    <td>&nbsp;</td>
+</tr>
 
 <tr tal:define="name string:creation">
   <th i18n:translate="">Creation Date:</th>
