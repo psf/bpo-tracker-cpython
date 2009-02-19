@@ -2,8 +2,6 @@
 import xmlrpclib
 import cgi
 
-server = "http://CIA.vc"
-
 # CHANGE THESE WHEN INTEGRATING THIS INTO YOUR TRACKER!!!!
 parameters = {
     'name':'Roundup Reactor for CIA',
@@ -39,6 +37,12 @@ TEMPLATE = """
 
 
 def sendcia(db, cl, nodeid, oldvalues):
+    try:
+        server = db.config.detectors["CIAVC_SERVER"]
+        if not server:
+            return
+    except KeyError:
+        return
     messages = set(cl.get(nodeid, 'messages'))
     if oldvalues:
         messages -= set(oldvalues.get('messages',()))
