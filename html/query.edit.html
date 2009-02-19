@@ -102,7 +102,13 @@ function retire(qid) {
 </td></tr>
 
 </table>
-
+</form>
+<form method="GET" action="issue">
+   <input type="hidden" name="@template" value="search">
+   <input type="hidden" name="status" value="1">
+   <input type="hidden" name="@ok_message" value="Select your Query parameters and click 'Search' to save.">
+New Query Name: <input type="text" name="@queryname">
+    <input type="submit" value="Add" i18n:attributes="value">
 </form>
 </td>
 </tal:block>
