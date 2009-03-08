@@ -31,6 +31,7 @@
    <th tal:condition="request/show/title" i18n:translate="">Title</th>
    <th tal:condition="request/show/components"  i18n:translate="">Components</th>
    <th tal:condition="request/show/versions" i18n:translate="">Versions</th>
+   <th tal:condition="request/show/stage" i18n:translate="">Stage</th>
    <th tal:condition="request/show/status"    i18n:translate="">Status</th>
    <th tal:condition="request/show/resolution" i18n:translate="">Resolution</th>
    <th tal:condition="request/show/creator" i18n:translate="">Creator</th>
@@ -68,6 +69,8 @@
        tal:content="python:i.components.plain() or default">&nbsp;</td>
    <td tal:condition="request/show/versions"
        tal:content="python:i.versions.plain() or default">&nbsp;</td>
+   <td tal:condition="request/show/stage"
+       tal:content="python:i.stage.plain() or default">&nbsp;</td>
    <td tal:condition="request/show/status"
        tal:content="python:i.status.plain() or default">&nbsp;</td>
    <td tal:condition="request/show/resolution"
