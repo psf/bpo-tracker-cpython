@@ -133,7 +133,9 @@ issue = IssueClass(db, "issue",
                    resolution=Link('resolution'),
                    superseder=Link('issue'),
                    keywords=Multilink("keyword"),
-                   stage=Link('stage'))
+                   stage=Link('stage'),
+                   nosy_count=Number(),
+                   message_count=Number())
 
 #
 # TRACKER SECURITY SETTINGS

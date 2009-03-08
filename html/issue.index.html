@@ -38,6 +38,7 @@
    <th tal:condition="request/show/keywords" i18n:translate="">Keywords</th>
    <th tal:condition="request/show/dependencies" i18n:translate="">Depends On</th>
    <th tal:condition="request/show/type" i18n:translate="">Type</th>
+   <th tal:condition="request/show/message_count" i18n:translate="">Msgs</th>
   </tr>
  <tal:block tal:repeat="i batch" condition=true>
   <tr tal:define="group python:[r[1] for r in request.group]"
@@ -81,6 +82,8 @@
        tal:content="python:i.dependencies.plain() or default">&nbsp;</td>
    <td tal:condition="request/show/type"
        tal:content="python:i.type.plain() or default">&nbsp;</td>
+   <td tal:condition="request/show/message_count"
+       tal:content="python:int(i.message_count or 0)">&nbsp;</td>
   </tr>
 
  </tal:block>

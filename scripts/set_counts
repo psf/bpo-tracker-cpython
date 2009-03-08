@@ -1,0 +1,3 @@
+-- cannot use roundup API, since that would set _activity on all issues
+update _issue set _message_count = (select count(*) from issue_messages where nodeid=id);
+update _issue set _nosy_count = (select count(*) from issue_nosy where nodeid=id);
