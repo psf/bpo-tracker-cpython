@@ -236,6 +236,15 @@ p = db.security.addPermission(name='Edit', klass='issue',
                               description='User can report and discuss issues')
 db.security.addPermissionToRole('User', p)
 
+# Allow users to close issues they created
+def close_own_issue(db, userid, itemid):
+    return userid == db.issue.get(itemid, 'creator')
+p = db.security.addPermission(name='Edit', klass='issue',
+                              properties=('status',),
+                              description='User can close issues he created',
+                              check=close_own_issue)
+db.security.addPermissionToRole('User', p)
+
 db.security.addPermissionToRole('User', 'SB: May Report Misclassified')
 
 

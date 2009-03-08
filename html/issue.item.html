@@ -117,7 +117,7 @@
  </tr>
  <tr>
  <th><tal:block i18n:translate="">Assigned To</tal:block>:</th>
- <td tal:condition="context/status/is_edit_ok">
+ <td tal:condition="context/assignee/is_edit_ok">
   <select name="assignee">
    <option value="-1">nobody</option>
    <tal:block tal:repeat="userdata python:db._db.user.filter_sql('select id,_username from _user where _roles like \'%Developer%\' order by _username')">
