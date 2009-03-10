@@ -73,6 +73,10 @@ def sendmail(db, cl, nodeid, oldvalues):
         changenote = cl.generateChangeNote(nodeid, oldvalues)
         oldfiles = oldvalues.get('files', [])        
 
+    # Silence nosy_count/message_count
+    lines = changenote.splitlines()
+    changenote = '\n'.join(line for line in lines if '_count' not in line)
+
     newfiles = db.issue.get(nodeid, 'files', [])
     if oldfiles != newfiles:
         added = [fid for fid in newfiles if fid not in oldfiles]

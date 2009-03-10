@@ -218,8 +218,9 @@ status_notresolved string:-1,1,3;
  <p tal:condition="options/error_message | nothing" class="error-message"
     tal:repeat="m options/error_message" tal:content="structure m" />
  <p tal:condition="options/ok_message | nothing" class="ok-message">
-  <span tal:repeat="m options/ok_message"
-        tal:content="structure string:$m <br/ > " />
+  <span tal:content="structure python:
+        '<br/ >'.join(m.replace('nosy_count', '').replace('message_count', '')
+        for m in options['ok_message']) + '<br/ >'" />
   <a class="form-small" tal:attributes="href request/current_url"
      i18n:translate="">clear this message</a>
  </p>

@@ -18,12 +18,20 @@ def localReplace(message):
         message = cre.sub(replacement, message)
 
     return message
-        
-    
-    
+
+noise_change = re.compile('(nosy_count|message_count)\: \d+\.0 -> \d+\.0')
+noise_init = re.compile('(nosy_count|message_count)\: \d+\.0')
+br = re.compile('<td><br />')
+
+def clean_count(history):
+    history = noise_change.sub('', history)
+    history = noise_init.sub('', history)
+    history = br.sub('<td>', history)
+    return history
+
 def init(instance):
     instance.registerUtil('localReplace', localReplace)
-    
+    instance.registerUtil('clean_count', clean_count)
 
 if "__main__" == __name__:
     print " revision 222", localReplace(" revision 222")
@@ -31,4 +39,4 @@ if "__main__" == __name__:
     print " r222", localReplace(" r222")
     print " r 222", localReplace(" r 222")
     print " #555", localReplace(" #555")
-    
+

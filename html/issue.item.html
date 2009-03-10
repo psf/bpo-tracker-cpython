@@ -257,7 +257,8 @@
  </tal:block>
 </table>
 
-<tal:block tal:condition="context/id" tal:replace="structure context/history" />
+<tal:block tal:condition="context/id" tal:define="history /context/history"
+           tal:content="structure python:utils.clean_count(history)" />
 
 </div>
 
