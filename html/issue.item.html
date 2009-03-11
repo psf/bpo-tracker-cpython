@@ -227,7 +227,7 @@
 
 <table class="messages" tal:condition="context/messages">
  <tr><th colspan="4" class="header" i18n:translate="">Messages</th></tr>
- <tal:block tal:repeat="msg context/messages">
+ <tal:block tal:repeat="msg python:context.messages.sorted('creation')">
   <tr>
    <th><a tal:attributes="href string:msg${msg/id}"
     i18n:translate="">msg<tal:x replace="msg/id" i18n:name="id" /> (view)</a></th>
