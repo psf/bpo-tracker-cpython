@@ -135,7 +135,8 @@
         tal:replace="structure python:db.user.classhelp('username,realname,address', property='nosy')" />
  </th>
  <td>
-  <span tal:replace="structure context/nosy/field" />
+     <span tal:replace="structure context/nosy/field" />
+     <span tal:replace="python: '(%d)' % context.nosy_count" />
  </td>
 </tr>
 <tr>
@@ -226,7 +227,9 @@
 </table>
 
 <table class="messages" tal:condition="context/messages">
- <tr><th colspan="4" class="header" i18n:translate="">Messages</th></tr>
+ <tr><th colspan="4" class="header"
+         tal:content="python:'Messages (%d)' % context.message_count"
+         >Messages</th></tr>
  <tal:block tal:repeat="msg python:context.messages.sorted('creation')">
   <tr>
    <th><a tal:attributes="href string:msg${msg/id}"

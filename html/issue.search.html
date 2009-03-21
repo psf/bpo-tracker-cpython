@@ -251,6 +251,21 @@
   <td metal:use-macro="sort_input"></td>
   <td metal:use-macro="group_input"></td>
 </tr>
+<tr tal:define="name string:nosy_count">
+    <th i18n:translate="">Nosy count:</th>
+    <td metal:use-macro="search_input"></td>
+    <td metal:use-macro="column_input"></td>
+    <td metal:use-macro="sort_input"></td>
+    <td metal:use-macro="group_input"></td>
+</tr>
+
+<tr tal:define="name string:message_count">
+    <th i18n:translate="">Message count:</th>
+    <td metal:use-macro="search_input"></td>
+    <td metal:use-macro="column_input"></td>
+    <td metal:use-macro="sort_input"></td>
+    <td metal:use-macro="group_input"></td>
+</tr>
 
 <tr>
  <th i18n:translate="">No Sort or group:</th>
