@@ -136,7 +136,7 @@
  </th>
  <td>
      <span tal:replace="structure context/nosy/field" />
-     <span tal:replace="python: '(%d)' % context.nosy_count" />
+     <span tal:condition="context/nosy_count" tal:replace="python: '(%d)' % context.nosy_count" />
  </td>
 </tr>
 <tr>
