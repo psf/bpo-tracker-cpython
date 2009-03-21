@@ -1,6 +1,6 @@
 <tal:block metal:define-macro="icing">
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title metal:define-slot="head_title">title goes here</title>
 <link rel="shortcut icon" href="@@file/favicon.ico" />
@@ -23,6 +23,7 @@ kw_create python:request.user.hasPermission('Create', 'keyword');
 columns string:id,activity,title,creator,status;
 columns_showall string:id,activity,title,creator,assignee,status,type;
 status_notresolved string:-1,1,3;
+status_all string:-1,1,2,3;
 ">
   <!--  Logo  -->
   <h1 id="logoheader">
@@ -42,10 +43,23 @@ status_notresolved string:-1,1,3;
        <input type="hidden" name="@group" value="priority" />
        <input type="hidden" name="@filter" value="status"/>
        <input type="hidden" name="@action" value="searchid"/>
-       <input type="hidden" name="status" tal:attributes="value status_notresolved"/>
        <input class="input-text" id="search-text" name="@search_text" size="10" />
-<input type="submit" id="submit" value="search in open issues" name="submit"
-       class="input-button"/>
+       <tal:block tal:condition="python:request.user.username=='anonymous'">
+         <input type="hidden" name="status" tal:attributes="value status_notresolved"/>
+         <input type="submit" id="submit" value="search in open issues" name="submit"
+                class="input-button"/>
+       </tal:block>
+       <tal:block tal:condition="python:request.user.username!='anonymous'">
+         <input type="submit" id="submit" value="search" name="submit"
+                class="input-button"/>
+         <input type="radio" name="status" tal:attributes="value status_notresolved;
+                checked string:checked;
+                id string:status_notresolved"/>
+         <label for="status_notresolved">open</label>
+         <input type="radio" name="status" tal:attributes="value status_all;
+                id string:status_all"/>
+         <label for="status_all">all</label>
+       </tal:block>
       </div>
      </form>
 </div>
