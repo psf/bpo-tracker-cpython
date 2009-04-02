@@ -1,0 +1,80 @@
+#!/usr/bin/python
+# Make sure you are using the python that has the roundup runtime used by the
+# tracker. Requires Python 2.3 or later.
+#
+# Based on roundup-summary script to create a tracker summary by
+# Richard Jones and Paul Dubois
+#
+# Changed into close-pending script by Sean Reifschneider, 2009.
+
+import sys, math
+
+# kludge
+sys.path.insert(1,'/home/roundup/roundup/lib/python2.4/site-packages')
+#
+import roundup
+import roundup.date, roundup.instance
+import optparse , datetime
+import cStringIO, MimeWriter, smtplib
+from roundup.mailer import SMTPConnection
+
+### CONFIGURATION
+# Roundup date range, pending issues that don't have activity in this
+# date range will be set to "closed" status.
+expireDates = ';-2w'
+
+##### END CONFIGURATION
+
+usage = """%prog trackerHome
+                             [--expire-dates 'date1;date2']
+                        # for maintainers
+                             [--DEBUG]
+         dates is a roundup date range such as:
+            '-1w;' -- newer than a week
+
+         Be sure to protect commas and semicolons from the shell with quotes!
+         Execute %prog --help for detailed help
+"""
+#### Options
+parser = optparse.OptionParser(usage=usage)
+parser.add_option('-e','--expire-dates', dest='expire_dates',
+   default=expireDates, metavar="'expire_dates;'",
+   help="""Specification for range of dates, such as: \
+';-1w'    -- Older than 1 week;
+';-1y'    -- Older than 1 year""")
+
+#### Get the command line args:
+(options, args) = parser.parse_args()
+
+if len(args) != 1:
+    parser.error("""Incorrect number of arguments;
+                    you must supply a tracker home.""")
+instanceHome = args[0]
+
+instance = roundup.instance.open(instanceHome)
+db = instance.open('admin')
+
+pendingID = db.status.lookup('pending')
+expireIdList = db.issue.filter(None,
+        { 'activity' : options.expire_dates, 'status' : pendingID })
+
+messageBody = (
+'This issue is being automatically closed due to inactivity while it is in '
+'the pending state.  If you are able to provide further information to help '
+'move this along, please update the ticket (which will re-open it).')
+
+closedID = db.status.lookup('closed')
+for issueID in expireIdList:
+    #print 'Closing issue "%s" with activity "%s"' % ( issueID,
+    #        db.issue.get(issueID, 'activity'))
+
+    messages = db.issue.get(issueID, 'messages')
+    msgID = db.msg.create(author = db.getuid(),
+            summary = 'Automatically closing pending issue',
+            content = messageBody)
+    messages.append(msgID)
+
+    db.issue.set(issueID, status = closedID, messages = messages)
+
+db.commit()
+sys.exit(0)
