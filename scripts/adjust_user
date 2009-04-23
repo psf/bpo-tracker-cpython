@@ -1,0 +1,45 @@
+# This script changes all references to one user to point to a
+# different. Useful if the user has several accounts which he 
+# doesn't need anymore.
+
+import sys
+sys.path.insert(1,'/home/roundup/roundup/lib/python2.4/site-packages')
+import roundup.instance
+from roundup.hyperdb import Link, Multilink
+
+if len(sys.argv) != 3:
+    print "Usage: adjust_user old new"
+    raise SystemExit
+old, new = sys.argv[1:]
+
+tracker = roundup.instance.open('.')
+db = tracker.open('admin')
+
+old = db.user.lookup(old)
+new = db.user.lookup(new)
+
+references = [] # class, prop
+for klass in db.getclasses():
+    klass = db.getclass(klass)
+    klass.disableJournalling()
+    for name, typ in klass.getprops().items():
+        if isinstance(typ, (Link, Multilink)) and typ.classname=='user':
+            references.append((klass, name))
+for klass, name in references:
+    for id in klass.find(**{name:old}):
+        v = klass.get(id, name)
+        if isinstance(v, list):
+            # Multilink
+            for i in range(len(v)):
+                if v[i] == old:
+                    v[i] = new
+            # col:(add, remove)
+            multilink_changes = {name:([new],[old])}
+        else:
+            # Link
+            v = new
+            multilink_changes = {}
+        db.setnode(klass.classname, id, {name: v}, multilink_changes)
+db.user.enableJournalling()
+db.user.retire(old)
+db.commit()
