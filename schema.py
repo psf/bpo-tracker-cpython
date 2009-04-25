@@ -21,7 +21,8 @@ component = Class(db, 'component',
                   name=String(),
                   description=String(),
                   order=Number(),
-                  assign_to=Link('user'))
+                  assign_to=Link('user'),
+                  add_as_nosy=Multilink('user'))
 component.setkey('name')
 
 # Version
