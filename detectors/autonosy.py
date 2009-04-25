@@ -18,8 +18,9 @@ def autonosy(db, cl, nodeid, newvalues):
         new_nosy = [value for value in new_nosy if db.hasnode('user', value)]
         nosy |= set(new_nosy)
     else:
-        old_nosy = db.issue.get(nodeid, 'nosy')
-        nosy |= set(old_nosy)
+        if nodeid:
+            old_nosy = db.issue.get(nodeid, 'nosy')
+            nosy |= set(old_nosy)
 
     for component in components:
         users = db.component.get(component, 'add_as_nosy')
