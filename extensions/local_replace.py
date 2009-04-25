@@ -8,8 +8,8 @@ substitutions = [ (re.compile('\#(?P<ws>\s*)(?P<id>\d+)'),
                    "\g<prews><a href='http://svn.python.org/view?rev=\g<revision>&view=rev'>rev\g<ws>\g<revision></a>"),
                   (re.compile('(?P<prews>\s+)(?P<revstr>r|r\s+)(?P<revision>\d+)'),
                    "\g<prews><a href='http://svn.python.org/view?rev=\g<revision>&view=rev'>\g<revstr>\g<revision></a>"),
-                  (re.compile('(?P<prews>\s+)(?P<path>(Demo|Doc|Grammar|Include|Lib|Mac|Misc|Modules|Parser|PC|PCbuild|Python|RISCOS|Tools)/[-.a-zA-Z0-9]+[a-zA-Z0-9])'),
-                   "\g<prews><a href='http://svn.python.org/view/python/trunk/\g<path>'>\g<path></a>"),
+                  (re.compile(r'\b(?P<path>(?:Demo|Doc|Grammar|Include|Lib|Mac|Misc|Modules|Parser|PC|PCbuild|Python|RISCOS|Tools|Objects)/[-.a-zA-Z0-9_/]+[a-zA-Z0-9]/?)'),
+                   '<a href="http://svn.python.org/view/python/trunk/\g<path>">\g<path></a>'),
                    ]
 
 def localReplace(message):
