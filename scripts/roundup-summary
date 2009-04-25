@@ -33,7 +33,7 @@ discussionMax = 10
 discussionThreshold = 3 
 
 # Date format per time.strftime
-dateFormat="%x"   #locale-appropriate
+dateFormat="%F"   # ISO 8601: yyyy-mm-dd
 
 ##### END CONFIGURATION; ALSO SEE CUSTOMIZATION BELOW
 
