@@ -1,11 +1,10 @@
-import sets
 from roundup import roundupdb, hyperdb
 
 def updatenosy(db, cl, nodeid, newvalues):
     '''Update the nosy list for changes to the assignee
     '''
     # nodeid will be None if this is a new node
-    current_nosy = sets.Set()
+    current_nosy = set()
     if nodeid is None:
         ok = ('new', 'yes')
     else:
@@ -26,7 +25,7 @@ def updatenosy(db, cl, nodeid, newvalues):
                 continue
             current_nosy.add(value)
 
-    new_nosy = sets.Set(current_nosy)
+    new_nosy = set(current_nosy)
 
     # add assignee(s) to the nosy list
     if newvalues.has_key('assignee') and newvalues['assignee'] is not None:
