@@ -17,7 +17,12 @@ def block_resolution(db, cl, nodeid, newvalues):
         dependencies = cl.get(nodeid, 'dependencies')
     dependencies = newvalues.get('dependencies', dependencies)
 
-    # don't do anything if there's no blockers or the status hasn't
+    # Check which dependencies are still open
+    closed = db.status.lookup('closed')
+    dep = [nid for nid in dependencies if cl.get(nid,'status') != closed]
+    dependencies = dep
+
+    # don't do anything if there's no open blockers or the status hasn't
     # changed
     if not dependencies or not newvalues.has_key('status'):
         return
@@ -31,7 +36,7 @@ def block_resolution(db, cl, nodeid, newvalues):
         s = 'issues %s are'%s
 
     # ok, see if we're trying to resolve
-    if newvalues.get('status') and newvalues['status'] == db.status.lookup('closed'):
+    if newvalues.get('status') and newvalues['status'] == closed:
         raise ValueError, "This issue can't be closed until %s closed."%s
 
 
@@ -88,7 +93,7 @@ def init(db):
     # fire before changes are made
     db.issue.audit('create', init_status)
 #    db.issue.audit('create', block_resolution)
-#    db.issue.audit('set', block_resolution)
+    db.issue.audit('set', block_resolution)
 #    db.issue.audit('set', resolve)
 
     # adjust after changes are committed
