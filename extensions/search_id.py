@@ -10,6 +10,9 @@ class SearchIDAction(Action):
             if id.isdigit():
                 if self.db.hasnode('issue', id):
                     raise exceptions.Redirect('issue'+id)
+        if len(split) > 50:
+            # Postgres crashes on log queries
+            raise exceptions.FormError("too many search terms")
 
 def init(instance):
     instance.registerAction('searchid', SearchIDAction)
