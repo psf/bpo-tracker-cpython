@@ -107,6 +107,15 @@ define="edit_ok context/is_edit_ok"
   </td>
  </tr>
 
+ <tr>
+   <th>Contributor Form Received</th>
+   <td><span tal:replace="structure context/contrib_form/field"/>
+   <tal:if condition="context/contrib_form">
+   on: <span tal:replace="structure context/contrib_form_date/field"/>
+   </tal:if>
+   </td>
+</tr>
+
  <tr tal:define="name string:address; label string:E-mail address; value context/address">
   <th metal:use-macro="th_label">E-mail address</th>
   <td tal:define="mailto python:context.address.field(id='address');

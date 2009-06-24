@@ -93,7 +93,9 @@ user = Class(db, "user",
              alternate_addresses=String(),
              queries=Multilink('query'),
              roles=String(),     # comma-separated string of Role names
-             timezone=String())
+             timezone=String(),
+             contrib_form=Boolean(),
+             contrib_form_date=Date())
 user.setkey("username")
 
 # FileClass automatically gets this property in addition to the Class ones:
@@ -302,7 +304,7 @@ p = db.security.addPermission(name='Edit', klass='user', check=own_record,
                 'phone', 'organisation',
                 'alternate_addresses',
                 'queries',
-                'timezone')) # Note: 'roles' excluded - users should not be able to edit their own roles. 
+                'timezone')) # Note: 'roles' excluded - users should not be able to edit their own roles. Also excluded: contrib_form, contrib_form_date
 for r in 'User', 'Developer':
     db.security.addPermissionToRole(r, p)
 
