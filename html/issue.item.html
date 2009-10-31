@@ -144,7 +144,7 @@
    <span tal:replace="structure python:db.priority.classhelp('id,name,description',label='Priority')" />:
  </th>
  <td tal:content="structure context/priority/menu">priority</td>
- <th i18n:translate="">Keywords:</th>
+ <th tal:content="structure python:db.keyword.classhelp('id,name,description',label='Keywords')" />
  <td tal:content="structure python:context['keywords'].menu(height=5)">keywords</td>
 
 
