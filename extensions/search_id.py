@@ -4,6 +4,8 @@ from roundup.cgi import exceptions
 class SearchIDAction(Action):
     def handle(self):
         request = self.context['request']
+        if not request.search_text:
+            raise exceptions.FormError("Missing search text")
         split = request.search_text.split()
         if len(split) == 1:
             id = split[0]
