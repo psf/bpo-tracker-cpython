@@ -1,15 +1,15 @@
 import re
 
-substitutions = [ (re.compile('\#(?P<ws>\s*)(?P<id>\d+)'),
-                   "<a href='issue\g<id>'>#\g<ws>\g<id></a>" ),
-                  (re.compile('(?P<prews>\s+)revision(?P<ws>\s*)(?P<revision>\d+)'),
-                   "\g<prews><a href='http://svn.python.org/view?rev=\g<revision>&view=rev'>revision\g<ws>\g<revision></a>"),
-                  (re.compile('(?P<prews>\s+)rev(?P<ws>\s*)(?P<revision>\d+)'),
-                   "\g<prews><a href='http://svn.python.org/view?rev=\g<revision>&view=rev'>rev\g<ws>\g<revision></a>"),
-                  (re.compile('(?P<prews>\s+)(?P<revstr>r|r\s+)(?P<revision>\d+)'),
-                   "\g<prews><a href='http://svn.python.org/view?rev=\g<revision>&view=rev'>\g<revstr>\g<revision></a>"),
+substitutions = [ (re.compile(r'\#(?P<ws>\s*)(?P<id>\d+)'),
+                   r"<a href='issue\g<id>'>#\g<ws>\g<id></a>" ),
+                  (re.compile(r'\brevision(?P<ws>\s*)(?P<revision>\d+)'),
+                   r"<a href='http://svn.python.org/view?rev=\g<revision>&view=rev'>revision\g<ws>\g<revision></a>"),
+                  (re.compile(r'\brev(?P<ws>\s*)(?P<revision>\d+)'),
+                   r"<a href='http://svn.python.org/view?rev=\g<revision>&view=rev'>rev\g<ws>\g<revision></a>"),
+                  (re.compile(r'\b(?P<revstr>r|r\s+)(?P<revision>\d+)'),
+                   r"<a href='http://svn.python.org/view?rev=\g<revision>&view=rev'>\g<revstr>\g<revision></a>"),
                   (re.compile(r'\b(?P<path>(?:Demo|Doc|Grammar|Include|Lib|Mac|Misc|Modules|Parser|PC|PCbuild|Python|RISCOS|Tools|Objects)/[-.a-zA-Z0-9_/]+[a-zA-Z0-9]/?)'),
-                   '<a href="http://svn.python.org/view/python/trunk/\g<path>">\g<path></a>'),
+                   r'<a href="http://svn.python.org/view/python/trunk/\g<path>">\g<path></a>'),
                    ]
 
 def localReplace(message):
