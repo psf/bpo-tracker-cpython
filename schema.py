@@ -277,6 +277,7 @@ for cl in ('issue_type', 'severity', 'component',
     db.security.addPermissionToRole('Coordinator', 'View', cl)
     db.security.addPermissionToRole('Coordinator', 'Edit', cl)
     db.security.addPermissionToRole('Coordinator', 'Create', cl)
+    db.security.addPermissionToRole('Coordinator', 'Retire', cl)
 
 db.security.addPermissionToRole('Coordinator', 'SB: May Classify')
 
