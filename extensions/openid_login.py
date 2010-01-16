@@ -230,7 +230,7 @@ class OpenidDelete(Action):
 
 class OpenidRegister(RegisterAction):
     def handle(self):
-        query = collections.defaultdict(list)
+        query = {}
         if 'openid.identity' not in self.form:
             raise ValueError, "OpenID fields missing"
         try:
@@ -242,7 +242,11 @@ class OpenidRegister(RegisterAction):
         # re-authenticate fields
         for key in self.form:
             if key.startswith("openid"):
-                query[key].append(self.form[key].value)
+                value = self.form[key].value
+                try:
+                    query[key].append(value)
+                except KeyError:
+                    query[key] = [value]
         try:
             signed = openid.authenticate(session, query)        
         except Exception, e:
