@@ -133,8 +133,11 @@ status_all string:-1,1,2,3;
       <form method="post" action="#">
        <ul class="level-three">
       <li>
-       <tal:span i18n:translate="">Login</tal:span><br/>
-       <input size="10" name="__login_name"/><br/>
+       <tal:span i18n:translate="">Login</tal:span>(OpenID possible)<br/>
+       <a style="display:inline;width:0;margin:0" tal:repeat="prov python:utils.openid_links(request)" tal:attributes="href prov/href">
+        <img hspace="0" vspace="0" width="16" height="16" tal:attributes="src prov/src;title prov/title"/>
+       </a>
+       <input size="10" name="openid_identifier"/><br/>
        <input size="10" type="password" name="__login_password"/><br/>
        <input type="hidden" name="@action" value="Login"/>
        <input type="checkbox" name="remember" id="remember"/>

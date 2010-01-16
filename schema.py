@@ -1,4 +1,3 @@
-
 #
 # TRACKER SCHEMA
 #
@@ -72,7 +71,6 @@ keyword = Class(db, "keyword",
                 name=String(),
                 description=String())
 keyword.setkey("name")
-                
 
 # User-defined saved searches
 query = Class(db, "query",
@@ -95,10 +93,26 @@ user = Class(db, "user",
              roles=String(),     # comma-separated string of Role names
              timezone=String(),
              contrib_form=Boolean(),
-             contrib_form_date=Date())
+             contrib_form_date=Date(),
+             openids=String(), # space separated list
+             )
 user.setkey("username")
 db.security.addPermission(name='Register', klass='user',
                           description='User is allowed to register new user')
+
+openid_session = Class(db, 'openid_session',
+                       provider_id=String(), # or user id
+                       url=String(),
+                       stypes=String(), # space-separated list of session types
+                       assoc_handle=String(),
+                       expires=Date(),
+                       mac_key=String())
+openid_session.setkey('assoc_handle')
+
+openid_nonce = Class(db, 'openid_nonce',
+                     created=Date(),
+                     nonce=String())
+openid_nonce.setkey('nonce')
 
 # FileClass automatically gets this property in addition to the Class ones:
 #   content = String()    [saved to disk in <tracker home>/db/files/]
@@ -373,4 +387,3 @@ for cl in 'issue', 'severity', 'status', 'resolution':
 
 
 # vim: set filetype=python sts=4 sw=4 et si :
-

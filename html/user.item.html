@@ -155,6 +155,30 @@ anybody@everywhere.net
 </table>
 </form>
 
+<table class="form" tal:condition="context/openids">
+<tr><th colspan="2" style="text-align:left">OpenIDs</th></tr>
+<tr tal:repeat="id python:context.openids._value.split()">
+  <td tal:content="id"/>
+  <td><form tal:attributes="action context/designator" method="post">
+      <input type="hidden" name="@action" value="openid_delete"/>
+      <input type="hidden" name="openid" tal:attributes="value id"/>
+      <input type="submit" value="Drop this ID"/>
+      </form>
+  </td>
+</tr>
+</table>
+
+<p>
+<form tal:attributes="action context/designator" method="post">
+  <input type="hidden" name="@action" value="login"/>
+  <input type="submit" value="Associate OpenID"/>
+  <input size="60" name="openid_identifier"/>
+<a style="display:inline;width:0;margin:0" tal:repeat="prov python:utils.openid_links(request)" tal:attributes="href prov/href">
+    <img hspace="0" vspace="0" width="16" height="16" tal:attributes="src prov/src;title prov/title"/>
+</a>
+</form>
+</p>
+
 <tal:block tal:condition="not:context/id" i18n:translate="">
 <table class="form">
 <tr>
