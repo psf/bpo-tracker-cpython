@@ -46,10 +46,10 @@ def normalize_uri(uri):
 
     # 6.2.2.1 case normalization
     parts = urlparse.urlparse(uri) # already lower-cases scheme
-    if '@' in parts.netloc:
-        userinfo,hostname = parts.netloc.rsplit('@', 1)
+    if '@' in parts[1]: #netloc
+        userinfo,hostname = parts[1].rsplit('@', 1)
     else:
-        userinfo,hostname = None,parts.netloc
+        userinfo,hostname = None,parts[1]
     if ':' in hostname:
         host,port = hostname.rsplit(':', 1)
         if ']' in port:
@@ -75,7 +75,7 @@ def normalize_uri(uri):
 
     # 6.2.2.3 remove dot segments
     parts = urlparse.urlparse(uri)
-    path = parts.path
+    path = parts[2] #path
     newpath = ''
     while path:
         if path.startswith('../'):
@@ -106,18 +106,18 @@ def normalize_uri(uri):
 
     # 6.2.3 scheme based normalization
 
-    # XXX port normalization doesn't support a standalone :
-    # (e.g. http://www.python.org:/)
-    parts = urlparse.urlparse(uri)
-    netloc = parts.netloc
-    if parts.scheme == 'http' and parts.port == 80:
-        netloc = parts.netloc[:-3]
-    if parts.scheme == 'https' and parts.port == 443:
-        netloc = parts.netloc[:-4]
+    parts = urlparse.urlparse(uri)    
+    netloc = parts[1]
+    if netloc.endswith(':'):
+        netloc = netloc[:-1]
+    elif parts[0] == 'http' and netloc.endswith(':80'):
+        netloc = netloc[:-3]
+    elif parts[0] == 'https' and netloc.endswith(':443'):
+        netloc = netloc[:-4]
     # other default ports not considered here
 
-    path = parts.path
-    if parts.scheme in ('http', 'https') and parts.path=='':
+    path = parts[2]
+    if parts[0] in ('http', 'https') and parts[2]=='':
         path = '/'
 
     # 6.2.5 protocol-based normalization not done, as it
