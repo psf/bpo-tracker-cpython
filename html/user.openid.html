@@ -7,11 +7,9 @@
  tal:replace="db/config/TRACKER_NAME" /></span>
 <td class="content" metal:fill-slot="content">
 
-<p><span style="color:red; font-size:large;">NOTE</span>: If you have previously created or modified issue
-reports using the sourceforge issue tracker previously used for python
-bugs, your username on sourceforge already exists in this tracker. Use
-the <a href="user?@template=forgotten">Password recovery form</a> to
-get a password for your account.</p>
+<p>If you already have a tracker account and want to associate this
+OpenID with it, you should login to your account, and then claim
+the OpenID on Your Details page.</p>
 
 
 <form method="POST" onSubmit="return submit_once()"
