@@ -11,7 +11,7 @@
 # - direct requests require https
 # - as a signature algorithm, HMAC-SHA1 is requested
 
-import urlparse, urllib, httplib, BeautifulSoup
+import urlparse, urllib, httplib, BeautifulSoup, time
 import cStringIO, base64, hmac, sha, datetime, re, binascii, struct
 import itertools
 
