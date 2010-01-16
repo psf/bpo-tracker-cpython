@@ -449,7 +449,8 @@ def authenticate(session, response):
 def parse_nonce(nonce):
     '''Split a nonce into a (timestamp, ID) pair'''
     stamp = nonce.split('Z', 1)[0]
-    stamp = datetime.datetime.strptime(stamp,"%Y-%m-%dT%H:%M:%S")
+    stamp = time.strptime(stamp, "%Y-%m-%dT%H:%M:%S")[:6]
+    stamp = datetime.datetime(*stamp)
     return stamp
 
 def get_namespaces(resp):
