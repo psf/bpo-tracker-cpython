@@ -11,9 +11,14 @@
 # - direct requests require https
 # - as a signature algorithm, HMAC-SHA1 is requested
 
-import urlparse, urllib, httplib, BeautifulSoup, xml.etree.ElementTree
+import urlparse, urllib, httplib, BeautifulSoup
 import cStringIO, base64, hmac, sha, datetime, re, binascii, struct
 import itertools
+
+try:
+    from xml.etree import ElementTree
+except ImportError:
+    from elementtree import ElementTree
 
 # Importing M2Crypto patches urllib; don't let them do that
 orig = urllib.URLopener.open_https.im_func
@@ -200,7 +205,7 @@ def discover(url):
 
     if content_type == 'application/xrds+xml':
         # Yadis 6.2.5 option 4
-        doc = xml.etree.ElementTree.fromstring(data)
+        doc = ElementTree.fromstring(data)
         for svc in doc.findall(".//{xri://$xrd*($v*2.0)}Service"):
             services = [x.text for x in svc.findall("{xri://$xrd*($v*2.0)}Type")]
             if 'http://specs.openid.net/auth/2.0/server' in services:
