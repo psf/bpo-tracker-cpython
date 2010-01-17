@@ -155,7 +155,7 @@ def discover(url):
     if query:
         path += '?'+query
     try:
-        h.connect()
+        conn.connect()
     except:
         # DNS or TCP error
         return None
