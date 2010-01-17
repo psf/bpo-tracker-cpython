@@ -167,6 +167,9 @@ def discover(url):
     data = res.read()
     conn.close()
 
+    if res.status in (301, 302, 303, 307):
+        return discover(res.msg.get('location'))
+
     content_type = res.msg.gettype()
 
     # Yadis 6.2.5 option 2 and 3: header includes x-xrds-location
