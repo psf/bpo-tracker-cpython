@@ -26,7 +26,7 @@ class Openid:
             elif  expires > date.Date('.')+date.Interval("1:00"):
                 # valid for another hour
                 return self.db.openid_session.getnode(session_id)
-            elif expores < date.Date('.')-date.Interval("1d"):
+            elif expires < date.Date('.')-date.Interval("1d"):
                 # expired more than one day ago
                 break
         else:
