@@ -76,7 +76,10 @@ class OpenidLogin(LoginAction, Openid):
         type, claimed = openid.normalize_uri(username)
         if type == 'xri':
             raise ValueError, "XRIs are not supported"
-        stypes, url, op_local = discovered = openid.discover(claimed)
+        discovered = openid.discover(claimed)
+        if not discovered:
+            raise ValueError, "OpenID provider discovery failed"
+        stypes, url, op_local = discovered
         session = self.get_session(claimed, discovered) # one session per claimed id
         realm = self.base+"?@action=openid_return"
         return_to = realm + "&__came_from=%s" % urllib.quote(self.client.path)
