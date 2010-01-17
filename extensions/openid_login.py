@@ -112,7 +112,19 @@ class OpenidReturn(Action):
         # parse again to get cgi kind of result
         query = cgi.parse_qs(self.client.env['QUERY_STRING'])
         if 'openid.identity' not in query:
-            return self.rp_discovery()
+            # RP discovery
+            payload = '''<xrds:XRDS xmlns:xrds="xri://$xrds"  
+                                    xmlns="xri://$xrd*($v*2.0)">  
+                <XRD>  
+                     <Service priority="1">  
+                              <Type>http://specs.openid.net/auth/2.0/return_to</Type>  
+                              <URI>%s?@action=openid_return</URI>  
+                     </Service>  
+                </XRD>  
+                </xrds:XRDS>
+            ''' % self.base
+            self.client.additional_headers['Content-Type'] = 'application/xrds+xml'
+            return payload
         if 'openid.response_nonce' in query:
             nonce = query['openid.response_nonce'][0]
             stamp = openid.parse_nonce(nonce)
