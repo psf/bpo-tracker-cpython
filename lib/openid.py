@@ -154,6 +154,11 @@ def discover(url):
     # conn.set_debuglevel(1)
     if query:
         path += '?'+query
+    try:
+        h.connect()
+    except:
+        # DNS or TCP error
+        return None
     # httplib in 2.5 incorrectly sends https port in Host
     # header even if it is 443
     conn.putrequest("GET", path, skip_host=1)
