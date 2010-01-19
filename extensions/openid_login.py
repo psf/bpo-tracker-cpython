@@ -265,7 +265,6 @@ class OpenidRegister(RegisterAction):
         try:
             signed = openid.authenticate(session, query)        
         except Exception, e:
-            raise
             raise ValueError, "Authentication failed: "+repr(e)
         if 'openid.claimed_id' in query:
             if 'claimed_id' not in signed:
