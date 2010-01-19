@@ -202,6 +202,7 @@ def discover(url):
         # 14.2.1: 1.1 compatibility
         op_endpoint = soup.find('link', {'rel':lambda v:v and 'openid.server' in v.lower()})
         if op_endpoint:
+            op_endpoint = op_endpoint['href']
             op_local = soup.find('link', {'rel':lambda v:v and 'openid.delegate' in v.lower()})
             if op_local:
                 op_local = op_local['href']
