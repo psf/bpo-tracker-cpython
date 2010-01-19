@@ -316,9 +316,13 @@ def associate(services, url):
         data['openid.dh_consumer_public'] = dh_public_base64
     if is_compat_1x(services):
         # 14.2.1: clear session_type in 1.1 compatibility mode
-        data['openid.session_type'] = ''
+        if data['openid.session_type'] == "no-encryption":
+            data['openid.session_type'] = ''
+        del data['openid.ns']
     res = urllib.urlopen(url, urllib.urlencode(data))
     data = parse_response(res.read())
+    if 'error' in data:
+        raise ValueError, "associate failed: "+data['error']
     if url.startswith('http:'):
         enc_mac_key = base64.b64decode(data['enc_mac_key'])
         dh_server_public = base64.b64decode(data['dh_server_public'])
