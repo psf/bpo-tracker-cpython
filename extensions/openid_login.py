@@ -50,7 +50,34 @@ class Openid:
         session.mac_key = session_data['mac_key']
         session.expires = now + date.Interval(int(session_data['expires_in']))
         self.db.commit()
-        return session    
+        return session
+
+    def authenticate(self, session, query):
+        '''Authenticate an OpenID indirect response, and return the claimed ID'''
+        try:
+            signed = openid.authenticate(session, query)
+        except Exception, e:
+            raise ValueError, "Authentication failed: "+str(e)
+        if openid.is_op_endpoint(session.stypes):
+            # Provider-guided login: provider ought to report claimed ID
+            if 'openid.claimed_id' in query:
+                claimed = query['openid.claimed_id'][0]
+            else:
+                raise ValueError, 'incomplete response'
+            # OpenID 11.2: verify that provider is authorized to assert ID
+            discovered = openid.discover(claimed)
+            if not discovered or discovered[1] != session.url:
+                raise ValueError, "Provider %s is not authorized to make assertions about %s" % (session.url, claimed)
+        else:
+            # User entered claimed ID, stored in session object
+            claimed = session.provider_id
+            if not openid.is_compat_1x(session.stypes):
+                # can only check correct claimed ID for OpenID 2.0
+                if 'openid.claimed_id' not in query or claimed != query['openid.claimed_id'][0]:
+                    # assertion is not about an ID, or about a different ID; refuse to accept
+                    raise ValueError, "Provider did not assert your ID"
+        return claimed
+
         
 class OpenidLogin(LoginAction, Openid):
     'Extended versoin of LoginAction, supporting OpenID identifiers in username field.'
@@ -107,7 +134,7 @@ class OpenidProviderLogin(Action, Openid):
                                             session.assoc_handle, return_to, realm=realm)
         raise Redirect, url
 
-class OpenidReturn(Action):
+class OpenidReturn(Action, Openid):
     def handle(self):
         # parse again to get cgi kind of result
         query = cgi.parse_qs(self.client.env['QUERY_STRING'])
@@ -152,20 +179,7 @@ class OpenidReturn(Action):
         except KeyError:
             raise ValueError, 'Not authenticated (no session)'
         session = self.db.openid_session.getnode(session[0])
-        try:
-            signed = openid.authenticate(session, query)
-        except Exception, e:
-            import traceback
-            raise ValueError, "Authentication failed: "+traceback.format_exc()
-        if 'openid.claimed_id' in query:
-            if 'claimed_id' not in signed:
-                raise ValueError, 'Incomplete signature'
-            claimed = query['openid.claimed_id'][0]
-        else:
-            # OpenID 1, claimed ID not reported - should set cookie
-            if 'identity' not in signed:
-                raise ValueError, 'Incomplete signature'
-            claimed = query['openid.identity'][0]
+        claimed = self.authenticate(session, query)
         if self.user != 'anonymous':
             # Existing user claims OpenID
 
@@ -244,7 +258,7 @@ class OpenidDelete(Action):
         self.db.user.set(self.userid, openids=' '.join(openids))
         self.db.commit()
 
-class OpenidRegister(RegisterAction):
+class OpenidRegister(RegisterAction, Openid):
     def handle(self):
         query = {}
         if 'openid.identity' not in self.form:
@@ -263,20 +277,7 @@ class OpenidRegister(RegisterAction):
                     query[key].append(value)
                 except KeyError:
                     query[key] = [value]
-        try:
-            signed = openid.authenticate(session, query)        
-        except Exception, e:
-            raise ValueError, "Authentication failed: "+repr(e)
-        if 'openid.claimed_id' in query:
-            if 'claimed_id' not in signed:
-                raise ValueError, 'Incomplete signature'
-            claimed = query['openid.claimed_id'][0]
-        else:
-            # OpenID 1, claimed ID not reported - should set cookie
-            if 'identity' not in signed:
-                raise ValueError, 'Incomplete signature'
-            claimed = query['openid.identity'][0]
-
+        claimed = self.authenticate(session, query)
         # OpenID signature is still authentic, now pass it on to the base
         # register method; also fake password
         self.form.value.append(cgi.MiniFieldStorage('openids', claimed))
