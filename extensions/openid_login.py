@@ -155,7 +155,8 @@ class OpenidReturn(Action):
         try:
             signed = openid.authenticate(session, query)
         except Exception, e:
-            raise ValueError, "Authentication failed: "+repr(e)
+            import traceback
+            raise ValueError, "Authentication failed: "+traceback.format_exc()
         if 'openid.claimed_id' in query:
             if 'claimed_id' not in signed:
                 raise ValueError, 'Incomplete signature'
