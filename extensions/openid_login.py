@@ -178,7 +178,7 @@ class OpenidReturn(Action, Openid):
             session = self.db.openid_session.lookup(handle)
         except KeyError:
             raise ValueError, 'Not authenticated (no session)'
-        session = self.db.openid_session.getnode(session[0])
+        session = self.db.openid_session.getnode(session)
         claimed = self.authenticate(session, query)
         if self.user != 'anonymous':
             # Existing user claims OpenID
@@ -266,7 +266,7 @@ class OpenidRegister(RegisterAction, Openid):
         try:
             handle = self.form['openid.assoc_handle'].value
             session = self.db.openid_session.lookup(handle)
-            session = self.db.openid_session.getnode(session[0])
+            session = self.db.openid_session.getnode(session)
         except Exception, e:
             raise ValueError, "Not authenticated (no session): "+str(e)
         # re-authenticate fields
