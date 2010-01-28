@@ -19,27 +19,24 @@ class Openid:
             # Match may not have been exact
             if self.db.openid_session.get(session_id, 'provider_id') != provider:
                 continue
-            expires = self.db.openid_session.get(session_id, 'expires')
             if discovered and discovered[1] != self.db.openid_session.get(session_id, 'url'):
                 # User has changed provider; don't reuse session
-                break
-            elif  expires > date.Date('.')+date.Interval("1:00"):
+                continue
+            expires = self.db.openid_session.get(session_id, 'expires')
+            if  expires > date.Date('.')+date.Interval("1:00"):
                 # valid for another hour
                 return self.db.openid_session.getnode(session_id)
-            elif expires < date.Date('.')-date.Interval("1d"):
-                # expired more than one day ago
-                break
-        else:
-            session_id = None
-        # need to create new session
+        # need to create new session, or recycle an expired one
         if discovered:
             stypes, url, op_local = discovered
         else:
             stypes, url, op_local = openid.discover(provider)
         now = date.Date('.')
         session_data = openid.associate(stypes, url)
-        if session_id:
-            session = self.db.openid_session.getnode(session_id)
+        # check whether a session has expired a day ago
+        sessions = self.db.openid_session.filter(None, {'expires':'to -1d'})
+        if sessions:
+            session = self.db.openid_session.getnode(sessions[0])
             session.assoc_handle = session_data['assoc_handle']
         else:
             session_id = self.db.openid_session.create(assoc_handle=session_data['assoc_handle'])
