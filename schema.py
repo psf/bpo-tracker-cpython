@@ -108,6 +108,7 @@ openid_session = Class(db, 'openid_session',
                        expires=Date(),
                        mac_key=String())
 openid_session.setkey('assoc_handle')
+openid_session.disableJournalling()
 
 openid_nonce = Class(db, 'openid_nonce',
                      created=Date(),
