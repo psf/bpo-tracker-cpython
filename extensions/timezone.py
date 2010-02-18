@@ -21,7 +21,7 @@ def tzfield(prop, name, default):
                 pass
 
         l = ['<select name="%s"' % name]
-        for zone in pytz.all_timezones:
+        for zone in pytz.common_timezones:
             s = ' '
             if zone == value:
                 s = 'selected=selected '
