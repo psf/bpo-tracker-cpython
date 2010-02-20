@@ -56,7 +56,7 @@
 <tr tal:attributes="class python:['normal', 'alt'][repeat['user'].index%6/3]">
  <td>
   <a tal:attributes="href string:user${user/id}"
-     tal:content="user/username">username</a>
+     tal:content="user/username">username</a><tal:if condition="user/contrib_form"><span tal:attributes="title string:Contributor form received on ${user/contrib_form_date/pretty}">&nbsp;*</span></tal:if>
  </td>
  <td tal:content="python:user.realname.plain() or default">&nbsp;</td>
  <td tal:content="python:user.organisation.plain() or default">&nbsp;</td>
