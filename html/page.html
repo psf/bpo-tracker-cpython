@@ -113,6 +113,32 @@ status_all string:-1,1,2,3;
       '@startwith': 0,
      })"
        i18n:translate="">Show Unassigned</a></li>
+    <li><a href="#"
+       tal:attributes="href python:request.indexargs_url('issue', {
+      '@sort': '-activity',
+      '@group': 'priority',
+      '@filter': 'status,assignee',
+      '@columns': columns,
+      '@search_text': '',
+      'keywords': 4,
+      'status': status_notresolved,
+      '@dispname': i18n.gettext('Show Needing Review'),
+      '@startwith': 0,
+     })"
+       i18n:translate="">Show Needing Review</a></li>
+    <li><a href="#"
+       tal:attributes="href python:request.indexargs_url('issue', {
+      '@sort': '-activity',
+      '@group': 'priority',
+      '@filter': 'status,assignee',
+      '@columns': columns,
+      '@search_text': '',
+      'keywords': 5,
+      'status': status_notresolved,
+      '@dispname': i18n.gettext('Show Having Patch'),
+      '@startwith': 0,
+     })"
+       i18n:translate="">Show Having Patch</a></li>
         <li>
          <a href="issue?@template=search&status=1" i18n:translate="">Search</a>
         </li>
