@@ -104,6 +104,19 @@ status_all string:-1,1,2,3;
        tal:attributes="href python:request.indexargs_url('issue', {
       '@sort': '-activity',
       '@group': 'priority',
+      '@columns': columns,
+      '@action': 'search',
+      '@filter': '',
+      'keywords': 6,
+      'status': 1,
+      '@dispname': i18n.gettext('Show Easy'),
+      '@startwith': 0,
+     })"
+       i18n:translate="">Show&nbsp;Easy</a></li>
+    <li><a href="#"
+       tal:attributes="href python:request.indexargs_url('issue', {
+      '@sort': '-activity',
+      '@group': 'priority',
       '@filter': 'status,assignee',
       '@columns': columns,
       '@search_text': '',
@@ -115,26 +128,26 @@ status_all string:-1,1,2,3;
        i18n:translate="">Show Unassigned</a></li>
     <li><a href="#"
        tal:attributes="href python:request.indexargs_url('issue', {
+      '@action': 'search',
       '@sort': '-activity',
       '@group': 'priority',
-      '@filter': 'status,assignee',
+      '@filter': '',
       '@columns': columns,
-      '@search_text': '',
-      'keywords': 4,
-      'status': status_notresolved,
+      'keywords': 8,
+      'status': 1,
       '@dispname': i18n.gettext('Show Needing Review'),
       '@startwith': 0,
      })"
-       i18n:translate="">Show Needing Review</a></li>
+       i18n:translate="">Show&nbsp;Needing&nbsp;Review</a></li>
     <li><a href="#"
        tal:attributes="href python:request.indexargs_url('issue', {
+      '@action': 'search',
       '@sort': '-activity',
       '@group': 'priority',
-      '@filter': 'status,assignee',
+      '@filter': '',
       '@columns': columns,
-      '@search_text': '',
-      'keywords': 5,
-      'status': status_notresolved,
+      'keywords': 2,
+      'status': 1,
       '@dispname': i18n.gettext('Show Having Patch'),
       '@startwith': 0,
      })"
