@@ -5,7 +5,7 @@
 # Script to create a tracker summary by Richard Jones and Paul Dubois
 import sys, math
 # kludge
-sys.path.insert(1,'/home//roundup/lib/python2.5/site-packages')
+sys.path.insert(1,'/home/roundup/lib/python2.5/site-packages')
 #
 import roundup
 import roundup.date, roundup.instance
