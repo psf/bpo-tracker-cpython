@@ -11,7 +11,7 @@
 # - direct requests require https
 # - as a signature algorithm, HMAC-SHA1 is requested
 
-import urlparse, urllib, httplib, BeautifulSoup, time
+import urlparse, urllib, httplib, BeautifulSoup, time, os
 import cStringIO, base64, hmac, sha, datetime, re, binascii, struct
 import itertools
 
@@ -30,6 +30,8 @@ urllib.URLopener.open_https = orig
 
 # Don't use urllib, since it sometimes selects HTTP/1.1 (e.g. in PyPI)
 # and then fails to parse chunked responses.
+
+logfile = None
 
 def normalize_uri(uri):
     """Normalize an uri according to OpenID section 7.2. Return a pair
@@ -535,6 +537,62 @@ def get_username(resp):
 
     # TODO: SREG 1.1
     return
+
+if logfile:
+    reqno = 0
+
+    def log_line(l):
+        f = open(logfile, 'a')
+        f.write(l)
+        f.close()
+        if reqno % 1000 == 0:
+            if os.stat(logfile).st_size > 10**7:
+                try:
+                    os.unlink(logfile+".1")
+                except:
+                    pass
+                os.rename(logfile, logfile+".1")
+
+    def enter(func, params):
+        global reqno
+        reqno += 1
+        log_line("%d %d %d enter %s %s\n" % (int(time.time()), os.getpid(), reqno, func, params))
+        return reqno
+
+    def exit(reqno):
+        log_line("%d %d %d exit\n" % (int(time.time()), os.getpid(), reqno))
+
+    orig_normalize_uri = normalize_uri
+    def normalize_uri(uri):
+        reqno = enter("normalize_uri", uri)
+        try:
+            return orig_normalize_uri(uri)
+        finally:
+            exit(reqno)
+
+    orig_discover = discover
+    def discover(url):
+        reqno = enter("discover", url)
+        try:
+            return orig_discover(url)
+        finally:
+            exit(reqno)
+
+    orig_associate = associate
+    def associate(services, url):
+        reqno = enter("associate", url)
+        try:
+            return orig_associate(services, url)
+        finally:
+            exit(reqno)
+
+    orig_request_authentication = request_authentication
+    def request_authentication(*args, **kw):
+        reqno = enter("request_authentication", args[1])
+        try:
+            return orig_request_authentication(*args, **kw)
+        finally:
+            exit(reqno)
 
 
 ################ Test Server #################################
