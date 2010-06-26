@@ -44,22 +44,15 @@ status_all string:-1,1,2,3;
        <input type="hidden" name="@filter" value="status"/>
        <input type="hidden" name="@action" value="searchid"/>
        <input class="input-text" id="search-text" name="@search_text" size="10" />
-       <tal:block tal:condition="python:request.user.username=='anonymous'">
-         <input type="hidden" name="status" tal:attributes="value status_notresolved"/>
-         <input type="submit" id="submit" value="search in open issues" name="submit"
-                class="input-button"/>
-       </tal:block>
-       <tal:block tal:condition="python:request.user.username!='anonymous'">
-         <input type="submit" id="submit" value="search" name="submit"
-                class="input-button"/>
-         <input type="radio" name="status" tal:attributes="value status_notresolved;
-                checked string:checked;
-                id string:status_notresolved"/>
-         <label for="status_notresolved">open</label>
-         <input type="radio" name="status" tal:attributes="value status_all;
-                id string:status_all"/>
-         <label for="status_all">all</label>
-       </tal:block>
+       <input type="submit" id="submit" value="search" name="submit"
+              class="input-button"/>
+       <input type="radio" name="status" tal:attributes="value status_notresolved;
+              id string:status_notresolved"/>
+       <label for="status_notresolved">open</label>
+       <input type="radio" name="status" tal:attributes="value status_all;
+              checked string:checked;
+              id string:status_all"/>
+       <label for="status_all">all</label>
       </div>
      </form>
 </div>
