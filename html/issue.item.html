@@ -9,6 +9,11 @@
  >New Issue - <span tal:replace="config/TRACKER_NAME" i18n:name="tracker"
 /></tal:block>
 </title>
+
+<metal:slot fill-slot="more-javascript">
+<script type="text/javascript" src="@@file/issue.item.js"></script>
+</metal:slot>
+
 <tal:block metal:fill-slot="body_title">
  <span tal:condition="python: not (context.id or context.is_edit_ok())"
   tal:omit-tag="python:1" i18n:translate="">New Issue</span>
@@ -130,13 +135,17 @@
  <td tal:condition="not:context/assignee/is_edit_ok">
   <span tal:replace="structure context/assignee/plain" />
  </td>
- <th><tal:block i18n:translate="">Nosy List</tal:block>:
+ <th><tal:block i18n:translate="">Nosy List</tal:block><span tal:condition="context/nosy_count" tal:replace="python: ' (%d)' % context.nosy_count" />:
   <span tal:condition="context/nosy/is_edit_ok"
         tal:replace="structure python:db.user.classhelp('username,realname,address', property='nosy')" />
  </th>
  <td>
      <span tal:replace="structure context/nosy/field" />
-     <span tal:condition="context/nosy_count" tal:replace="python: '(%d)' % context.nosy_count" />
+     <span id="add_me_to_nosy" style="display: none"
+        tal:define="current_user request/user/username"
+        tal:condition="python:request.user.username != 'anonymous' and current_user not in str(context.nosy).replace(' ','').split(',')"
+        tal:attributes="onclick string:add_to_nosy('$current_user')"
+        onclick="add_to_nosy(the_current_username)" />
  </td>
 </tr>
 <tr>
