@@ -4,10 +4,14 @@ window.onload = function () {
     // This might eventually be replaced by jquery
     var node_id = 'add_me_to_nosy';
     var add_me_span = document.getElementById(node_id);
+    if (add_me_span == null) {
+        // we are already in the nosy or we are not logged in
+        return;
+    }
     var add_me_button = document.createElement('input');
     var add_me_parent = add_me_span.parentNode;
-    add_me_button.value = '+';
     add_me_button.type = 'button';
+    add_me_button.value = '+';
     add_me_button.title = 'Add me to the nosy list (remember to Submit Changes)';
     add_me_button.onclick = add_me_span.onclick;
     add_me_button.style.display = 'inline';
