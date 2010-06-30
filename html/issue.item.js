@@ -38,6 +38,6 @@ function add_to_nosy(user) {
     // hide the button and resize the list to fill the void
     var new_width = nosy.offsetWidth + add_me_button.offsetWidth;
     add_me_button.style.display = 'none';
-    nosy.style.display = 'block';
+    nosy.style.display = 'inline';
     nosy.style.width = new_width + "px";
 }

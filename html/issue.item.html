@@ -145,7 +145,7 @@
         tal:define="current_user request/user/username"
         tal:condition="python:request.user.username != 'anonymous' and current_user not in str(context.nosy).replace(' ','').split(',')"
         tal:attributes="onclick string:add_to_nosy('$current_user')"
-        onclick="add_to_nosy(the_current_username)" />
+        onclick="add_to_nosy(the_current_username)"></span>
  </td>
 </tr>
 <tr>
