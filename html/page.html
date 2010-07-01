@@ -42,6 +42,7 @@ status_all string:-1,1,2,3;
        <input type="hidden" name="@sort" value="-activity" />
        <input type="hidden" name="@filter" value="status"/>
        <input type="hidden" name="@action" value="searchid"/>
+       <input type="hidden" name="ignore" value="file:content"/>
        <input class="input-text" id="search-text" name="@search_text" size="10" />
        <input type="submit" id="submit" value="search" name="submit"
               class="input-button"/>
@@ -145,7 +146,8 @@ status_all string:-1,1,2,3;
      })"
        i18n:translate="">Show Having Patch</a></li>
         <li>
-         <a href="issue?@template=search&status=1" i18n:translate="">Search</a>
+         <a href="issue?@template=search&status=1&ignore=file:content"
+            i18n:translate="">Search</a>
         </li>
         <li>
          <form method="post" action="#">

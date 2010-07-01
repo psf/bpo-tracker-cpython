@@ -93,8 +93,8 @@
 <tr tal:condition="context/id">
  <th>
   <tal:block i18n:translate="">Dependencies</tal:block>:
-  <span tal:condition="context/dependencies/is_edit_ok"
-        tal:replace="structure python:db.issue.classhelp('id,title,status', filter='status=0,1', property='dependencies')" />
+  <!-- <span tal:condition="context/dependencies/is_edit_ok"
+        tal:replace="structure python:db.issue.classhelp('id,title,status', filter='status=0,1', property='dependencies')" /> -->
  </th>
  <td>
   <span tal:replace="structure python:context.dependencies.field(showid=1,size=20)" />
@@ -104,8 +104,8 @@
  </td>
  <th i18n:translate="">
   <tal:block i18n:translate="">Superseder</tal:block>:
-  <span tal:condition="context/superseder/is_edit_ok"
-        tal:replace="structure python:db.issue.classhelp('id,title', filter='status=0,1', property='superseder')" />
+  <!-- <span tal:condition="context/superseder/is_edit_ok"
+        tal:replace="structure python:db.issue.classhelp('id,title', filter='status=0,1', property='superseder')" /> -->
  </th>
  <td>
   <span tal:replace="structure python:context.superseder.field(showid=1, size=20)" />
