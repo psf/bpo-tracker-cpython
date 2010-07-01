@@ -135,7 +135,7 @@
  <td tal:condition="not:context/assignee/is_edit_ok">
   <span tal:replace="structure context/assignee/plain" />
  </td>
- <th><tal:block i18n:translate="">Nosy List</tal:block><span tal:condition="context/nosy_count" tal:replace="python: ' (%d)' % context.nosy_count" />:
+ <th><tal:block i18n:translate="">Nosy List</tal:block><!-- <span tal:condition="context/nosy_count" tal:replace="python: ' (%d)' % context.nosy_count" /> -->:
   <span tal:condition="context/nosy/is_edit_ok"
         tal:replace="structure python:db.user.classhelp('username,realname,address', property='nosy')" />
  </th>
