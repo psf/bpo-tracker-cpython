@@ -21,12 +21,6 @@ a[href], a[href]:link {
   margin: 0px;
 }
 
-#menu ul.level-three li {
-    margin-left: 0px;
-    border: thin solid red;
-}
-
-
 @media print 
 {
   .index-controls { display: none;}
@@ -73,8 +67,8 @@ div#searchbox input#search-text
   display: block;
   border: 0;
   padding: 0.1em;
-  margin: 0 3em 0px 1.8em;
-  padding-left:1em;
+  margin: 0 3em 0 1em;
+  padding-left: 1em;
   color: #5E72A5;
   background-image: none;
   width: 10em !important;
@@ -83,10 +77,13 @@ div#searchbox input#search-text
   font-size: 95%;
 }
 
-#menu ul.level-three li
-{
-    margin: 0px;
-    padding: 0px;
+#menu ul.level-three li a {
+  margin-left: 1em;
+}
+
+#menu ul.level-three li {
+  margin: 0;
+  padding: 0;
 }
 
 form {
