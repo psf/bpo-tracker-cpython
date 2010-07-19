@@ -42,6 +42,7 @@ status_all string:-1,1,2,3;
        <input type="hidden" name="@sort" value="-activity" />
        <input type="hidden" name="@filter" value="status"/>
        <input type="hidden" name="@action" value="searchid"/>
+       <input type="hidden" name="ignore" value="file:content"/>
        <input tal:attributes="value python:request.form.getvalue('@search_text') or nothing;"
               class="input-text" id="search-text" name="@search_text" size="10" />
        <input type="submit" id="submit" value="search" name="submit"
