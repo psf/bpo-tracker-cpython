@@ -3,10 +3,12 @@ from roundup.cgi.actions import Action, LoginAction, RegisterAction
 from roundup.cgi.exceptions import *
 from roundup import date, password
 
-good_providers = ['Google', 'myOpenID', 'Launchpad']
 providers = {}
-for p in openid2rp.providers:
-    if p[0] not in good_providers: continue
+for p in (
+    ('Google', 'http://www.google.com/favicon.ico', 'https://www.google.com/accounts/o8/id'),
+    ('myOpenID', 'https://www.myopenid.com/favicon.ico', 'https://www.myopenid.com/'),
+    ('Launchpad', 'https://login.launchpad.net/favicon.ico', 'https://login.launchpad.net/')
+    ):
     providers[p[0]] = p
 
 class Openid:
