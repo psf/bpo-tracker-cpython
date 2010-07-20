@@ -1,11 +1,11 @@
-import openid, urllib, cgi, collections, calendar, time
+import openid2rp, urllib, cgi, collections, calendar, time
 from roundup.cgi.actions import Action, LoginAction, RegisterAction
 from roundup.cgi.exceptions import *
 from roundup import date, password
 
 good_providers = ['Google', 'myOpenID', 'Launchpad']
 providers = {}
-for p in openid.providers:
+for p in openid2rp.providers:
     if p[0] not in good_providers: continue
     providers[p[0]] = p
 
@@ -30,9 +30,9 @@ class Openid:
         if discovered:
             stypes, url, op_local = discovered
         else:
-            stypes, url, op_local = openid.discover(provider)
+            stypes, url, op_local = openid2rp.discover(provider)
         now = date.Date('.')
-        session_data = openid.associate(stypes, url)
+        session_data = openid2rp.associate(stypes, url)
         # check whether a session has expired a day ago
         sessions = self.db.openid_session.filter(None, {'expires':'to -1d'})
         if sessions:
@@ -52,23 +52,23 @@ class Openid:
     def authenticate(self, session, query):
         '''Authenticate an OpenID indirect response, and return the claimed ID'''
         try:
-            signed = openid.authenticate(session, query)
+            signed = openid2rp.authenticate(session, query)
         except Exception, e:
             raise ValueError, "Authentication failed: "+str(e)
-        if openid.is_op_endpoint(session.stypes):
+        if openid2rp.is_op_endpoint(session.stypes):
             # Provider-guided login: provider ought to report claimed ID
             if 'openid.claimed_id' in query:
                 claimed = query['openid.claimed_id'][0]
             else:
                 raise ValueError, 'incomplete response'
             # OpenID 11.2: verify that provider is authorized to assert ID
-            discovered = openid.discover(claimed)
+            discovered = openid2rp.discover(claimed)
             if not discovered or discovered[1] != session.url:
                 raise ValueError, "Provider %s is not authorized to make assertions about %s" % (session.url, claimed)
         else:
             # User entered claimed ID, stored in session object
             claimed = session.provider_id
-            if not openid.is_compat_1x(session.stypes):
+            if not openid2rp.is_compat_1x(session.stypes):
                 # can only check correct claimed ID for OpenID 2.0
                 if 'openid.claimed_id' not in query or claimed != query['openid.claimed_id'][0]:
                     # assertion is not about an ID, or about a different ID; refuse to accept
@@ -97,17 +97,17 @@ class OpenidLogin(LoginAction, Openid):
         else:
             return LoginAction.handle(self)
         # Login an OpenID
-        type, claimed = openid.normalize_uri(username)
+        type, claimed = openid2rp.normalize_uri(username)
         if type == 'xri':
             raise ValueError, "XRIs are not supported"
-        discovered = openid.discover(claimed)
+        discovered = openid2rp.discover(claimed)
         if not discovered:
             raise ValueError, "OpenID provider discovery failed"
         stypes, url, op_local = discovered
         session = self.get_session(claimed, discovered) # one session per claimed id
         realm = self.base+"?@action=openid_return"
         return_to = realm + "&__came_from=%s" % urllib.quote(self.client.path)
-        url = openid.request_authentication(session.stypes, session.url,
+        url = openid2rp.request_authentication(session.stypes, session.url,
                                             session.assoc_handle, return_to, realm=realm,
                                             claimed=claimed, op_local=op_local)
         raise Redirect, url
@@ -127,7 +127,7 @@ class OpenidProviderLogin(Action, Openid):
         session = self.get_session(provider_id)
         realm = self.base+"?@action=openid_return"
         return_to = realm + "&__came_from=%s" % urllib.quote(self.client.path)
-        url = openid.request_authentication(session.stypes, session.url,
+        url = openid2rp.request_authentication(session.stypes, session.url,
                                             session.assoc_handle, return_to, realm=realm)
         raise Redirect, url
 
@@ -151,7 +151,7 @@ class OpenidReturn(Action, Openid):
             return payload
         if 'openid.response_nonce' in query:
             nonce = query['openid.response_nonce'][0]
-            stamp = openid.parse_nonce(nonce)
+            stamp = openid2rp.parse_nonce(nonce)
             utc = calendar.timegm(stamp.utctimetuple())
             if utc < time.time()-3600:
                 # Old nonce
@@ -222,7 +222,7 @@ class OpenidReturn(Action, Openid):
             if key.startswith('openid'):
                 openid_fields.append((key, self.form.getfirst(key)))
         pt = self.client.instance.templates.get('user', 'openid')
-        username = openid.get_username(query)
+        username = openid2rp.get_username(query)
         realname = None
         if username:
             if isinstance(username, tuple):
@@ -232,7 +232,7 @@ class OpenidReturn(Action, Openid):
         result = pt.render(self.client, None, None,
                            realname=realname,
                            username=username,
-                           email=openid.get_email(query),
+                           email=openid2rp.get_email(query),
                            claimed=claimed,
                            openid_fields=openid_fields)
         self.client.additional_headers['Content-Type'] = pt.content_type
