@@ -92,6 +92,7 @@ test_strings = [
     (' #2000000 ', ' #2000000 '),
     (' # 2000000 ', ' # 2000000 '),
     (' #1234567890123  ', ' #1234567890123  '),
+    ('pyissue1000', 'pyissue1000'),
 
     ## Lib/somefile.py, Modules/somemodule.c, Doc/somedocfile.rst, ...
     ('Lib/cgi.py',
@@ -117,6 +118,8 @@ test_strings = [
     ('http://svn.python.org/view/python/tags/r265/Lib/cgi.py?view=markup',
      ('<a href="http://svn.python.org/view/python/tags/r265/Lib/cgi.py?view=markup">'
       'http://svn.python.org/view/python/tags/r265/Lib/cgi.py?view=markup</a>')),
+    ('http://bugs.python.org/issue1000',
+     '<a href="http://bugs.python.org/issue1000">http://bugs.python.org/issue1000</a>'),
 
     ## emails
     ('fixed@europython.eu',
