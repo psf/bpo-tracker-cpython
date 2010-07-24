@@ -77,16 +77,10 @@ class PyDevStringHTMLProperty(StringHTMLProperty):
                                status=status, text=text)
 
 
-# XXX there should be only one regex for this
-noise_change = re.compile('(nosy_count|message_count)\: \d+\.0 -> \d+\.0')
-noise_init = re.compile('(nosy_count|message_count)\: \d+\.0')
-# XXX this shouldn't be a regex
-br = re.compile('<td><br />')
+noise_changes = re.compile('(nosy_count|message_count)\: \d+\.0( -> \d+\.0)?')
 
 def clean_count(history):
-    history = noise_change.sub('', history)
-    history = noise_init.sub('', history)
-    history = br.sub('<td>', history)
+    history = noise_changes.sub('', history).replace('<td><br />', '<td>')
     return history
 
 def init(instance):
