@@ -266,7 +266,7 @@
        Message has been classified as spam.
     </p>
     <pre tal:condition="python:msg.content.is_view_ok()"
-         tal:content="structure python:utils.localReplace(msg.content.hyperlinked())">content</pre>
+         tal:content="structure msg/content/pydev_hyperlinked">content</pre>
    </td>
   </tr>
  </tal:block>
