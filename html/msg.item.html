@@ -95,7 +95,7 @@
   <td class="content" colspan=2
       tal:condition="python:context.content.is_view_ok()">
       <pre
-      tal:content="structure msg/content/pydev_hyperlinked"></pre></td>
+      tal:content="structure context/content/pydev_hyperlinked"></pre></td>
   <td class="content" colspan=2
       tal:condition="python:not context.content.is_view_ok()">
             Message has been classified as spam and is therefore not
