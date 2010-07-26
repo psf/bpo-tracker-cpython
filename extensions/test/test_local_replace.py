@@ -96,17 +96,17 @@ test_strings = [
 
     ## Lib/somefile.py, Modules/somemodule.c, Doc/somedocfile.rst, ...
     ('Lib/cgi.py',
-     '<a href="http://svn.python.org/view/python/trunk/Lib/cgi.py">Lib/cgi.py</a>'),
+     '<a href="http://svn.python.org/view/python/branches/py3k/Lib/cgi.py">Lib/cgi.py</a>'),
     ('/Lib/cgi.py',
-     '<a href="http://svn.python.org/view/python/trunk/Lib/cgi.py">/Lib/cgi.py</a>'),
+     '<a href="http://svn.python.org/view/python/branches/py3k/Lib/cgi.py">/Lib/cgi.py</a>'),
     ('see Lib/cgi.py.',
-     'see <a href="http://svn.python.org/view/python/trunk/Lib/cgi.py">Lib/cgi.py</a>.'),
+     'see <a href="http://svn.python.org/view/python/branches/py3k/Lib/cgi.py">Lib/cgi.py</a>.'),
     ('see /Lib/cgi.py.',
-     'see <a href="http://svn.python.org/view/python/trunk/Lib/cgi.py">/Lib/cgi.py</a>.'),
+     'see <a href="http://svn.python.org/view/python/branches/py3k/Lib/cgi.py">/Lib/cgi.py</a>.'),
     ('(Lib/cgi.py)',
-     '(<a href="http://svn.python.org/view/python/trunk/Lib/cgi.py">Lib/cgi.py</a>)'),
+     '(<a href="http://svn.python.org/view/python/branches/py3k/Lib/cgi.py">Lib/cgi.py</a>)'),
     ('(/Lib/cgi.py)',
-     '(<a href="http://svn.python.org/view/python/trunk/Lib/cgi.py">/Lib/cgi.py</a>)'),
+     '(<a href="http://svn.python.org/view/python/branches/py3k/Lib/cgi.py">/Lib/cgi.py</a>)'),
 
     ## URLs
     ('http://svn.python.org/view/python/tags/r265 ',

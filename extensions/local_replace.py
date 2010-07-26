@@ -14,8 +14,8 @@ substitutions = [
     (re.compile(r'(?P<sep>(?<!\w/)|(?<!\w)/)(?P<path>(?:Demo|Doc|Grammar|'
                 r'Include|Lib|Mac|Misc|Modules|Parser|PC|PCbuild|Python|'
                 'RISCOS|Tools|Objects)/[-.a-zA-Z0-9_/]+[a-zA-Z0-9]/?)'),
-     r'<a href="http://svn.python.org/view/python/'
-     r'trunk/\g<path>">\g<sep>\g<path></a>'), # XXX trunk is dead
+     r'<a href="http://svn.python.org/view/python/branches/'
+     r'py3k/\g<path>">\g<sep>\g<path></a>'),
 ]
 
 
