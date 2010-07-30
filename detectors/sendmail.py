@@ -61,7 +61,7 @@ def sendmail(db, cl, nodeid, oldvalues):
         pass
 
     # New submission? 
-    if None == oldvalues:
+    if oldvalues == None:
         changenote = cl.generateCreateNote(nodeid)
         try:
             # Add triage addresses
@@ -71,7 +71,8 @@ def sendmail(db, cl, nodeid, oldvalues):
         oldfiles = []
     else:
         changenote = cl.generateChangeNote(nodeid, oldvalues)
-        oldfiles = oldvalues.get('files', [])        
+        oldfiles = oldvalues.get('files', [])
+        oldmsglist = oldvalues.get('messages', [])
 
     # Silence nosy_count/message_count
     lines = changenote.splitlines()
@@ -89,9 +90,14 @@ def sendmail(db, cl, nodeid, oldvalues):
             changenote+="\nAdded file: %s" % url
         for fid in removed:
             url = db.config.TRACKER_WEB + "file%s/%s" % \
-                  (fid, db.file.get(fid, "name"))            
+                  (fid, db.file.get(fid, "name"))
             changenote+="\nRemoved file: %s" % url
 
+    # detect if any of the messages has been removed
+    newmsglist = db.issue.get(nodeid, 'messages', [])
+    for msgid in set(oldmsglist)-set(newmsglist):
+        url = db.config.TRACKER_WEB + "msg%s" % msgid
+        changenote += "\nRemoved message: %s" % url
 
     authid = db.getuid()
 
