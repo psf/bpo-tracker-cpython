@@ -69,6 +69,7 @@ def sendmail(db, cl, nodeid, oldvalues):
         except KeyError:
             pass
         oldfiles = []
+        oldmsglist = []
     else:
         changenote = cl.generateChangeNote(nodeid, oldvalues)
         oldfiles = oldvalues.get('files', [])
