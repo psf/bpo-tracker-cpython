@@ -6,7 +6,7 @@ from roundup.cgi.templating import register_propclass, StringHTMLProperty
 
 substitutions = [
     #  r12345, r 12345, rev12345, rev 12345, revision12345, revision 12345
-    (re.compile(r'\b(?<!/)(?P<revstr>r(ev(ision)?)?\s*)(?P<revision>\d+)'),
+    (re.compile(r'\b(?<![/?&;])(?P<revstr>r(ev(ision)?)?\s*)(?P<revision>\d+)'),
      r'<a href="http://svn.python.org/view?rev=\g<revision>'
      r'&view=rev">\g<revstr>\g<revision></a>'),
 

@@ -120,6 +120,12 @@ test_strings = [
       'http://svn.python.org/view/python/tags/r265/Lib/cgi.py?view=markup</a>')),
     ('http://bugs.python.org/issue1000',
      '<a href="http://bugs.python.org/issue1000">http://bugs.python.org/issue1000</a>'),
+    ('http://svn.python.org/view/python/branches/release26-maint'
+     '/Lib/socket.py?r1=83624&r2=83623&pathrev=83624',
+     '<a href="http://svn.python.org/view/python/branches/release26-maint/'
+     'Lib/socket.py?r1=83624&amp;r2=83623&amp;pathrev=83624">http://svn.python.org/'
+     'view/python/branches/release26-maint/Lib/socket.py'
+     '?r1=83624&amp;r2=83623&amp;pathrev=83624</a>'),
 
     ## emails
     ('fixed@europython.eu',
