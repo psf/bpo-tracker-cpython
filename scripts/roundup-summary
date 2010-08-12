@@ -1,917 +1,715 @@
 #!/usr/bin/python
-# Make sure you are using the python that has the roundup runtime used by the 
-# tracker. Requires Python 2.3 or later.
-#
-# Script to create a tracker summary by Richard Jones and Paul Dubois
-import sys, math
-# kludge
-sys.path.insert(1,'/home/roundup/lib/python2.5/site-packages')
-#
-import roundup
+# Authors: Ezio Melotti, Daniel Diniz, Richard Jones and Paul Dubois
+# Requires Python 2.5 or later.
+
+"""
+Create a tracker summary report.
+
+Usage: roundup-summary2 path_to_tracker [options]
+
+Options:
+  -h, --help            show this help message and exit
+  -m MAILTO, --mail=MAILTO
+                        Send the report to the comma-separated list of
+                        addresses or print it if the list is empty.
+  -b, --brief           Show only the summary without the lists of issues.
+  --html                Send also the HTML report via mail.
+  -d 'from;to', --dates='from;to'
+                        Specify the range of dates. Examples: "-1w;" = last
+                        week, previous week = "-2w;-1w", last 15 days =
+                        "-15d;", specific interval = "from 2010-06-19 to
+                        2010-07-04". Default: "-1w;".
+
+  Advanced options:
+    -r RESOLVED, --resolved=RESOLVED
+                        Comma-delimited list of statuses that corresponds to
+                        resolved (default: resolved,done,done-cbb,closed,faq).
+    -o FILENAME, --output=FILENAME
+                        File name for output; default is stdout.
+    -e FILENAME, --errors=FILENAME
+                        File name for error output; default is stderr.
+    -a 'from;to', --audit='from;to'
+                        Print journal for all the transactions in the given
+                        date range.
+    -D, --DEBUG         Print email content without sending it if -m is used.
+"""
+
+# This script has a class (Report) that filters the issues and generates txt
+# and HTML reports.  The issues_map function creates a list of all the issues,
+# with all the necessary information.
+
+import sys
+# hardcode the path to roundup
+sys.path.insert(1, '/home/roundup/lib/python2.5/site-packages')
+#sys.path.insert(1, '/opt/tracker-roundup/lib/python2.6/site-packages/')
+
+import cgi
+import optparse
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 import roundup.date, roundup.instance
-import optparse , datetime
-import cStringIO, MimeWriter, smtplib
 from roundup.mailer import SMTPConnection
 
-### CONFIGURATION
-# List of statuses to treat as closed -- these don't have to all exist.
-resolvedStatusDefault = 'resolved,done,done-cbb,closed,faq'     
+# summary headers
+HEADER_TXT = """
+ACTIVITY SUMMARY (%(timespan)s)
+%(tracker_name)s at %(tracker_url)s
 
-# Period of time for report. Uses roundup syntax for ranges.
-defaultDates = '-1w;'            
+To view or respond to any of the issues listed below, click on the issue.
+Do NOT respond to this message.
 
-# Email address of recipient of report, if any.
-defaultMailTo = ''
+Issues stats:
+  open   %(open)5d (%(open_new)+3d)
+  closed %(closed)5d (%(closed_new)+3d)
+  total  %(total)5d (%(total_new)+3d)
 
-# Comma-delimited list of statuses not to include in report.
-ignoredStatusesDefault = ''
+Open issues with patches: %(patches)-5d"""
 
-# Number of most-discussed messages to display
-discussionMax = 10
+# this looks quite ugly, if you want it to look better write a CSS (or use
+# the plain text version)
+HEADER_HTML = """
+<h1>ACTIVITY SUMMARY</h1>
+<p>(%(timespan)s)</p>
+<p>%(tracker_name)s at <a href="%(tracker_url)s">%(tracker_url)s</a></p>
 
-# Smallest number of messages to be eligible for 'most discussed'.
-discussionThreshold = 3 
+<p>To view or respond to any of the issues listed below, click on the issue.
+Do NOT respond to this message.</p>
 
-# Date format per time.strftime
-dateFormat="%F"   # ISO 8601: yyyy-mm-dd
+<p>Issues stats:</p>
+<table border="1">
+  <tr><th>open</th><td>%(open)5d (%(open_new)+3d)</td></tr>
+  <tr><th>closed</th><td>%(closed)5d (%(closed_new)+3d)</td></tr>
+  <tr><th>total</th><td>%(total)5d (%(total_new)+3d)</td></tr>
+</table>
 
-##### END CONFIGURATION; ALSO SEE CUSTOMIZATION BELOW
-
-usage = """%prog trackerHome [--mail mailTo] 
-                             [--dates 'date1;date2'] 
-                             [--brief]
-			     [--text]
-                        # less likely 
-                             [--resolved 'status1,status2'] 
-                             [--status 'status1,status2']
-                             [--output filename]
-                             [--errors filename]
-                        # for maintainers
-                             [--DEBUG] 
-                             [--AUDIT recent|all]
-         dates is a roundup date range such as:
-            '-1w;' -- the last week (the default)
-            '-3m;' -- the last 3 months
-            'from 2006-10-25 to 2006-12-25'  -- Thanksgiving to Christmas, 2006
-
-         mailTo is one or more email addresses, comma delimited.         
-         resolved is a list of statuses to treat as 'closed'.
-         statuses are names of statuses to ignore.
-         
-         Be sure to protect commas and semicolons from the shell with quotes!
-         Execute %prog --help for detailed help
-"""
-#### Options
-parser = optparse.OptionParser(usage=usage)
-parser.add_option('-b','--brief', dest='brief', action='store_true', 
-   default=False,
-   help='Show summary only, no tables.')
-parser.add_option('-a','--audit', dest='audit', 
-   default='', metavar = 'all|recent',
-   help='Print journal for "all" or "recent" transactions, then halt.')
-parser.add_option('-D','--DEBUG', dest='debug', action='store_true', 
-   default=False,
-   help='Just print the result; if mailTo set, print email but do not send it.')
-parser.add_option('-d','--dates', dest='dates', 
-   default=defaultDates, metavar="'from;to'",
-   help="""Specification for range of dates, such as: \
-'-1w;'    -- previous week;
-'-1y;'    -- previous year;
-'from 2006-11-1 to 2006-12-1' -- exact period""") 
-parser.add_option('-m','--mail', dest='mailTo', 
-   default=defaultMailTo,
-   help='Mail the report to the address(es) mailTo; if not given, print report.')
-parser.add_option('-s','--status', dest='ignore', metavar="STATUSES_TO_IGNORE",
-   default=ignoredStatusesDefault, 
-   help="Comma-delimited list of statuses to ignore in report.")
-parser.add_option('-r','--resolved', dest='resolved', 
-   default=resolvedStatusDefault,
-   help="Comma-delimited list of statuses that corresponds to being 'closed'.")
-parser.add_option('-t', '--text', dest='text', action='store_true',
-   default=False,
-   help="Write text report only, no HTML.")
-parser.add_option('-o','--output', dest='output', 
-   default='', metavar='FILENAME',
-   help='File name for output; default is stdout.')
-parser.add_option('-e','--errors', dest='errors', 
-   default='', metavar='FILENAME',
-   help='File name for error output; default is stderr.')
-
-#### Get the command line args:
-(options, args) = parser.parse_args()
-if options.output:
-    sys.stdout = open(options.output, 'w')
-if options.errors:
-    sys.stderr = open(options.errors, 'w')
-
-if len(args) != 1:
-    parser.error("""Incorrect number of arguments; 
-                    you must supply a tracker home.""")
-instanceHome = args[0]
-# Open the instance
-instance = roundup.instance.open(instanceHome)
-db = instance.open('admin')
-
-# CUSTOMIZATION
-columnWidth = 72  #for text report
-dateWidth = len(roundup.date.Date('2006-09-30').pretty(format=dateFormat))
-titleWidth = columnWidth - dateWidth #zero means no limit
-durationWidth = len('9999 days')
-tableStyle = 'border="1" cellspacing="0" cellpadding="3"'
-
-def formatDuration(duration):
-    "Change a duration into text."
-    return "%4.0f days" % (duration.as_seconds()/(3600.*24),)
-
-def closedOrBlank(statusID):
-    "CLOSED or a blank"
-    if statusID in resolvedStatusIDS:
-        return "CLOSED"
-    else:
-        return ""
-
-def F(**args):
-    "args is the dictionary to return, with additions if desired."
-    return args
+<p>Open issues with patches: %(patches)-5d</p>"""
 
 
-# Set what fields show up in the different tables.
-# May need to modify getIssueAttribute to match your schema or add things
-# you want to compute.
-# Each field has a title and a field width.
-# In text mode:
-#     a title of '<br>, indent' means a new line is started for each 
-#     record, and the integer indent indicates an indentation for the next line.
-#     If used, titles are omitted.
-# In html mode, <br> is ignored.
 
-### Text Tables
-# The 'Created or Repopened' table, text mode.
-createdTable = """
-    titles:
-        'Title', titleWidth
-        'Date', dateWidth
-        '<br>', 0
-        'Status', len('CLOSED')
-        'Link', linkWidth
-        'Action', actionWidth
-        'By', userNameWidth
-        '<br>', len('CLOSED')
-	'Keywords', columnWidth
-    records:
-        title
-        (reopenedDate or creation).pretty(format=dateFormat)
-        closedOrBlank(statusID)
-        link(issueNumber)
-        reopened or 'created'
-        reopener or creator
-	keywords
-"""
-# The table of closed issues, text mode.
-closedTable = """
-    titles:
-        'Title', titleWidth
-        'Duration', durationWidth
-        '<br>', len('CLOSED')
-        'Link', linkWidth 
-        'By', userNameWidth
-	'<br>', len('CLOSED')
-	'Keywords', columnWidth
-    records:
-        title
-        formatDuration(duration)
-        link(issueNumber) 
-        actor
-	keywords
-"""
-# The table of most discussed issues, text mode.
-discussedTable = """
-    titles:
-        'N', -3
-        'Title', columnWidth - durationWidth
-        'Duration', durationWidth
-        '<br>', 0
-        'Status', statusWidth
-        'Link', linkWidth
-    records:
-        numberOfMessages
-        title
-        formatDuration(duration)
-        status
-        link(issueNumber) 
-"""
-
-### HTML Tables
-# The 'Created or Repopened' table, html mode.
-# Titles are links, use zero on width; limit is applied in hlink
-htmlCreatedTable = """
-    titles:
-        'Title', 0
-        'Status', len('CLOSED')
-        'Date', dateWidth
-        'Action', actionWidth
-        'By', userNameWidth
-	'Keywords', 15
-    records:
-        hlink(issueNumber, title)
-        closedOrBlank(statusID)
-        (reopenedDate or creation).pretty(format=dateFormat)
-        reopened or 'created'
-        reopener or creator
-	keywords
-"""
-# The table of closed issues, html mode.
-htmlClosedTable = """
-    titles:
-        'Title', 0
-        'By', userNameWidth
-        'Duration', durationWidth
-	'Keywords', 15
-    records:
-        hlink(issueNumber, title)
-        actor
-        formatDuration(duration)
-	keywords
-"""
-# The table of most discussed issues, text mode.
-htmlDiscussedTable = """
-    titles:
-        'N', -3
-        'Title', 0
-        'Status', statusWidth
-        'Duration', durationWidth
-    records:
-        numberOfMessages
-        hlink(issueNumber, title)
-        status
-        formatDuration(duration)
-"""
-### END CUSTOMIZATION
-# well, except you might want to add to this...locals in getIssueAttributes 
-# are usable in the 'records' section of tables.
-# Keywords
-patchID = db.keyword.lookup('patch')
-keywordIDS = db.keyword.getnodeids(False)
-keywordsDict = {}
-for id in keywordIDS:
-    keywordsDict[id] = db.keyword.get(id, 'name')
-
-def isPatch(issueID):
-    keywordIDS = db.issue.get(issueID, 'keywords')
-    return patchID in keywordIDS
-
-def getKeywordString (issueID):
-    keywordIDS = db.issue.get(issueID, 'keywords')
-    sep = ''
-    keywords = ''
-    for id in keywordIDS:
-        try:
-	    k = keywordsDict[id]
-            keywords += (sep + k)
-	    sep = ', '
-	except KeyError:  #retired kw
-	    pass
-    return keywords
-
-def getIssueAttributes (issueID):
-    """Return dictionaries with the issue's title, etc.
-       Assumes issue was created no later than to_value
+def get_options_and_home():
     """
-    issueNumber = issueID
-    reopened = ''
-    reopener = ''
-    reopenedDate = ''
-    numberOfMessages = 0
-    status2 = db.issue.get(issueID, 'status') 
-    status1 = status2
-    actor2 = db.issue.get(issueID, 'actor')
-    activity2 = db.issue.get(issueID, 'activity')
-    statusID = None
-    actorID = None
-    activity = None
-    keywords = getKeywordString(issueID)
+    Return a list of options and the instance home.
+    """
+    # list of statuses to treat as closed -- these don't have to all exist.
+    resolved_status_def = 'resolved,done,done-cbb,closed,faq'
+    # period of time for report. Uses roundup syntax for ranges.
+    default_dates = '-1w;' # last week
+    # email address of recipient of report, if any.
+    default_mailto = ''
+    parser = optparse.OptionParser(usage='Usage: %prog path_to_tracker [options]')
+    parser.add_option(
+        '-m', '--mail', dest='mailTo', default=default_mailto,
+        help='Send the report to the comma-separated list of addresses '
+             'or print it if the list is empty.')
+    parser.add_option(
+        '-b', '--brief', dest='brief', action='store_true', default=False,
+        help='Show only the summary without the lists of issues.')
+    parser.add_option(
+        '', '--html', dest='html', action='store_true', default=False,
+        help='Send also the HTML report via mail.')
+    parser.add_option(
+        '-d', '--dates', dest='dates', default=default_dates, metavar="'from;to'",
+        help='Specify the range of dates. Examples: "-1w;" = last week, '
+             'previous week = "-2w;-1w", last 15 days = "-15d;", specific '
+             'interval = "from 2010-06-19 to 2010-07-04". Default: "-1w;".')
 
-# programming note:
-# the journal records the OLD value of the status in the data field     
-# So we know the end value (status2) and can walk backwards through it
-# Want to set statusID = status in effect at to_value
-# Also discover any activity that changed a resolved to non-resolved.
-    journal = db.issue.history(issueID)
-    journal.reverse()
-# this trick catches the first time we are in the interval of interest
-    if activity2 < to_value:
-        statusID = statusID or status2
-        actorID = actorID or actor2
-        activity = activity or activity2
+    advanced = optparse.OptionGroup(parser, 'Advanced options')
+    advanced.add_option(
+        '-r', '--resolved', dest='resolved', default=resolved_status_def,
+        help='Comma-delimited list of statuses that corresponds to resolved '
+             '(default: %default).')
+    advanced.add_option(
+        '-o', '--output', dest='output', metavar='FILENAME', default='',
+        help='File name for output; default is stdout.')
+    advanced.add_option(
+        '-e', '--errors', dest='errors', default='', metavar='FILENAME',
+        help='File name for error output; default is stderr.')
+    advanced.add_option(
+        '-a', '--audit', dest='audit', metavar="'from;to'",
+        help='Print journal for all the transactions in the given date range.')
+    advanced.add_option(
+        '-D', '--DEBUG', dest='debug', action='store_true', default=False,
+        help='Print email content without sending it if -m is used.')
+    parser.add_option_group(advanced)
 
-    for x,ts,userid,act,data in journal:
-        inPeriod = ts >= from_value and ts < to_value
-        if inPeriod:
-            statusID = statusID or status2
-            actorID = actorID or actor2
-            activity = activity or activity2
-        if act == 'set':
-            if data.has_key('messages'):
-                if inPeriod:
-                    numberOfMessages += 1
-            if data.has_key('status'):
-                status1 = data['status']
-                if ts < to_value:
-                    if (status1 in resolvedStatusIDS) and \
-                       (status2 not in resolvedStatusIDS):
-                        if not reopened: # want the latest reopener only
-                            if inPeriod and issueID not in recentlyCreatedIssueIDS:
-                                reopenedIssueIDS.append(issueID)
-                            reopened = 'reopened'
-                            reopener = userMap[userid]
-                            reopenedDate = ts
-                    actor2 = userid
-                    activity2 = ts
-                    status2 = status1 
+    # Get the command line args:
+    (options, args) = parser.parse_args()
+    if options.output:
+        sys.stdout = open(options.output, 'w')
+    if options.errors:
+        sys.stderr = open(options.errors, 'w')
+    if len(args) != 1:
+        parser.error('Incorrect number of arguments; '
+                     'you must supply the path to a tracker home.')
+    options.dates = get_dates(options.dates)
+    options.resolved = [s.strip() for s in options.resolved.split(',')]
+    instance_home = args[0]
+    return options, instance_home
 
-    messages.append((numberOfMessages, issueID))
-# get these set if not done before
-    statusID = statusID or status2
-    activity = activity or activity2
-    actorID = actorID or actor2
-# calculate the fields for the reports 
-    status = statusMap[statusID]
-    actor = userMap[actorID]
-    title = db.issue.get(issueID, 'title')
-    creation = db.issue.get(issueID, 'creation')
-    creatorID = db.issue.get(issueID, 'creator')
-    creator = userMap[creatorID]
-    if statusID in resolvedStatusIDS:
-        duration = activity - (reopenedDate or creation)
-    else:
-        duration = to_value - (reopenedDate or creation)
-    if options.debug:
-        print >>bugfile, issueID, status, creator, actor, "%4.0f" %(duration.as_seconds()/(3600.24)), \
-               activity.pretty(dateFormat), reopenedDate or 'created', creation.pretty(dateFormat)
-# out of a sense of neatness
-    del status1, status2, actor2, activity2
-    del x, ts, userid, act, data, journal
-# return the dictionary of local values for use in evals of table values.
-    return locals()
 
-### Utility
-def link (issueID):
-    "url of issue whose ID is issueID"
-    return "%sissue%s" % (db.config.TRACKER_WEB, issueID)
+def get_dates(dates):
+    dates = roundup.date.Range(dates, roundup.date.Date)
+    if dates.to_value is None:
+        dates.to_value = roundup.date.Date('.')
+    if dates.from_value is None:
+        dates.from_value = roundup.date.Date('1980-1-1')
+    return dates
 
-def hlink (issueID, title):
-    "html link to url/title of issue whose ID is issueID"
-    return '''<a href="%s">%s</a>''' %(link(issueID), title[:titleWidth])
 
-def statusCompare (x, y):
-    """Compare two statusIDs by order."""
-    xs = db.status.get(x, 'order')
-    ys = db.status.get(y, 'order')
-    c = float(xs) - float(ys)
-    if c >= 0.0: 
-        return int(c)
-    else:
-        return -int(abs(c))
 
-def issueIdCompare (x, y):
-    """Compare two issue ids numerically."""
-    return int(x) - int(y)
+class Report(object):
+    """
+    Class that stores and filters all the issues and provides a method
+    to generate plain text or HTML reports.
+    """
+    def __init__(self, issues):
+        self.issues = issues
+        self.start_date = OPTIONS.dates.from_value
+        self.end_date = OPTIONS.dates.to_value
+        self.header_content = None
+        # create a list with the filtered issues
+        # a table will be generated for each of this lists
+        self.issues_lists = [
+            self.opened_issues(),
+            self.unreplied(),
+            self.need_review(),
+            self.most_discussed(),
+            self.closed_issues(),
+        ]
 
-def issueStatus(issueID):
-    """Get the status name from an issueID."""
-    sid = db.issue.get(issueID, 'status')
-    return db.status.get(sid, 'name')
 
-def statusUsable (statusID):
-    """Is this status is one we want to deal with?"""
-    if db.status.is_retired(statusID): 
-        return False
-    if db.status.get(statusID, 'name') in ignoredStatuses:
-        return False
-    return True
-
-#Table writers
-
-class Table (object):
-    def __init__ (self, caption, issueIDS, tableSpec):
-        self.caption = caption + ' (%d)' % len(issueIDS)
-        self.issueIDS = issueIDS
-        self.breaks = []
-        self.spec = self.parse(tableSpec)
-
-    def parse(self, tableSpec):
-        """Sample:
-        titles:
-            'ID', -6 
-            'Title', 25
-            'Status', 30
-        records:
-            id
-            title
-            status
+    def make_report(self, type='txt'):
         """
-        titles = []
-        fields = []
-        fws = []
-        for line in tableSpec.split('\n'):
-            line = line.strip()
-            if not line: continue
-            if line.startswith("titles"):
-                inTitles = True
-            elif line.startswith("records"):
-                inTitles = False
-            elif inTitles:
-                title, fw = eval(line)
-                if title == '<br>':
-                    self.breaks.append((len(titles), fw))
-                else:
-                    titles.append(title)
-                    if fw > 0:
-                        fw = max(fw, len(title))
-                    elif fw < 0:
-                        fw = min(fw, -len(title))
-                    fws.append(fw)
+        Return the report as a string. The report can be either in 'txt' or
+        'html' format, depending on the value of the *type* attribute.
+        """
+        if type not in ('txt', 'html'):
+            raise ValueError('The type should be either "txt" or "html".')
+        report = self.make_header(type)
+        if not OPTIONS.brief:
+            report += self.make_tables(type)
+        return report
+
+
+    def make_header(self, type):
+        """Calculate the number of open, closed and total issues and now many
+           have been created in the given period."""
+        if type == 'txt':
+            header = HEADER_TXT
+        elif type == 'html':
+            header = HEADER_HTML
+
+        # if we have already calculated the values just return the header
+        if self.header_content is not None:
+            return header % self.header_content
+
+        start_date, end_date = self.start_date, self.end_date
+        start_str = start_date.pretty(format='%F') # %F -> yyyy-mm-dd
+        end_str = end_date.pretty(format='%F')
+        open_tot = closed_tot = all_tot = 0
+        open_new = closed_new = all_old = 0
+        with_patch = 0
+        patch_id = DB.keyword.lookup('patch')
+        for id, issue in self.issues.iteritems():
+            # don't include issues created after the end date
+            if issue['creation'] > end_date:
+                continue
+            if issue['creation'] < start_date:
+                all_old += 1
+            all_tot += 1
+            if issue['closed']:
+                closed_tot += 1
+                if issue['closed_date'] >= start_date:
+                    closed_new += 1
             else:
-                fields.append(line)
-        self.titles = titles
-        self.fields = fields
-        self.fws = fws
-        if len(titles) != len(fields):
-            raise ValueError, 'Number of titles and fields do not match.'
-        if len(titles) == 0:
-            raise ValueError, 'No titles or fields given'
-       
-    def write(self, device):
-        if not self.issueIDS: 
-            return
-        fields = self.fields
-        fws = self.fws
-        self.prologue(device)
-        self.writeFields(device, fields, fws)
-        self.epilogue(device)
+                open_tot += 1
+                if ((issue['creation'] >= start_date) or
+                    (issue['reopened_date'] >= start_date)):
+                    open_new += 1
+                if patch_id in issue['keyword_ids']:
+                    with_patch += 1
+        all_new = all_tot - all_old
+        # save the values in an attribute to avoid calculating it twice
+        # when both the txt and the HTML header are needed (i.e. when sending
+        # HTML mails)
+        self.header_content = dict(
+            timespan='%s - %s' % (start_str, end_str),
+            tracker_url=DB.config.TRACKER_WEB,
+            tracker_name=DB.config.TRACKER_NAME,
+            open=open_tot, open_new=open_new,
+            closed=closed_tot, closed_new=closed_new,
+            total=all_tot, total_new=all_new,
+            patches=with_patch,
+        )
+        return header % self.header_content
 
-    def writeTitles(self, device, titles, fws):
-        self.startTitles(device, titles, fws)
-        for i in range(len(titles)):
-            t = titles[i]
-            fw = fws[i]
-            self.startTitle(device, t, fw)
-            self.writeTitle(device, t, fw)
-            self.endTitle(device, t, fw)
-        self.endTitles(device, titles, fws)
 
-    def writeFields(self, device, fields, fws):
-        for issueID in self.issueIDS:
-            d = issueAttributes[issueID]
-            self.startFields(d, device, fields, fws)
-            for i in range(len(fields)):
-                f = fields[i]
-                fw = fws[i]
-                self.startField(d, device, f, fw)
-                self.writeField(d, device, f, fw)
-                self.endField(d, device, f, fw)
-                for count, indent in self.breaks:
-                    if i+1 == count:
-                        print >>device
-                        if indent: 
-                            print >>device, ' '.ljust(indent),
-            self.endFields(d, device, fields, fws)
+    def make_tables(self, type):
+        """Return all the tables as a single string."""
+        return ''.join(self.make_table(t, type) for t in self.issues_lists)
 
-    def prologue(self, device):
-        print >>device
-        print >>device, self.caption
-        print >>device, '_'*len(self.caption)
-        print >>device
-        if not self.breaks:
-            self.writeTitles(device, self.titles, self.fws)
 
-    def epilogue(self, device):
-        print >>device    
+    # these methods are currently not used
+    def average_duration(self):
+        durations = [issue['duration'] for issue in self.issues.values()
+                                       if issue['status'] == 'closed']
+        return sum(durations) / len(durations)
 
-    def startTitles(self, device, titles, fws):
-        pass
+    def median_duration(self):
+        durations = sorted(issue['duration'] for issue in self.issues.values()
+                                             if issue['status'] == 'closed')
+        return durations[len(durations)//2]
 
-    def endTitles(self, device, titles, fws):
-        print >>device
 
-    def startTitle(self, device, title, fw):
-        pass
+    def opened_issues(self):
+        """
+        Return a list of all the issues created or reopened during the
+        specified period.
+        """
+        title = 'Issues opened'
+        template = ('#%(id)d: %(title)s\n'
+                    '%(url)s  %(re)sopened by %(opener)s\n')
+        headers = ['ID', 'Title', 'Opener']
+        issues_list = []
+        # XXX: sort issues by date? id?
+        for id,issue in self.issues.iteritems():
+            if issue['closed']:
+                continue  # list only issues that are still open
+            reopened = ''
+            opener = issue['creator']
+            if not self._in_period(issue['creation']):
+                if (not issue['reopened_date'] or
+                    not self._in_period(issue['reopened_date'])):
+                    continue
+                else:
+                    reopened = 're'
+                    opener = issue['reopener']
+            issues_list.append({
+                'id': id,
+                'title': issue['title'][:62],
+                #'date': issue['creation'].pretty('%F'),
+                'url': issue['url'],
+                're': reopened,
+                'opener': opener
+            })
+        return dict(title=title, issues=issues_list,
+                    template=template, headers=headers)
 
-    def writeTitle(self, device, title, fw):
-        fwa = abs(fw)
-        if fwa > 0:
-            print >>device, title[0:fwa].ljust(fwa),
-        elif fwa < 0:
-            print >>device, title[0:fwa].rjust(fwa),
+    # XXX pending issues?
+
+    def closed_issues(self):
+        """
+        Return a list of all the issues closed during the specified period
+        that are still closed.
+        """
+        title = 'Issues closed'
+        template = ('#%(id)d: %(title)s\n'
+                    '%(url)s  closed by %(closedby)s\n')
+        headers = ['ID', 'Title', 'Closed by']
+        issues_list = []
+        for id,issue in self.issues.iteritems():
+            if not issue['closed'] or not self._in_period(issue['closed_date']):
+                continue
+            issues_list.append({
+                'id': id,
+                'title': issue['title'][:62],
+                #'date': issue['closed_date'].pretty('%F'),
+                'url': issue['url'],
+                'closedby': issue['closer']
+            })
+        return dict(title=title, issues=issues_list,
+                    template=template, headers=headers)
+
+
+    def most_discussed(self):
+        """
+        Return a table of the ten most discussed issues of the specified
+        period, sorted by number of messages.
+        """
+        title = 'Top 10 most discussed issues'
+        template = ('#%(id)d: %(title)s\n'
+                    '%(url)s %(msgs)3d msgs\n')
+        headers = ['ID', 'Title', 'Msgs']
+        issues_list = []
+        def newmsg(issue): return issue['msgs_in_period']
+        for issue in sorted(self.issues.itervalues(), key=newmsg, reverse=True):
+            if issue['closed'] or newmsg(issue) < 3:
+                continue  # only open issues with at least 3 new msgs
+            issues_list.append({
+                'id': issue['issue_num'],
+                'title': issue['title'][:62],
+                'url': issue['url'],
+                'msgs': issue['msgs_in_period']
+            })
+            if len(issues_list) == 10:
+                break
+        return dict(title=title, issues=issues_list,
+                    template=template, headers=headers)
+
+
+    def unreplied(self):
+        """
+        Return a table that lists the issues that haven't received any
+        reply.
+        """
+        title = 'Most recent 15 issues with no replies'
+        template = ('#%(id)d: %(title)s\n'
+                    '%(url)s\n')
+        headers = ['ID', 'Title']
+        issues_list = []
+        def creation(issue): return issue['creation']
+        for issue in sorted(self.issues.itervalues(),
+                            key=creation, reverse=True):
+            # check only the end_date, otherwise older issues might get lost
+            if (issue['closed'] or issue['msgs_num'] > 1 or
+                issue['creation'] > self.end_date):
+                continue  # only open issues with no replies
+            issues_list.append({
+                'id': issue['issue_num'],
+                'title': issue['title'][:62],
+                'url': issue['url'],
+            })
+            if len(issues_list) == 15:
+                break
+        return dict(title=title, issues=issues_list,
+                    template=template, headers=headers)
+
+
+    def need_review(self):
+        """
+        Return a table that lists the issues active during the specified
+        period that need a review (i.e. they have 'patch' or 'needs review'
+        as keywords or 'patch review' as stage).
+        """
+        title = 'Most recent 15 issues waiting for review'
+        template = ('#%(id)d: %(title)s\n'
+                    '%(url)s\n')
+        headers = ['ID', 'Title']
+        issues_list = []
+        def creation(issue): return issue['creation']
+        for issue in sorted(self.issues.itervalues(),
+                            key=creation, reverse=True):
+            # it would be better to check if the 'needs review' or
+            # 'patch' keyword have been added in the last period
+            # or if the stage changed to 'patch review' instead of
+            # checking the most recent
+            if issue['closed'] or issue['creation'] > self.end_date:
+                continue
+            if ('needs review' in issue['keywords'] or
+                'patch' in issue['keywords'] or
+                issue['stage'] == 'patch review'):
+                issues_list.append({
+                    'id': issue['issue_num'],
+                    'title': issue['title'][:62],
+                    'url': issue['url'],
+                })
+            if len(issues_list) == 15:
+                break
+        return dict(title=title, issues=issues_list,
+                    template=template, headers=headers)
+
+
+    def make_table(self, data, type):
+        """
+        Create a text or HTML table depending on the settings.
+
+        *title* is the title of the table, *issues* a list of dicts that
+        contains the information about the issues, *template* is the format
+        string used to generate the entries in the text table, *headers*
+        is a list of strings used for the headers of the HTML table.
+        """
+
+        # if there are no issues skip the whole table
+        if not data['issues']:
+            return ''
+        if type == 'html':
+            return self._make_html_table(data['title'], data['issues'],
+                                         data['headers'])
         else:
-            print >>device, title,
-
-    def endTitle(self, device, title, fw):
-        pass
-
-    def startFields(self, d, device, fields, fws):
-        pass
-
-    def endFields(self, d, device, fields, fws):
-        print >>device
-        if self.breaks: print >>device
-
-    def startField(self, d, device, field, fw):
-        pass
-
-    def writeField(self, d, device, field, fw):
-        fwa = abs(fw)
-        value = str(eval(field, d, globals()))
-        if fw > 0:
-            print >>device, value[0:fwa].ljust(fwa),
-        elif fw < 0:
-            print >>device, value[0:fwa].rjust(fwa),
-        else:
-            print >>device, value,
-
-    def endField(self, d, device, field, fw):
-        pass
-
-class htmlTable (Table):
-    def __init__ (self, caption, issueIDS, tableSpec):
-        super(htmlTable, self).__init__(caption, issueIDS, tableSpec)
-
-    def prologue(self, device):
-        print >>device, """<br><table %s>
-<caption>%s</caption>""" % (tableStyle, self.caption)
-        self.writeTitles(device, self.titles, self.fws)
-
-    def epilogue(self, device):
-        print >>device, '</table>' 
-
-    def startTitles(self, device, titles, fws):
-        print >>device, '        <tr>'
-
-    def endTitles(self, device, titles, fws):
-        print >>device, '        </tr>'
-
-    def startTitle(self, device, title, fw):
-        print >>device, '            <th>',
-
-    def writeTitle(self, device, title, fw):
-        if not title: 
-            title = '&nbsp;'
-        fwa = abs(fw)
-        if fw != 0:
-            print >>device, title[0:fwa],
-        else:
-            print >>device, title,
-
-    def endTitle(self, device, title, fw):
-        print >>device, '</th>'
-
-    def startFields(self, d, device, fields, fws):
-        print >>device, '        <tr>'
-
-    def endFields(self, d, device, fields, fws):
-        print >>device, '        </tr>'
-
-    def startField(self, d, device, field, fw):
-        print >>device, '            <td>',
-
-    def writeField(self, d, device, field, fw):
-        if field == 'issueRef': 
-            field = 'issueHRef'
-            fw = 0
-        value = str(eval(field, d, globals()))
-        fwa = abs(fw)
-        if not value:
-            value = '&nbsp;'
-            fwa = 0
-        if fwa != 0:
-            print >>device, value[0:fwa],
-        else:
-            print >>device, value,
-
-    def endField(self, d, device, field, fw):
-        print >>device, '</td>'
-
-# Summary writers 
-def htmlSummary(body, caption):
-    "Print html summary"
-    print >>body, '<h2>ACTIVITY SUMMARY ('+ from_value.pretty(format=dateFormat) + \
-                  ' - ' + to_value.pretty(format=dateFormat) + ')</h2>'
-    print >>body, '<h3>%s at %s</h3>' % (db.config.TRACKER_NAME, 
-                                         db.config.TRACKER_WEB)
-    print >>body, '<p>'
-    print >>body, '''To view or respond to any of the issues listed
-        below, simply click on the issue ID. Do <b>not</b> respond to
-        this message.'''
-    print >>body, '</p>'
-    print >>body, '<p>'
-    fmt = "%5d open (%+3d) / %5d closed (%+3d) / %5d total (%+3d)"
-    print >>body, '</p>'
-    print >>body, '<p>'
-    print >>body, fmt % \
- (nOpen, nOpen-nOpenOld, nClosed, nClosed-nClosedOld, (nOpen+nClosed), 
- (nOpen+nClosed)-(nOpenOld+nClosedOld))
-    print >>body, '</p>'
-    print >>body, "<p>"
-    print >>body, "Open issues with patches: %5d" % nPatch
-    print >>body, '</p>'
-    print >>body, '<p>'
-    print >>body, "Average duration of open issues:", "%3.0f" % averageDuration, "days."
-    print >>body, '</p>'
-    print >>body, "<p>"
-    print >>body, "Median duration of open issues:", "%3.0f" % medianDuration, "days."
-    print >>body, '</p>'
-    print >>body, '<p>'
-    print >>body, '''<table %s>
-<caption>%s</caption>
-<tr><th>STATUS</th> <th>Number</th><th>Change</th></tr>
-''' % (tableStyle, caption)
-    for sid in statusIDS:
-        if sid in resolvedStatusIDS:
-            continue
-        (ntot, nold) = statusReport[sid]
-        name = statusMap[sid]
-        print >>body, '''<tr><td>%s</td><td>%6d</td><td>%+6d</td></tr>'''% \
-                         (name, ntot, ntot-nold)
-    print >>body, '</table>'
-    print >>body, '</p>'
+            return self._make_text_table(data['title'], data['issues'],
+                                         data['template'])
 
 
-def textSummary(body, caption):
-    "Print text summary"
-    print >>body
-    print >>body, 'ACTIVITY SUMMARY ('+ from_value.pretty(format=dateFormat) + \
-                  ' - ' + to_value.pretty(format=dateFormat) + ')'
-    print >>body, '%s at %s' % (db.config.TRACKER_NAME, db.config.TRACKER_WEB)
-    print >>body, '''
-To view or respond to any of the issues listed below, click on the issue 
-number.  Do NOT respond to this message.
-'''
-    print >>body
-    fmt = "%5d open (%+3d) / %5d closed (%+3d) / %5d total (%+3d)"
-    print >>body, fmt % \
- (nOpen, nOpen-nOpenOld, nClosed, nClosed-nClosedOld, (nOpen+nClosed), 
- (nOpen+nClosed)-(nOpenOld+nClosedOld))
-    print >>body
-    print >>body, "Open issues with patches: %5d" % nPatch
-    print >>body
-    print >>body, "Average duration of open issues:", "%3.0f" % averageDuration, "days."
-    print >>body, "Median duration of open issues:", "%3.0f" % medianDuration, "days."
-    print >>body
-    print >>body, caption
-    for sid in statusIDS:
-        if sid in resolvedStatusIDS:
-            continue
-        (ntot, nold) = statusReport[sid]
-        name = statusMap[sid]
-        fmt = "%" + str(statusWidth) + "s %5d (%+3d)"
-        print >>body, (fmt % (name, ntot, ntot-nold))
+    def _make_text_table(self, title, issues, template):
+        """
+        Make a text table. *title* is the title of the table,
+        *issues* a lidt of dicts with the information for each issue,
+        *template* is a format string used for each entry.
+        """
+        lnum = len(issues)
+        table = [
+            title + ' (%d)' % lnum,
+            '=' * (len(title) + len(str(lnum)) + 3) + '\n'
+        ]
+        table.extend(template % issue for issue in issues)
+        return '\n\n\n' + '\n'.join(table)
 
 
-def writeTextReport(device):
-    "Write the report in text mode to device."
-    textSummary(device, "Open Issues Breakdown") 
+    def _make_html_table(self, title, issues, headers):
+        # seriously, HTML tables?
+        lines = [
+            '<table border="1">',
+            '  <caption style="border: 1px solid black; margin-top: 2em">%s'
+            '</caption>' % title,
+            '  <tr>%s</tr>' % ''.join('<th>%s</th>' % h for h in headers),
+        ]
+        for issue in issues:
+            lines.append('  <tr>')
+            for header in headers:
+                column = header.replace(' ', '').lower()
+                if column == 'title':
+                    # 'title' is special-cased to be turned in a link
+                    url, title = issue['url'], cgi.escape(issue['title'])
+                    lines.append('     <td><a href="%s">%s</a></td>'
+                                 % (url, title))
+                else:
+                    lines.append('     <td>%s</td>' % issue[column])
+            lines.append('  </tr>')
+        lines.append('</table>')
+        return '\n'.join(lines) + '\n\n'
 
-    if not options.brief:
-        messages.sort()
-        messages.reverse()
-        t = Table('Issues Created Or Reopened', createdOrReopenedIDS, 
-                  createdTable)
-        t.write(device)
+    def _in_period(self, date):
+        """Check that the given date is between the start and end_date"""
+        return self.start_date <= date <= self.end_date
 
-        t = Table('Issues Now Closed', recentlyClosedIssueIDS, closedTable)
-        t.write(device)
 
-        t = Table('Top Issues Most Discussed', discussedIDS, discussedTable)
-        t.write(device)
 
-def writeHtmlReport(device):
-    "Write the report in html mode to device."
-    htmlSummary(device, 'Open Issues Breakdown')
-    if not options.brief:
-        t = htmlTable('Issues Created Or Reopened', createdOrReopenedIDS, 
-                      htmlCreatedTable)
-        t.write(device)
-    
-        t = htmlTable('Issues Now Closed', recentlyClosedIssueIDS, 
-                       htmlClosedTable)
-        t.write(device)
-        
-        t = htmlTable('Top Issues Most Discussed', discussedIDS, 
-                      htmlDiscussedTable)
-        t.write(device)
-   
-def writeAudit(device, issueIDS):
-    "Write audit of given issues to device."
-    for issueID in issueIDS:
-        journal = db.issue.history(issueID)
-        for x,ts,userid,act,data in journal:
-            user = db.user.get(userid, 'username')
-            print >>device, x, ts, '%s (%s)'%(userid, user), act
+def get_issue(issue_id, kws_dict, stages_dict):
+    """Get issue attributes and journal from the database."""
+    attrs = DB.getnode('issue', issue_id)  # get the current attributes
+    kwds = set(attrs['keywords'])
+    if attrs.get('stage', None) is not None:
+        stage = stages_dict[attrs['stage']]
+    else:
+        stage = None
+
+    # if you need more attributes add them here
+    issue = dict(
+        issue_num = issue_id,
+        reopened = '',
+        new = False, closed = False,
+        reopener = '',
+        reopened_date = '',
+        closer = '',
+        closed_date = '',
+        msgs_num = len(attrs['messages']),
+        msgs_in_period = 0,
+        status = None,
+        real_status = sid2name(attrs['status']), # Avoid a bug in get_issue_attrs
+        actor = None,
+        activity = None,
+        keyword_ids = kwds,
+        keywords =  ', '.join([kws_dict[id] for id in kwds if id in kws_dict]),
+        stage = stage,
+        title = attrs['title'],
+        creation = attrs['creation'],
+        creator = attrs['creator'],
+        url = DB.config.TRACKER_WEB + 'issue%d' % issue_id
+    )
+    # The journal records the OLD value of the status in the data field
+    journal = DB.issue.history(issue['issue_num'])
+
+    helper = dict(
+        issue_id = issue_id,
+        status2 = sid2name(attrs['status']),
+        status1 = sid2name(attrs['status']),
+        actor2 = attrs['actor'],
+        activity2 = attrs['activity'],
+        journal = journal
+    )
+    return issue, helper
+
+
+def get_issue_attrs(issue, helper):
+    """Calculate and set issue attributes from journal.
+
+     Return dictionaries with the issue's title, etc. Assumes issue was
+     created no later than to_value.
+    """
+    dates = OPTIONS.dates
+    def reopened(issue):
+        status1 = issue['status1'] in OPTIONS.resolved
+        status2 = issue['status2'] not in OPTIONS.resolved
+        return status1 and status2
+
+    def not_new(issue):
+        return dates.to_value > issue['creation'] <= dates.from_value
+
+    def update(issue, helper):
+        for key in ('status', 'actor', 'activity'):
+            issue[key] = issue[key] or helper[key + '2']
+    # I'm not sure all this stuff is necessary, but it seems to work...
+    # this trick catches the first time we are in the interval of interest
+    if helper['activity2'] < dates.to_value:
+        update(issue, helper)
+    for _, time, userid, act, data in helper['journal']:
+        in_period =  dates.to_value > time >= dates.from_value
+        if in_period:
+            update(issue, helper)
+            issue['new'] = issue['new'] or act == 'create'
+        if act == 'set':
+            if 'messages' in data and in_period:
+                # find the number of messages added/removed in the period
+                msg = data['messages'][0]
+                if msg[0] == '+':
+                    issue['msgs_in_period'] += 1
+                elif msg[0] == '-':
+                    issue['msgs_in_period'] -= 1
+            if 'status' in data:
+                helper['status1'] = sid2name(data['status'])
+                if time < dates.to_value:
+                    # want the last reopener only
+                    if reopened(helper) and not issue['reopened']:
+                        issue['new'] = in_period and not_new(issue)
+                        issue['reopened'] = 'reopened'
+                        issue['reopener'] = userid
+                        issue['reopened_date'] = time
+                    helper['actor2'] = userid
+                    helper['activity2'] = time
+                    helper['status2'] = helper['status1']
+                if (not issue['closer'] and
+                    sid2name(data['status']) not in OPTIONS.resolved and
+                    issue['real_status'] in OPTIONS.resolved):
+                    issue['closer'] = userid
+                    issue['closed_date'] = time
+    # get these set if not done before
+    update(issue, helper)
+    last_opened = issue['reopened_date'] or issue['creation']
+    issue['closed'] = issue['status'] in OPTIONS.resolved
+    duration = issue['activity'] if issue['closed'] else dates.to_value
+    issue['duration'] = int((duration - last_opened).as_seconds())
+    return issue
+
+
+def format_issue_attrs(issue):
+    """Format issue fields for the reports."""
+    # XXX: this shouldn't be a separate function
+    issue['status_id'] = issue['status']
+    #issue['status'] = sid2name(issue['status'])
+    issue['actor'] = uid2name(issue['actor'])
+    issue['creator'] = uid2name(issue['creator'])
+    if issue['reopener']:
+        issue['reopener'] = uid2name(issue['reopener'])
+    if issue['closer']:
+        issue['closer'] = uid2name(issue['closer'])
+    return issue
+
+
+def issues_map():
+    """Issue data collection and formatting driver."""
+    all_issue_ids = set(DB.issue.filter(None, {}))
+    # Fetch, compute and format issue attributes
+    issue_attrs = {}
+    keywords = get_keywords_dict()
+    stages = get_stages_dict()
+    for issue_id in sorted(map(int,all_issue_ids)):
+        issue, helper = get_issue(issue_id, keywords, stages)
+        issue = get_issue_attrs(issue, helper)
+        issue_attrs[issue_id] = format_issue_attrs(issue)
+    return issue_attrs
+
+
+
+def get_keywords_dict():
+    keyword_ids = DB.keyword.getnodeids(False)
+    kws_dict = {}
+    for id in keyword_ids:
+        kws_dict[id] = DB.keyword.get(id, 'name')
+    return kws_dict
+
+def get_stages_dict():
+    # some instances (e.g. Jython) don't have a 'stage' field
+    if not hasattr(DB, 'stage'):
+        return {}
+    stages_ids = DB.stage.getnodeids(False)
+    stages_dict = {}
+    for id in stages_ids:
+        stages_dict[id] = DB.stage.get(id, 'name')
+    return stages_dict
+
+
+def sid2name(status_id, cache={None:'none'}):
+    if status_id in cache:
+        return cache[status_id]
+    name = DB.status.get(status_id, 'name')
+    cache[status_id] = name
+    return name
+
+def uid2name(user_id, cache={None:'none'}):
+    if user_id in cache:
+        return cache[user_id]
+    name = DB.user.get(user_id, 'username')
+    cache[user_id] = name
+    return name
+
+
+
+def write_audit():
+    """Print audit for the given period."""
+    issue = DB.issue
+    ids = issue.filter(None, dict(activity=OPTIONS.audit))
+    ids.sort(key=int)
+    output = []
+    for issue_id in ids:
+        journal = issue.history(issue_id)
+        for id_, time, user, act, data in journal:
+            user = '%s (%s)' % (user, uid2name(user))
+            output.append('%s %s %s %s' %  (id_, time, user, act))
             if act == 'set':
-                for d, v in data.items():
-                    print >>device, '    ', d, ': ', v
-
-# Options processing
-if options.debug: 
-    bugfile = open('bugfile', 'w')
-    print >>bugfile, options
-# ...dates
-dates = roundup.date.Range(options.dates, roundup.date.Date)
-from_value = dates.from_value
-to_value = dates.to_value
-if to_value is None:
-    to_value = roundup.date.Date('.')
-if from_value is None:
-    from_value = roundup.date.Date('1980-1-1')
-early_period = ';%s'%from_value
-whole_period = ';%s'%to_value
-# ... statuses
-ignoredStatuses = [s.strip() for s in options.ignore.split(',')]
-if options.debug:
-    print >>bugfile, "from,to", from_value, to_value
-    print >>bugfile, 'ignoredStatuses', ignoredStatuses
-
-# ...audit
-if options.audit:
-# Name of audit file (not usually used by normal users)
-    auditFilename = 'audit.txt'
-    if options.audit not in ['all', 'recent']:
-        raise ValueError, "AUDIT option must be 'recent' or 'all'."
-
-    audit = open(auditFilename, 'w')
-    if options.audit == 'recent':
-        IDS = db.issue.filter(None, F(activity=options.dates))
-    elif options.audit == 'full':
-        IDS = db.issue.filter(None, F(activity=whole_period))
-    IDS.sort(issueIdCompare)
-    writeAudit(audit, IDS)
-    audit.close()
+                for dat, val in data.items():
+                    output.append('     %s :  %s' %  (dat, val))
+    print '\n'.join(output) + '\n'
     sys.exit(0)
 
 
-# MAIN
-# Make lists and maps of things
-# Users
-adminUserID = db.user.lookup('admin')
-userIDS_ALL = db.user.getnodeids(retired=None) 
-userMap = {None: adminUserID}
-userLookup = {}
-for userid in userIDS_ALL:
-    name = db.user.get(userid, 'username')
-    userLookup[name] = userid
-    userMap[userid] = name
-userNames = userLookup.keys()
-userNameWidth = max([len(uname) for uname in userNames])
-
-# Make map of statuses / names, including retired ones.
-# Just doing lookup on names will miss retired ones.
-statusIDS_ALL = db.status.getnodeids(retired=None) 
-statusLookup = {'None': None}
-statusMap = {None: 'None'}
-for sid in statusIDS_ALL:
-    name = db.status.get(sid, 'name')
-    statusLookup[name] = sid
-    statusMap[sid] = name
-
-# Make a list of statuses considered closed (including retired ones)
-resolvedStatusOptions = options.resolved.split(',')
-resolvedStatusIDS = []
-for r in resolvedStatusOptions:
-    try:
-        sid = statusLookup[r]
-        resolvedStatusIDS.append(sid)
-    except KeyError:
-        pass
-
-if options.debug: 
-    print >>bugfile, 'statusLookup', statusLookup
-    print >>bugfile, 'resolvedStatusIDS', resolvedStatusIDS
-
-statusIDS = [sid for sid in statusIDS_ALL if statusUsable(sid)]
-statusIDS.sort(statusCompare)
-statusNames = [statusMap[sid] for sid in statusIDS]
-statusWidth = max([len(s) for s in statusLookup.keys()])
-actionWidth = len('reopened')
-
-# Important note: for 'all', get only issues created before to_value
-# Not just efficient, simplifies logic in getIssueAttribue
-
-# All issues
-allIssueIDS = db.issue.filter(None, F(creation=whole_period))
-allIssueIDS.sort(issueIdCompare)
-earlyIssueIDS = db.issue.filter(None, F(creation=early_period))
-
-# Closed issues
-oldClosedIssueIDS = db.issue.filter(None, F(creation=early_period,
-                                            status= resolvedStatusIDS))
-closedIssueIDS = db.issue.filter(None,F(creation=whole_period,
-                                        status=resolvedStatusIDS))
-recentlyClosedIssueIDS=db.issue.filter(None, F(activity=options.dates,
-                                               status=resolvedStatusIDS))
-recentlyClosedIssueIDS.sort(issueIdCompare)
-
-# Created and reopened issues
-recentlyCreatedIssueIDS=db.issue.filter(None, F(creation=options.dates))
-reopenedIssueIDS = [] # gets accumulated in getIssueAttributes
-
-# Create more data needed for reports
-if allIssueIDS:
-   maxIssueID = allIssueIDS[-1]
-else:
-   maxIssueID = 1000
-linkWidth = len(link(maxIssueID))
-messages = []
-statusReport = {}
-issueAttributes = {}
-
-for issueID in allIssueIDS:
-    issueAttributes[issueID] = getIssueAttributes(issueID)
-
-createdOrReopenedIDS = reopenedIssueIDS + recentlyCreatedIssueIDS
-createdOrReopenedIDS.sort(issueIdCompare)
-
-durations = [issueAttributes[id]['duration'].as_seconds()/(3600*24.) for id in allIssueIDS if \
-                 id not in closedIssueIDS]
-if durations:
-    if options.debug:
-        print >>bugfile, 'Min duration:', durations[-1], '; max', durations[0]
-    averageDuration = sum(durations)/len(durations)
-    durations.sort()
-    medianDuration = durations[len(durations)/2]
-else:
-    averageDuration = "N/A"
-    medianDuration = "N/A"
-
-messages.sort()
-messages.reverse()
-discussedIDS = [id for (num, id) in messages[:discussionMax] \
-                if num >= discussionThreshold]
-
-nTotal = len(allIssueIDS)
-nTotalOld = len(earlyIssueIDS)
-nClosed = len(closedIssueIDS)
-nClosedOld = len(oldClosedIssueIDS)
-
-nOpen = nTotal - nClosed
-nOpenOld = nTotalOld - nClosedOld
-
-nPatch = 0
-for id in allIssueIDS:
-    if id in closedIssueIDS: continue
-    if isPatch(id):
-        nPatch += 1
-
-for sid in statusIDS:
-    IDS = db.issue.filter(None, F(creation=whole_period, status=sid))
-    IDSOld = db.issue.filter(None, F(creation=early_period, status=sid))
-    nNow, nThen = (len(IDS), len(IDSOld))
-    statusReport[sid] = (nNow, nThen)
-
-
-# Now make the reports
-textReport = cStringIO.StringIO()
-writeTextReport(textReport)
-
-htmlReport = cStringIO.StringIO()
-writeHtmlReport(htmlReport)
-
-def sendReport (recipient):
-    "Send the email message."
-    message = cStringIO.StringIO()
-    writer = MimeWriter.MimeWriter(message)
-    writer.addheader('Subject', 'Summary of %s Issues'%db.config.TRACKER_NAME)
-    writer.addheader('To', recipient)
-    writer.addheader('From', '%s <%s>'%(db.config.TRACKER_NAME, 'status@bugs.python.org'))
-    writer.addheader('Reply-To', '%s <%s>'%(db.config.TRACKER_NAME, 'status@bugs.python.org'))
-    writer.addheader('MIME-Version', '1.0')
-    writer.addheader('X-Roundup-Name', db.config.TRACKER_NAME)
-
-    # start the multipart
-    part = writer.startmultipartbody('alternative')
-    part = writer.nextpart()
-    body = part.startbody('text/plain')
-    
-    # do the plain text bit
-    print >>body, textReport.getvalue()
-
-    # now the HTML one
-    if not options.text:
-       part = writer.nextpart()
-       body = part.startbody('text/html')
-       print >>body, htmlReport.getvalue()
-    # finish off the multipart
-    writer.lastpart()
-    # all done, send!
-    if options.debug:
-        print message.getvalue()
+def send_report(recipient, txt_report, html_report=None):
+    """Send the email message."""
+    tracker_name = DB.config.TRACKER_NAME
+    hdrs = [('Subject', 'Summary of %s Issues' % tracker_name)]
+    # XXX: maybe this email shouldn't be hardcoded...
+    email = '%s <%s>'  % (tracker_name, 'status@bugs.python.org')
+    hdrs += [('To', recipient), ('From', email), ('Reply-To', email),
+           ('MIME-Version', '1.0'), ('X-Roundup-Name', tracker_name)]
+    # create the message, using a multipart if --html is passed
+    if html_report is not None:
+        msg = MIMEMultipart('alternative')
     else:
-        smtp = SMTPConnection(db.config)
-        smtp.sendmail(db.config.ADMIN_EMAIL, options.mailTo, message.getvalue())
+        msg = MIMEText(txt_report)
+    for name, content in hdrs:
+        msg[name] = content
+    # if it's html create the two parts
+    if OPTIONS.html:
+        msg.attach(MIMEText(txt_report, 'plain'))
+        msg.attach(MIMEText(html_report, 'html'))
 
-# Email? Or just print it.
-if not options.mailTo:
-    print textReport.getvalue()
-else:  
-    for recipient in options.mailTo.split(','):
-        sendReport(recipient)
+    if OPTIONS.debug:
+        print msg.as_string()
+    else:
+        config = DB.config
+        smtp = SMTPConnection(config)
+        smtp.sendmail(config.ADMIN_EMAIL, recipient, msg.as_string())
 
+
+def main():
+    """Create the report and print or send it."""
+    issue_attrs = issues_map()
+    report = Report(issue_attrs)
+    if OPTIONS.audit:
+        write_audit()
+
+    if not OPTIONS.mailTo:
+        print report.make_report('html' if OPTIONS.html else 'txt')
+    else:
+        txt_report = report.make_report('txt')
+        html_report = report.make_report('html') if OPTIONS.html else None
+        for recipient in OPTIONS.mailTo.split(','):
+            send_report(recipient, txt_report, html_report)
+
+
+
+if __name__ == '__main__':
+    OPTIONS, instance_home = get_options_and_home()
+    instance = roundup.instance.open(instance_home)
+    DB = instance.open('admin')
+    main()
