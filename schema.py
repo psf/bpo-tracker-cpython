@@ -262,7 +262,7 @@ db.security.addPermissionToRole('User', p)
 def close_own_issue(db, userid, itemid):
     return userid == db.issue.get(itemid, 'creator')
 p = db.security.addPermission(name='Edit', klass='issue',
-                              properties=('status',),
+                              properties=('status', 'resolution'),
                               description='User can close issues he created',
                               check=close_own_issue)
 db.security.addPermissionToRole('User', p)
