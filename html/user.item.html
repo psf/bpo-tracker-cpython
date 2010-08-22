@@ -189,7 +189,9 @@ anybody@everywhere.net
 </table>
 </tal:block>
 
+<tal:if condition="python:utils.is_history_ok(request)">
 <tal:block tal:condition="context/id" tal:replace="structure context/history" />
+</tal:if>
 
 </div>
 
