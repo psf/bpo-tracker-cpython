@@ -37,7 +37,8 @@ def patches_keyword(db, cl, nodeid, newvalues):
                 return
         if not newvalues.has_key('keywords'):
             newvalues['keywords'] = oldkeywords
-        newvalues['keywords'].append(patchid)
+        if patchid not in newvalues['keywords']:
+            newvalues['keywords'].append(patchid)
 
 def init(db):
     db.file.audit('create', patches_text_plain)
