@@ -11,7 +11,7 @@ clean: clean_local clean_external
 clean_external: clean_rietveld clean_django
 
 clean_rietveld:
-	rm -rf codereview static templates
+	rm -rf codereview static templates_svn
 
 clean_django:
 	unlink django
@@ -21,9 +21,9 @@ clean_local:
 	rm -f dev.db
 
 gae2django:
-	ln -s ../../gae2django .
+	ln -s ../../gae2django/gae2django .
 
-dev.db:
+syncdb:
 	./manage.py syncdb
 
 codereview:
@@ -33,8 +33,8 @@ static:
 	svn co http://rietveld.googlecode.com/svn/trunk/static@$(RIETVELDREV)
 	patch -p0 < patches/upload.diff
 
-templates:
-	svn co http://rietveld.googlecode.com/svn/trunk/templates@$(RIETVELDREV)
+templates_svn:
+	svn co http://rietveld.googlecode.com/svn/trunk/templates@$(RIETVELDREV) templates_svn
 
 django:
-	ln -s ../../django .
+	ln -s ../../gae2django/django .
