@@ -1,4 +1,5 @@
-import subprocess, re
+#!/usr/bin/python
+import subprocess, re, sys
 from xml.etree import ElementTree
 
 def identify(db, patch):
@@ -73,10 +74,12 @@ def fill_revs(db, lookfor=None):
     db.commit()
     return branch
 
+# this runs as a cron job every 30min
 if __name__=='__main__':
     # manual setup:
     # create table svnbranch(rev integer primary key, branch text);
     # then run this once in the instance directory
+    sys.path.append('/home/roundup/roundup/lib/python2.5/site-packages')
     import roundup.instance
     tracker = roundup.instance.open('.')
     db = tracker.open('admin')
