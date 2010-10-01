@@ -1,7 +1,17 @@
-import subprocess
+import subprocess, re
 from xml.etree import ElementTree
 
+def identify(db, patch):
+    """Return revision number and branch of a patch;
+    either value may become None."""
+    m = re.search('---.* ([0-9]+)', patch)
+    if not m:
+        return None, None
+    rev = int(m.group(1))
+    return rev, find_branch(db, rev)
+
 def find_branch(db, rev):
+    """Return the branch name for a given revision, or None."""
     c = db.cursor
     c.execute('select branch from svnbranch where rev=%s', (rev,))
     branch = c.fetchone()
@@ -11,6 +21,8 @@ def find_branch(db, rev):
     return fill_revs(db, lookfor=rev)
 
 def fill_revs(db, lookfor=None):
+    """Initialize/update svnbranch table. If lookfor is given,
+    return its branch, or None if that cannot be determined."""
     result = None
     c = db.cursor
     c.execute('select max(rev) from svnbranch')
@@ -19,6 +31,9 @@ def fill_revs(db, lookfor=None):
         start = 1
     else:
         start = start+1
+    if lookfor and lookfor < start:
+        # revision is not in database
+        return None
     p = subprocess.Popen(['svn', 'log', '-r%s:HEAD' % start, '--xml', '-v',
                           'http://svn.python.org/projects'],
                          stdout = subprocess.PIPE,

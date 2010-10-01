@@ -130,10 +130,16 @@ msg = FileClass(db, "msg",
                 spambayes_misclassified=Boolean(),)
 
 file = FileClass(db, "file",
-                name=String(),
-                description=String(indexme='yes'),
-                spambayes_score=Number(),
-                spambayes_misclassified=Boolean(),)
+                 name=String(),
+                 description=String(indexme='yes'),
+                 spambayes_score=Number(),
+                 spambayes_misclassified=Boolean(),
+                 # filled out if this is a patch
+                 revision=String(),
+                 branch=String(),
+                 # filled out if a corresponding Rietveld
+                 # patchset exists for the issue
+                 patchset=String(),)
 
 # IssueClass automatically gets these properties in addition to the Class ones:
 #   title = String()

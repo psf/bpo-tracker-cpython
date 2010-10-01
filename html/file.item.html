@@ -34,6 +34,12 @@
   for security reasons, it's not permitted to set content type to <i>text/html</i>.</td>
  </tr>
  <tr>
+  <th>Tracker Branch</th><td tal:content="structure context/branch/field"/>
+ </tr>
+ <tr>
+  <th>Tracker Revision</th><td tal:content="structure context/revision/field"/>
+ </tr>
+ <tr>
   <th i18n:translate="">SpamBayes Score</th>
   <td tal:content="structure context/spambayes_score/plain"></td>
  </tr>
