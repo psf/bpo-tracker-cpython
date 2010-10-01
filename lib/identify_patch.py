@@ -72,7 +72,7 @@ def fill_revs(db, lookfor=None):
             if lookfor == rev:
                 result = branch
     db.commit()
-    return branch
+    return result
 
 # this runs as a cron job every 30min
 if __name__=='__main__':
