@@ -381,3 +381,7 @@ add_recipients = new
 # each recipient as a CC address.
 # Default: single
 email_sending = multiple
+
+[django]
+# generate on a per-instance basis
+secret_key = 'el@4s$*(idwm5-87teftxlksckmy8$tyo7(tm!n-5x)zeuheex'
