@@ -5,7 +5,7 @@ from xml.etree import ElementTree
 def identify(db, patch):
     """Return revision number and branch of a patch;
     either value may become None."""
-    m = re.search('---.* ([0-9]+)', patch)
+    m = re.search(r'---.* ([0-9]+)\)', patch)
     if not m:
         return None, None
     rev = int(m.group(1))

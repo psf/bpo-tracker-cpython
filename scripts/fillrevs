@@ -1,0 +1,19 @@
+#!/usr/bin/python
+# Fill branch information for all file objects where it's missing
+import identify_patch
+import roundup.instance
+tracker = roundup.instance.open('.')
+db = tracker.open('admin')
+
+for fileid in db.file.list():
+    fname = db.file.get(fileid, 'name')
+    if fname.endswith('.patch') or fname.endswith('.diff'):
+        if db.file.get(fileid, 'revision'):
+            continue
+        data = db.file.get(fileid, 'content')
+        revid, branch = identify_patch.identify(db, data)
+        if revid:
+            db.file.set_inner(fileid, revision=str(revid))
+        if branch:
+            db.file.set_inner(fileid, branch=branch)
+        db.commit()
