@@ -79,7 +79,7 @@ if __name__=='__main__':
     # manual setup:
     # create table svnbranch(rev integer primary key, branch text);
     # then run this once in the instance directory
-    sys.path.append('/home/roundup/roundup/lib/python2.5/site-packages')
+    sys.path.append('/home/roundup/lib/python2.5/site-packages')
     import roundup.instance
     tracker = roundup.instance.open('.')
     db = tracker.open('admin')
