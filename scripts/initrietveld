@@ -1,0 +1,32 @@
+#!/usr/bin/python
+# Create Rietveld users and issues
+import rietveldreactor
+import roundup.instance
+tracker = roundup.instance.open('.')
+db = tracker.open('admin')
+
+# Need to widen username, as some roundup names are too long
+widen_username = """
+begin;
+alter table auth_user add username2 varchar(50);
+update auth_user set username2=username;
+alter table auth_user drop username;
+alter table auth_user add username varchar(50);
+update auth_user set username=username2;
+commit;
+"""
+
+c = db.cursor
+for userid in db.user.getnodeids():
+    c.execute("select count(*) from auth_user where id=%s", (userid,))
+    if c.fetchone()[0] == 1:
+        continue
+    rietveldreactor.create_django_user(db, db.user, userid, None)
+    db.commit()
+
+for issue in db.issue.list():
+    c.execute("select count(*) from codereview_issue where id=%s", (issue,))
+    if c.fetchone()[0] == 1:
+        continue
+    rietveldreactor.create_rietveld_issue(db, db.issue, issue, None)
+    db.commit()
