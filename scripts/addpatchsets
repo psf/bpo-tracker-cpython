@@ -13,7 +13,7 @@ if len(sys.argv)==2 and sys.argv[1]=='-v':
 from codereview.models import Repository, Branch, PatchSet, Issue
 from django.contrib.auth.models import User
 from codereview import engine
-from roundup_helper.models import File, Issue as RoundupIssue
+from roundup_helper.models import File, RoundupIssue
 from django.db import connection, transaction
 from google.appengine.ext import db as gae_db
 

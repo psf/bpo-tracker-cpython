@@ -23,7 +23,7 @@ class File(models.Model):
     class Meta:
         db_table = '_file'
 
-class Issue(models.Model):
+class RoundupIssue(models.Model):
     _creator = models.IntegerField()
     _creation = models.DateTimeField()
     _status = models.IntegerField()
