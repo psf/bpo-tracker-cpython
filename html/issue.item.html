@@ -223,6 +223,9 @@
   <td tal:content="file/description" />
   <td><a tal:condition="file/is_edit_ok"
           tal:attributes="href string:file${file/id}">edit</a>
+      <tal:block tal:define="rvlink python:utils.rietveldlink(request,context.id,file.id)">
+      <a tal:condition="rvlink" tal:attributes="href rvlink">review</a>
+      </tal:block>
   </td>
   <td>
    <form style="padding:0" method="post" tal:condition="file/is_edit_ok"
