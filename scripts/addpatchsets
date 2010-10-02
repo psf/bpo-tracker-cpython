@@ -1,0 +1,97 @@
+#!/usr/bin/python
+import sys, os
+basedir = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(basedir+"/rietveld")
+os.environ["DJANGO_SETTINGS_MODULE"]="settings"
+import gae2django
+gae2django.install(server_software='Django')
+
+verbose = False
+if len(sys.argv)==2 and sys.argv[1]=='-v':
+    verbose=True
+
+from codereview.models import Repository, Branch, PatchSet, Issue
+from django.contrib.auth.models import User
+from codereview import engine
+from roundup_helper.models import File, Issue as RoundupIssue
+from django.db import connection, transaction
+from google.appengine.ext import db as gae_db
+
+transaction.enter_transaction_management()
+transaction.managed()
+python = Repository.gql("WHERE name = 'Python'").get()
+
+_branches={}
+def get_branch(branchname):
+    try:
+        return _branches[branchname]
+    except KeyError:
+        branch = Branch.gql("WHERE url = '%s%s/'" % (python.url, branchname[1:])).get()
+        _branches[branchname] = branch
+        return branch
+
+def fetch_patches(patches):
+    try:
+        # fetch base file for each patch
+        for patch in patches:
+            content = engine.FetchBase(branch.url, patch)
+            content.put()
+            patch.content = content
+        # success
+        return patches
+    except engine.FetchError, e:
+        if verbose:
+            print "Fetching base failed", e
+        return None
+
+c = connection.cursor()
+c.execute("select id from _status where _name='closed'")
+closed = c.fetchone()[0]
+
+for f in (File.objects.filter(_patchset__isnull=True,
+                              _branch__isnull=False).
+          order_by('-id')):
+    branchname = f._branch
+    branch = get_branch(branchname)
+    if not branch:
+        if verbose:
+            print branchname,"not found", python.url
+        continue
+    c.execute("select nodeid from issue_files where linkid=%s", (f.id,))
+    nodeid = c.fetchone()[0]
+    roundup = RoundupIssue.objects.get(id=nodeid)
+    if roundup._status == closed:
+        print "issue",nodeid,"is closed"
+        continue
+    issue = Issue.objects.get(id=nodeid)
+    filename = os.path.join(basedir, "db", "files", "file",
+                            str(nodeid/1000), "file"+str(nodeid))
+    if not os.path.exists(filename):
+        print filename,"not found"
+        continue
+    data = open(filename).read()
+    blob = gae_db.Blob(engine.UnifyLinebreaks(data))
+    if verbose:
+        print "Doing", f.id
+    patchset = PatchSet(issue=issue, data=blob, parent=issue,
+                        owner=User.objects.get(id=f._creator),
+                        created=f._creation, modified=f._creation)
+    patchset.put()
+    issue.patchset=patchset
+    issue.put()
+    f._patchset = str(patchset.id)
+    f.save()
+    #import pdb;pdb.set_trace()
+    patches = engine.ParsePatchSet(patchset)
+    if patches:
+        patches = fetch_patches(patches)
+    if patches:
+        gae_db.put(patches)
+        transaction.commit()
+        if verbose:
+            print f.id, "succeeded"
+    else:
+        transaction.rollback()
+        print f.id, "failed"
+
+transaction.leave_transaction_management()
