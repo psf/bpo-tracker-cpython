@@ -15,7 +15,7 @@ MANAGERS = ADMINS
 
 _c = ConfigParser.ConfigParser({'password':'', 'port':''})
 _c.read(os.path.dirname(__file__)+"/../config.ini")
-TRACKER_COOKIE_NAME=re.sub('[^a-zA-Z]', '', _c.get('tracker','name'))
+TRACKER_COOKIE_NAME='roundup_session_'+re.sub('[^a-zA-Z]', '', _c.get('tracker','name'))
 
 DATABASE_ENGINE = 'postgresql_psycopg2'
 DATABASE_NAME = _c.get('rdbms', 'name')
