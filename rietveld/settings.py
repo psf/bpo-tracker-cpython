@@ -14,7 +14,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 _c = ConfigParser.ConfigParser({'password':'', 'port':''})
-_c.read(os.path.dirname(__file__)+"/../../config.ini")
+_c.read(os.path.dirname(__file__)+"/../config.ini")
 
 DATABASE_ENGINE = 'postgresql_psycopg2'
 DATABASE_NAME = _c.get('rdbms', 'name')
