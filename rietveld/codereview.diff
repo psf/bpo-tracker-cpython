@@ -1,3 +1,16 @@
+Index: codereview/views.py
+===================================================================
+--- codereview/views.py	(Revision 510)
++++ codereview/views.py	(Arbeitskopie)
+@@ -1382,6 +1382,8 @@
+   issue = request.issue
+   patchsets = list(issue.patchset_set.order('created'))
+   response = None
++  if not patchsets:
++    return issue, patchsets, response
+   if not patchset_id:
+     patchset_id = patchsets[-1].key().id()
+ 
 Index: codereview/models.py
 ===================================================================
 --- codereview/models.py	(Revision 510)
