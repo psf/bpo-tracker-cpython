@@ -2,7 +2,7 @@
 
 # NOTE: Keep the settings.py in examples directories in sync with this one!
 
-import os, ConfigParser
+import os, ConfigParser, re
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -15,6 +15,7 @@ MANAGERS = ADMINS
 
 _c = ConfigParser.ConfigParser({'password':'', 'port':''})
 _c.read(os.path.dirname(__file__)+"/../config.ini")
+TRACKER_COOKIE_NAME=re.sub('[^a-zA-Z]', '', _c.get('tracker','name'))
 
 DATABASE_ENGINE = 'postgresql_psycopg2'
 DATABASE_NAME = _c.get('rdbms', 'name')

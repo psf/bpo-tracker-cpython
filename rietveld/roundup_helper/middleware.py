@@ -1,5 +1,6 @@
 from models import Session, User
 from codereview.models import Account
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.backends import RemoteUserBackend
 
@@ -11,7 +12,7 @@ class UserBackend(RemoteUserBackend):
 class LookupRoundupUser(object):
 
     def process_request(self, request):
-        session_key = request.COOKIES.get('roundup_session_Tracker', None)
+        session_key = request.COOKIES.get(settings.TRACKER_COOKIE_NAME, None)
         if not session_key:
             self.logout(request)
             return
