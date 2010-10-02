@@ -1,17 +1,12 @@
 from models import Session, User
+from codereview.models import Account
 from django.contrib import auth
 from django.contrib.auth.backends import RemoteUserBackend
 
 class UserBackend(RemoteUserBackend):
-    def configure_user(self, user):
-        roundup_user = User.objects.filter(_username=user.username)[0]
-        user.email = roundup_user._address
-        user.save()
-        from codereview import models
-        account = models.Account.get_account_for_user(user)
-        account.nickname = user.username
-        account.save()
-        return user
+    # auto-creation of django users should not be necessary,
+    # as they should have been created before, so suppress it here.
+    create_unknown_user = False
 
 class LookupRoundupUser(object):
 
@@ -27,21 +22,24 @@ class LookupRoundupUser(object):
         username = eval(session[0].session_value)['user']
         # the username comes from the cookie, so it really ought to exist
         roundup_user = User.objects.filter(_username=username)[0]
-        if not roundup_user._address:
-            # Rietveld insists that user objects must have email addresses
-            return
-        # Taken from RemoteUserMiddleware: auto-create the user if it's new
+        # if we already have a user from the session, we are done.
         if request.user.is_authenticated():
             if request.user.username == username:
                 return
-        # We are seeing this user for the first time in this session, attempt
-        # to authenticate the user.
+        # We see the user for the first time. Authenticate it, and create
+        # codereview account if none exists.
         user = auth.authenticate(remote_user=username)
-        if user:
-            # User is valid.  Set request.user and persist user in the session
-            # by logging the user in.
-            request.user = user
-            auth.login(request, user)
+        if not user:
+            return
+        # User is valid.  Set request.user and persist user in the session
+        # by logging the user in.
+        request.user = user
+        account = Account.get_by_id(user.id)
+        if not account:
+            account = Account(id=user.id, user=user, email=user.email,
+                              nickname=username, fresh=True)
+            account.put()
+        auth.login(request, user)
         
     def logout(self, request):
         # Clear django session if roundup session is gone.
