@@ -185,9 +185,9 @@ var publish_link = "{%url codereview.views.publish issue.key.id%}";
    href="http://code.google.com/p/rietveld">Source code</a>
 |
 {%if user%}
-<a class="novisit" href="{%url roundup%}?@action=logout">Sign out</a>
+<a class="novisit" href="/?@action=logout">Sign out</a>
 {% else %}
-<a class="novisit" href="{%url roundup%}">Sign in</a>
+<a class="novisit" href="/">Sign in</a>
 {%endif%}
 </div>
 
