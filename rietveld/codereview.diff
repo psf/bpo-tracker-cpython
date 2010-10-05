@@ -1,7 +1,7 @@
 Index: codereview/views.py
 ===================================================================
---- codereview/views.py	(Revision 510)
-+++ codereview/views.py	(Arbeitskopie)
+--- codereview/views.py	(revision 510)
++++ codereview/views.py	(working copy)
 @@ -1382,6 +1382,8 @@
    issue = request.issue
    patchsets = list(issue.patchset_set.order('created'))
@@ -13,8 +13,8 @@ Index: codereview/views.py
  
 Index: codereview/models.py
 ===================================================================
---- codereview/models.py	(Revision 510)
-+++ codereview/models.py	(Arbeitskopie)
+--- codereview/models.py	(revision 510)
++++ codereview/models.py	(working copy)
 @@ -520,14 +520,14 @@
    @classmethod
    def get_account_for_user(cls, user):
@@ -34,3 +34,16 @@ Index: codereview/models.py
      nickname = cls.create_nickname_for_user(user)
      return cls.get_or_insert(key, user=user, email=email, nickname=nickname,
                               fresh=True)
+@@ -556,8 +556,10 @@
+   def get_account_for_email(cls, email):
+     """Get the Account for an email address, or return None."""
+     assert email
+-    key = '<%s>' % email
+-    return cls.get_by_key_name(key)
++    account = cls.objects.filter(email=email)
++    if not account:
++      return None
++    return account[0]
+ 
+   @classmethod
+   def get_by_key_name(cls, key, **kwds):
