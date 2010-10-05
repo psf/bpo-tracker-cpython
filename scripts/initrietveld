@@ -23,10 +23,3 @@ for userid in db.user.getnodeids():
         continue
     rietveldreactor.create_django_user(db, db.user, userid, None)
     db.commit()
-
-for issue in db.issue.list():
-    c.execute("select count(*) from codereview_issue where id=%s", (issue,))
-    if c.fetchone()[0] == 1:
-        continue
-    rietveldreactor.create_rietveld_issue(db, db.issue, issue, None)
-    db.commit()

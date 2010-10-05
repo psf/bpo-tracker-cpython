@@ -63,7 +63,14 @@ for f in (File.objects.filter(_patchset__isnull=True,
     if roundup._status == closed:
         print "issue",nodeid,"is closed"
         continue
-    issue = Issue.objects.get(id=nodeid)
+    issue = Issue.objects.filter(id=nodeid)
+    if not issue:
+        c.execute("select _title, _creator from _issue where id=%s", (nodeid,))
+        title, creator = c.fetchone()
+        issue = Issue(id=nodeid, subject=title, owner_id=creator)
+        issue.put()
+    else:
+        issue = issue[0]
     filename = os.path.join(basedir, "db", "files", "file",
                             str(nodeid/1000), "file"+str(nodeid))
     if not os.path.exists(filename):
@@ -81,7 +88,6 @@ for f in (File.objects.filter(_patchset__isnull=True,
     issue.put()
     f._patchset = str(patchset.id)
     f.save()
-    #import pdb;pdb.set_trace()
     patches = engine.ParsePatchSet(patchset)
     if patches:
         patches = fetch_patches(patches)
