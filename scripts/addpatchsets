@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys, os, urllib2
+import sys, os, urllib2, logging
 basedir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(basedir+"/rietveld")
 os.environ["DJANGO_SETTINGS_MODULE"]="settings"
@@ -9,6 +9,8 @@ gae2django.install(server_software='Django')
 verbose = False
 if len(sys.argv)==2 and sys.argv[1]=='-v':
     verbose=True
+else:
+    logging.disable(logging.ERROR)
 
 from codereview.models import (Repository, Branch, Patch, 
                                PatchSet, Issue, Content)
@@ -93,9 +95,16 @@ for f in (File.objects.filter(_patchset__isnull=True).
           order_by('id')):
     c.execute("select nodeid from issue_files where linkid=%s", (f.id,))
     nodeid = c.fetchone()[0]
+    nodeid = c.fetchone()
+    if not nodeid:
+        if verbose:
+            print "File",nodeid,"is detached"
+        continue
+    nodeid = nodeid[0]
     roundup = RoundupIssue.objects.get(id=nodeid)
     if roundup._status == closed:
-        print "issue",nodeid,"is closed"
+        if verbose:
+            print "issue",nodeid,"is closed"
         continue
     issue = Issue.objects.filter(id=nodeid)
     if not issue:
