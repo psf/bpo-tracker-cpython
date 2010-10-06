@@ -48,16 +48,19 @@ def try_match(filename, chunks, branch, rev):
     return base
 
 def find_bases(data, rev):
+    startrev = rev
     to_match = []
     for filename, data in engine.SplitPatch(data):
         lines = data.splitlines(True)
         chunks = patching.ParsePatchToChunks(lines)
+        if not chunks:
+            return None, None
         to_match.append((filename, data, chunks))
 
     c = connection.cursor()
     branches = set()
     while 1:
-        if rev == 1:
+        if rev < startrev-5000:
             if verbose:
                 print "Could not find base revision and branch"
                 return None, None
@@ -91,10 +94,10 @@ c = connection.cursor()
 c.execute("select id from _status where _name='closed'")
 closed = c.fetchone()[0]
 
-for f in (File.objects.filter(_patchset__isnull=True).
+for f in (File.objects.filter(_revision__isnull=False,
+                              _patchset__isnull=True).
           order_by('id')):
     c.execute("select nodeid from issue_files where linkid=%s", (f.id,))
-    nodeid = c.fetchone()[0]
     nodeid = c.fetchone()
     if not nodeid:
         if verbose:
