@@ -41,19 +41,17 @@ def patches_keyword(db, cl, nodeid, newvalues):
         if patchid not in newvalues['keywords']:
             newvalues['keywords'].append(patchid)
 
-def patches_branch(db, cl, nodeid, oldvalues):
+def patch_revision(db, cl, nodeid, oldvalues):
     # there shouldn't be old values
     assert not oldvalues
     if not ispatch(cl.get(nodeid, 'name'), patchtypes):
         return
-    revno, branch = identify_patch.identify(db, cl.get(nodeid, 'content'))
+    revno = identify_patch.identify(db, cl.get(nodeid, 'content'))
     if revno:
         cl.set(nodeid, revision=str(revno))
-    if branch:
-        cl.set(nodeid, branch=branch)
 
 def init(db):
     db.file.audit('create', patches_text_plain)
-    db.file.react('create', patches_branch)
+    db.file.react('create', patch_revision)
     db.issue.audit('create', patches_keyword)
     db.issue.audit('set', patches_keyword)

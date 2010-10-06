@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys, os
+import sys, os, urllib2
 basedir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(basedir+"/rietveld")
 os.environ["DJANGO_SETTINGS_MODULE"]="settings"
@@ -10,9 +10,10 @@ verbose = False
 if len(sys.argv)==2 and sys.argv[1]=='-v':
     verbose=True
 
-from codereview.models import Repository, Branch, PatchSet, Issue
+from codereview.models import (Repository, Branch, Patch, 
+                               PatchSet, Issue, Content)
 from django.contrib.auth.models import User
-from codereview import engine
+from codereview import engine, patching
 from roundup_helper.models import File, RoundupIssue
 from django.db import connection, transaction
 from google.appengine.ext import db as gae_db
@@ -30,33 +31,66 @@ def get_branch(branchname):
         _branches[branchname] = branch
         return branch
 
-def fetch_patches(patches):
+def try_match(filename, chunks, branch, rev):
     try:
-        # fetch base file for each patch
-        for patch in patches:
-            content = engine.FetchBase(branch.url, patch)
-            content.put()
-            patch.content = content
-        # success
-        return patches
-    except engine.FetchError, e:
-        if verbose:
-            print "Fetching base failed", e
+        r = urllib2.urlopen("http://svn.python.org/view/*checkout*/python"+branch+"/"+filename+"?rev="+str(rev))
+    except urllib2.HTTPError:
         return None
+    base = engine.UnifyLinebreaks(r.read())
+    lines = base.splitlines(True)
+    #import pdb; pdb.set_trace()
+    for (start, end), newrange, oldlines, newlines in chunks:
+        if lines[start:end] != oldlines:
+            print "No match", filename, start, end
+            return None
+    return base
+
+def find_bases(data, rev):
+    to_match = []
+    for filename, data in engine.SplitPatch(data):
+        lines = data.splitlines(True)
+        chunks = patching.ParsePatchToChunks(lines)
+        to_match.append((filename, data, chunks))
+
+    c = connection.cursor()
+    branches = set()
+    while 1:
+        if rev == 1:
+            if verbose:
+                print "Could not find base revision and branch"
+                return None, None
+        c.execute("select branch from svnbranch where rev=%s", (rev,))
+        branch = c.fetchone()
+        if not branch:
+            rev -= 1
+            continue
+        branch = branch[0]
+        if branch in branches:
+            # already tried
+            rev -= 1
+            continue
+        branches.add(branch)
+        if verbose:
+            print "Trying ", branch, rev
+
+        bases = []
+        for filename, data, chunks in to_match:
+            res = try_match(filename, chunks, branch, rev)
+            if not res:
+                break
+            bases.append((filename, data, chunks, res))
+        else:
+            if verbose:
+                print "Found match", branch, rev
+            return branch, bases
+        rev -= 1
 
 c = connection.cursor()
 c.execute("select id from _status where _name='closed'")
 closed = c.fetchone()[0]
 
-for f in (File.objects.filter(_patchset__isnull=True,
-                              _branch__isnull=False).
-          order_by('-id')):
-    branchname = f._branch
-    branch = get_branch(branchname)
-    if not branch:
-        if verbose:
-            print branchname,"not found", python.url
-        continue
+for f in (File.objects.filter(_patchset__isnull=True).
+          order_by('id')):
     c.execute("select nodeid from issue_files where linkid=%s", (f.id,))
     nodeid = c.fetchone()[0]
     roundup = RoundupIssue.objects.get(id=nodeid)
@@ -72,32 +106,36 @@ for f in (File.objects.filter(_patchset__isnull=True,
     else:
         issue = issue[0]
     filename = os.path.join(basedir, "db", "files", "file",
-                            str(nodeid/1000), "file"+str(nodeid))
+                            str(f.id/1000), "file"+str(f.id))
     if not os.path.exists(filename):
         print filename,"not found"
         continue
     data = open(filename).read()
-    blob = gae_db.Blob(engine.UnifyLinebreaks(data))
     if verbose:
         print "Doing", f.id
+    data = engine.UnifyLinebreaks(data)
+    branch, bases = find_bases(data, int(f._revision))
+    if not branch:
+        continue
+
+    blob = gae_db.Blob(data)
     patchset = PatchSet(issue=issue, data=blob, parent=issue,
                         owner=User.objects.get(id=f._creator),
                         created=f._creation, modified=f._creation)
     patchset.put()
     issue.patchset=patchset
     issue.put()
+    f._branch = branch
     f._patchset = str(patchset.id)
     f.save()
-    patches = engine.ParsePatchSet(patchset)
-    if patches:
-        patches = fetch_patches(patches)
-    if patches:
-        gae_db.put(patches)
-        transaction.commit()
-        if verbose:
-            print f.id, "succeeded"
-    else:
-        transaction.rollback()
-        print f.id, "failed"
+    for filename, data, chunks, base in bases:
+        patch = Patch(patchset=patchset, text=engine.ToText(data),
+                      filename=filename, parent=patchset)
+        patch.put()
+        content = Content(text=engine.ToText(base), parent=patch)
+        content.put()
+        patch.content = content
+        patch.put()
+    transaction.commit()
 
 transaction.leave_transaction_management()

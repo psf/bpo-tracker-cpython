@@ -9,7 +9,7 @@ def identify(db, patch):
     if not m:
         return None, None
     rev = int(m.group(1))
-    return rev, find_branch(db, rev)
+    return rev
 
 def find_branch(db, rev):
     """Return the branch name for a given revision, or None."""
