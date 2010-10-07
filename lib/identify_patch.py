@@ -21,6 +21,26 @@ def find_branch(db, rev):
     # may need to cache more revisions
     return fill_revs(db, lookfor=rev)
 
+def addfiles(cursor, files):
+    """Add all files to fileprefix that aren't there, in all
+    prefix/suffix combinations."""
+    to_add = []
+    for f in files:
+        cursor.execute("select count(*) from fileprefix "
+                       "where prefix='' and suffix=%s",
+                       (f,))
+        if cursor.fetchone()[0] > 0:
+            continue
+        parts = f.split('/')
+        for i in range(len(parts)):
+            prefix = '/'.join(parts[:i])
+            if i:
+                prefix += '/'
+            suffix = '/'.join(parts[i:])
+            to_add.append((prefix, suffix))
+    cursor.executemany("insert into fileprefix(prefix, suffix) "
+                       "values(%s, %s)", to_add)
+
 def fill_revs(db, lookfor=None):
     """Initialize/update svnbranch table. If lookfor is given,
     return its branch, or None if that cannot be determined."""
@@ -44,6 +64,7 @@ def fill_revs(db, lookfor=None):
         # svn log failed
         return None
     xml = ElementTree.fromstring(data)
+    files = set()
     for entry in xml.findall('logentry'):
         rev = int(entry.get('revision'))
         paths = [p.text for p in entry.findall('paths/path')]
@@ -67,10 +88,15 @@ def fill_revs(db, lookfor=None):
                 # inconsistent commit
                 break
         else:
+            if branch in ('/trunk', '/branches/py3k'):
+                # Add all files that ever existed on the main trunks
+                for p in paths:
+                    files.add(p[len(ppath)+1:])
             c.execute('insert into svnbranch(rev, branch) values(%s, %s)',
                       (rev, branch))
             if lookfor == rev:
                 result = branch
+    addfiles(c, files)
     db.commit()
     return result
 
@@ -78,9 +104,12 @@ def fill_revs(db, lookfor=None):
 if __name__=='__main__':
     # manual setup:
     # create table svnbranch(rev integer primary key, branch text);
+    # create table fileprefix(prefix text, suffix text);
+    # create index fileprefix_suffix on fileprefix(suffix);
     # then run this once in the instance directory
     sys.path.append('/home/roundup/lib/python2.5/site-packages')
     import roundup.instance
     tracker = roundup.instance.open('.')
     db = tracker.open('admin')
+    #db.cursor.execute('delete from svnbranch')
     fill_revs(db)

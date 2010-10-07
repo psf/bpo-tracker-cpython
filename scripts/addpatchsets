@@ -48,9 +48,28 @@ def try_match(filename, chunks, branch, rev):
     return base
 
 def find_bases(data, rev):
+    c = connection.cursor()
     startrev = rev
     to_match = []
-    for filename, data in engine.SplitPatch(data):
+    split = engine.SplitPatch(data)
+    # Check whether a prefix needs to be added to each file path
+    prefixes = None
+    for filename, data in split:
+        c.execute('select prefix from fileprefix where suffix=%s', (filename,))
+        res = c.fetchall()
+        if not res:
+            # prefix not known to Python at all - not a Python patch
+            return None, None
+        res = set(p[0] for p in res)
+        if prefixes is None:
+            prefixes = res
+        else:
+            prefixes = prefixes.intersection(res)
+        if not prefixes:
+            # no common prefix can be found
+            return None, None
+    # parse each file patch to chunks
+    for filename, data in split:
         lines = data.splitlines(True)
         chunks = patching.ParsePatchToChunks(lines)
         if not chunks:
@@ -78,16 +97,24 @@ def find_bases(data, rev):
         if verbose:
             print "Trying ", branch, rev
 
-        bases = []
-        for filename, data, chunks in to_match:
-            res = try_match(filename, chunks, branch, rev)
-            if not res:
-                break
-            bases.append((filename, data, chunks, res))
-        else:
-            if verbose:
-                print "Found match", branch, rev
-            return branch, bases
+        # if some file may occur with multiple prefixes,
+        # try them all - except that the intersection of all
+        # possible prefixes was taken above, so this should
+        # typically only use one round, and typically use ''
+        # as the prefix
+        for prefix in prefixes:
+            bases = []
+            for filename, data, chunks in to_match:
+                res = try_match(prefix+filename, chunks, branch, rev)
+                if not res:
+                    # try next prefix if any,
+                    # else go to previous revision
+                    break
+                bases.append((prefix+filename, data, chunks, res))
+            else:
+                if verbose:
+                    print "Found match", branch+prefix, rev
+                return branch, bases
         rev -= 1
 
 c = connection.cursor()
