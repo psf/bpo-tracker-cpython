@@ -1,0 +1,21 @@
+# This sample script reassigns all "Documentation"
+# issues assigned to "georg.brandl" to "docs@python"
+import sys
+sys.path.insert(1,'/home/roundup/roundup/lib/python2.4/site-packages')
+import roundup.instance
+
+tracker = roundup.instance.open('.')
+db = tracker.open('admin')
+
+olduser = db.user.lookup('georg.brandl')
+newuser = db.user.lookup('docs@python')
+component = db.component.lookup("Documentation")
+
+edit = db.issue.find(components=[component], assignee=olduser)
+print len(edit), edit; raise SystemExit
+
+for issue in edit:
+    # Use set_inner, so that auditors and reactors don't fire
+    db.issue.set_inner(issue, assignee=newuser)
+
+db.commit()
