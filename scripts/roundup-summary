@@ -59,10 +59,10 @@ ACTIVITY SUMMARY (%(timespan)s)
 To view or respond to any of the issues listed below, click on the issue.
 Do NOT respond to this message.
 
-Issues stats:
-  open   %(open)5d (%(open_new)+3d)
-  closed %(closed)5d (%(closed_new)+3d)
-  total  %(total)5d (%(total_new)+3d)
+Issues counts and deltas:
+  open   %(open)5d (%(open_delta)+3d)
+  closed %(closed)5d (%(closed_delta)+3d)
+  total  %(total)5d (%(total_delta)+3d)
 
 Open issues with patches: %(patches)-5d"""
 
@@ -207,29 +207,36 @@ class Report(object):
         start_date, end_date = self.start_date, self.end_date
         start_str = start_date.pretty(format='%F') # %F -> yyyy-mm-dd
         end_str = end_date.pretty(format='%F')
+        # counters for current values
         open_tot = closed_tot = all_tot = 0
-        open_new = closed_new = all_old = 0
+        # counters for previous values
+        open_old = closed_old = all_old = 0
         with_patch = 0
         patch_id = DB.keyword.lookup('patch')
         for id, issue in self.issues.iteritems():
             # don't include issues created after the end date
             if issue['creation'] > end_date:
                 continue
+            all_tot += 1
             if issue['creation'] < start_date:
                 all_old += 1
-            all_tot += 1
+                # check if the issue was closed at the end of the previous
+                # period
+                if issue['last_period_status'] in OPTIONS.resolved:
+                    closed_old += 1
+                else:
+                    open_old += 1
+            # check if the issue is closed now
             if issue['closed']:
                 closed_tot += 1
-                if issue['closed_date'] >= start_date:
-                    closed_new += 1
             else:
                 open_tot += 1
-                if ((issue['creation'] >= start_date) or
-                    (issue['reopened_date'] >= start_date)):
-                    open_new += 1
                 if patch_id in issue['keyword_ids']:
                     with_patch += 1
-        all_new = all_tot - all_old
+        all_delta = all_tot - all_old
+        open_delta = open_tot - open_old
+        closed_delta = closed_tot - closed_old
+        assert all_delta == open_delta + closed_delta
         # save the values in an attribute to avoid calculating it twice
         # when both the txt and the HTML header are needed (i.e. when sending
         # HTML mails)
@@ -237,9 +244,9 @@ class Report(object):
             timespan='%s - %s' % (start_str, end_str),
             tracker_url=DB.config.TRACKER_WEB,
             tracker_name=DB.config.TRACKER_NAME,
-            open=open_tot, open_new=open_new,
-            closed=closed_tot, closed_new=closed_new,
-            total=all_tot, total_new=all_new,
+            open=open_tot, open_delta=open_delta,
+            closed=closed_tot, closed_delta=closed_delta,
+            total=all_tot, total_delta=all_delta,
             patches=with_patch,
         )
         return header % self.header_content
@@ -497,6 +504,7 @@ def get_issue(issue_id, kws_dict, stages_dict):
         msgs_in_period = 0,
         status = None,
         real_status = sid2name(attrs['status']), # Avoid a bug in get_issue_attrs
+        last_period_status = None, # the status of the issue before start_date
         actor = None,
         activity = None,
         keyword_ids = kwds,
@@ -543,6 +551,8 @@ def get_issue_attrs(issue, helper):
     # this trick catches the first time we are in the interval of interest
     if helper['activity2'] < dates.to_value:
         update(issue, helper)
+    status_changes = []
+    old_time = issue['creation']
     for _, time, userid, act, data in helper['journal']:
         in_period =  dates.to_value > time >= dates.from_value
         if in_period:
@@ -558,6 +568,8 @@ def get_issue_attrs(issue, helper):
                     issue['msgs_in_period'] -= 1
             if 'status' in data:
                 helper['status1'] = sid2name(data['status'])
+                status_changes.append((old_time, helper['status1']))
+                old_time = time
                 if time < dates.to_value:
                     # want the last reopener only
                     if reopened(helper) and not issue['reopened']:
@@ -573,6 +585,15 @@ def get_issue_attrs(issue, helper):
                     issue['real_status'] in OPTIONS.resolved):
                     issue['closer'] = userid
                     issue['closed_date'] = time
+    status_changes.append((old_time, issue['real_status']))
+    # if the status didn't change and this is still None set it to 'open',
+    # leave it to None for new issues
+    if issue['creation'] < dates.from_value:
+        for time, status in status_changes:
+            if time < dates.from_value:
+                issue['last_period_status'] = status
+        if issue['last_period_status'] is None:
+            issue['last_period_status'] = 'open'
     # get these set if not done before
     update(issue, helper)
     last_opened = issue['reopened_date'] or issue['creation']
