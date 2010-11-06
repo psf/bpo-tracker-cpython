@@ -54,6 +54,9 @@ def find_bases(data, rev):
     split = engine.SplitPatch(data)
     # Check whether a prefix needs to be added to each file path
     prefixes = None
+    if not split:
+        # Missing Index: line in patch
+        return None, None
     for filename, data in split:
         c.execute('select prefix from fileprefix where suffix=%s', (filename,))
         res = c.fetchall()
@@ -155,9 +158,10 @@ for f in (File.objects.filter(_revision__isnull=False,
     data = engine.UnifyLinebreaks(data)
     branch, bases = find_bases(data, int(f._revision))
     if not branch:
-        if nodeid < 15000:
+        if f.id < 15000:
             f._patchset = "n/a"
             f.save()
+            transaction.commit()
         continue
 
     blob = gae_db.Blob(data)
