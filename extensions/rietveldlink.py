@@ -1,5 +1,6 @@
 def rietveldlink(request, issueid, fileid):
-    if request.client.db.file.get(fileid, 'patchset'):
+    patchset = request.client.db.file.get(fileid, 'patchset'):
+    if patchset and patchset != 'n/a':
         return '/review/%s/show' % issueid
     return ""
 

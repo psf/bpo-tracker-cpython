@@ -155,6 +155,9 @@ for f in (File.objects.filter(_revision__isnull=False,
     data = engine.UnifyLinebreaks(data)
     branch, bases = find_bases(data, int(f._revision))
     if not branch:
+        if nodeid < 15000:
+            f._patchset = "n/a"
+            f.save()
         continue
 
     blob = gae_db.Blob(data)
