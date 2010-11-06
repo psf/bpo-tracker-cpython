@@ -7,7 +7,7 @@ def identify(db, patch):
     either value may become None."""
     m = re.search(r'---.* ([0-9]+)\)', patch)
     if not m:
-        return None, None
+        return None
     rev = int(m.group(1))
     return rev
 
