@@ -1,6 +1,11 @@
 #!/usr/bin/python
 # WSGI server to implement search suggestions
-import ConfigParser, psycopg2, os, urllib, json
+import ConfigParser, psycopg2, os, urllib
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 # copied from indexer_common
 STOPWORDS = set([
