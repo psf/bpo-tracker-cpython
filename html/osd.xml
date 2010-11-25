@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+   <ShortName>Python Bugs</ShortName>
+   <Description>Python Bug Tracker Search</Description>
+   <Tags>python bugtracker</Tags>
+   <Contact>tracker-discuss@python.org</Contact>
+   <Url type="text/html" 
+        template="http://bugs.python.org/?@action=opensearch&amp;@search_text={searchTerms}"/>
+   <Url type="application/x-suggestions+json"
+	template="http://bugs.python.org/suggest?{searchTerms}"/>
+   <LongName>Python Bug Tracker Search</LongName>
+   <Query role="example" searchTerms="python" />
+   <Language>en-us</Language>
+</OpenSearchDescription>
