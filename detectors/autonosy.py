@@ -28,12 +28,21 @@ def autonosy(db, cl, nodeid, newvalues):
         users = db.component.get(component, 'add_as_nosy')
         nosy |= set(users)
 
+    # get the new values if they changed or the already-set ones if they didn't
     if 'priority' in newvalues:
-        if db.priority.get(newvalues['priority'], 'name') == 'release blocker':
-            for version in db.issue.get(nodeid, 'versions'):
-                name = db.version.get(version, 'name')
-                if name in RELEASE_MANAGERS:
-                    nosy.add(RELEASE_MANAGERS[name])
+        priority = db.priority.get(newvalues['priority'], 'name')
+    else:
+        priority = db.priority.get(db.issue.get(nodeid, 'priority'), 'name')
+    if 'versions' in newvalues:
+        versions = newvalues.get('versions', [])
+    else:
+        versions = db.issue.get(nodeid, 'versions')
+
+    if priority == 'release blocker':
+        for version in versions:
+            name = db.version.get(version, 'name')
+            if name in RELEASE_MANAGERS:
+                nosy.add(RELEASE_MANAGERS[name])
 
     newvalues['nosy'] = list(nosy)
 
