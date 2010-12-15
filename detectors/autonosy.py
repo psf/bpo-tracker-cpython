@@ -4,13 +4,15 @@
 # Python 2.3 ... 2.6 compatibility:
 from roundup.anypy.sets_ import set
 
-def autonosy(db, cl, nodeid, newvalues):
+RELEASE_MANAGERS = {
+    'Python 2.6': '19',   # barry
+    'Python 2.7': '4455', # benjamin.peterson
+    'Python 3.1': '4455', # benjamin.peterson
+    'Python 3.2': '93',   # georg.brandl
+}
 
-    if 'components' not in newvalues:
-        # Without components, nobody needs to be added as nosy
-        return
-    else:
-        components = newvalues['components']
+def autonosy(db, cl, nodeid, newvalues):
+    components = newvalues.get('components', [])
 
     nosy = set()
     if 'nosy' in newvalues:
@@ -25,6 +27,13 @@ def autonosy(db, cl, nodeid, newvalues):
     for component in components:
         users = db.component.get(component, 'add_as_nosy')
         nosy |= set(users)
+
+    if 'priority' in newvalues:
+        if db.priority.get(newvalues['priority'], 'name') == 'release blocker':
+            for version in db.issue.get(nodeid, 'versions'):
+                name = db.version.get(version, 'name')
+                if name in RELEASE_MANAGERS:
+                    nosy.add(RELEASE_MANAGERS[name])
 
     newvalues['nosy'] = list(nosy)
 
