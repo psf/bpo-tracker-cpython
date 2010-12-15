@@ -29,10 +29,13 @@ def autonosy(db, cl, nodeid, newvalues):
         nosy |= set(users)
 
     # get the new values if they changed or the already-set ones if they didn't
+    priority = 'None'
     if 'priority' in newvalues:
-        priority = db.priority.get(newvalues['priority'], 'name')
+        priority_id = newvalues['priority']
     else:
-        priority = db.priority.get(db.issue.get(nodeid, 'priority'), 'name')
+        priority_id = db.issue.get(nodeid, 'priority')
+    if priority_id is not None:
+        priority = db.priority.get(priority_id, 'name')
     if 'versions' in newvalues:
         versions = newvalues.get('versions', [])
     else:
