@@ -28,15 +28,15 @@ substitutions = [
 
     # deadbeeffeed  (hashes with exactly twelve or forty chars)
     (re.compile(r'\b(?<![/?&;])(?P<revision>[a-fA-F0-9]{40})\b'),
-     r'<a href="http://hg.python.org/lookup/\g<revision>">[\g<revision>]</a>'),
+     r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
     (re.compile(r'\b(?<![/?&;])(?P<revision>[a-fA-F0-9]{12})\b'),
-     r'<a href="http://hg.python.org/lookup/\g<revision>">[\g<revision>]</a>'),
+     r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
 
     # Lib/somefile.py, Modules/somemodule.c, Doc/somedocfile.rst, ...
     (re.compile(r'(?P<sep>(?<!\w/)|(?<!\w)/)(?P<path>(?:Demo|Doc|Grammar|'
                 r'Include|Lib|Mac|Misc|Modules|Parser|PC|PCbuild|Python|'
                 'RISCOS|Tools|Objects)/[-.a-zA-Z0-9_/]+[a-zA-Z0-9]/?)'),
-     r'<a href="http://hg.python.org/cpython/file/py3k/\g<path>">\g<sep>\g<path></a>'),
+     r'<a href="http://hg.python.org/cpython/file/default/\g<path>">\g<sep>\g<path></a>'),
 ]
 
 # if the issue number is too big the db will explode -- limit it to 7 digits
