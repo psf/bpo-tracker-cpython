@@ -4,6 +4,8 @@ from roundup import hyperdb
 from roundup.cgi.templating import register_propclass, StringHTMLProperty
 
 
+# pre-hg migration
+'''
 substitutions = [
     #  r12345, r 12345, rev12345, rev 12345, revision12345, revision 12345
     (re.compile(r'\b(?<![/?&;])(?P<revstr>r(ev(ision)?)?\s*)(?P<revision>\d+)'),
@@ -17,17 +19,17 @@ substitutions = [
      r'<a href="http://svn.python.org/view/python/branches/'
      r'py3k/\g<path>">\g<sep>\g<path></a>'),
 ]
-
-# for use after hg migration
-
 '''
+
 substitutions = [
     # r12345, r 12345, rev12345, rev 12345, revision12345, revision 12345
     (re.compile(r'\b(?<![/?&;])(?P<revstr>r(ev(ision)?)?\s*)(?P<revision>\d+)'),
      r'<a href="http://hg.python.org/lookup/r\g<revision>">\g<revstr>\g<revision></a>'),
 
-    # [deadbeef]  (syntax open for discussion)
-    (re.compile(r'\b(?<![/?&;])\[(?P<revision>[a-fA-F0-9]{6,})\]'),
+    # deadbeeffeed  (hashes with exactly twelve or forty chars)
+    (re.compile(r'\b(?<![/?&;])(?P<revision>[a-fA-F0-9]{40})\b'),
+     r'<a href="http://hg.python.org/lookup/\g<revision>">[\g<revision>]</a>'),
+    (re.compile(r'\b(?<![/?&;])(?P<revision>[a-fA-F0-9]{12})\b'),
      r'<a href="http://hg.python.org/lookup/\g<revision>">[\g<revision>]</a>'),
 
     # Lib/somefile.py, Modules/somemodule.c, Doc/somedocfile.rst, ...
@@ -36,8 +38,6 @@ substitutions = [
                 'RISCOS|Tools|Objects)/[-.a-zA-Z0-9_/]+[a-zA-Z0-9]/?)'),
      r'<a href="http://hg.python.org/cpython/file/py3k/\g<path>">\g<sep>\g<path></a>'),
 ]
-'''
-
 
 # if the issue number is too big the db will explode -- limit it to 7 digits
 issue_re = re.compile(r'(?P<text>(\#|\b(?<!/)issue)\s*(?P<id>1?\d{1,6}))\b', re.I)
