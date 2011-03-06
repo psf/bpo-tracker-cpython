@@ -65,6 +65,12 @@ def hg_splitpatch(data):
             continue
         if filename:
             diff.append(line)
+    # add last patch
+    if filename:
+        chunks = patching.ParsePatchToChunks(diff)
+        if not chunks:
+            return None
+        patches.append((filename, ''.join(diff), chunks))
     return patches
 
 def find_bases(data):
@@ -89,7 +95,6 @@ c = connection.cursor()
 c.execute("select id from _status where _name='closed'")
 closed = c.fetchone()[0]
 
-#import pdb;pdb.set_trace()
 if len(sys.argv) == 2:
     query = File.objects.filter(id = sys.argv[1])
 else:
@@ -101,7 +106,7 @@ for f in query:
     nodeid = c.fetchone()
     if not nodeid:
         if verbose:
-            print "File",nodeid,"is detached"
+            print "File",f.id,"is detached"
         continue
     nodeid = nodeid[0]
     roundup = RoundupIssue.objects.get(id=nodeid)
