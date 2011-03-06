@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys, os, urllib2, logging
+import sys, os, urllib2, logging, datetime
 basedir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(basedir+"/rietveld")
 os.environ["DJANGO_SETTINGS_MODULE"]="settings"
@@ -7,8 +7,9 @@ import gae2django
 gae2django.install(server_software='Django')
 
 verbose = False
-if len(sys.argv)==2 and sys.argv[1]=='-v':
+if len(sys.argv)>=2 and sys.argv[1]=='-v':
     verbose=True
+    del sys.argv[1]
 else:
     logging.disable(logging.ERROR)
 
@@ -33,9 +34,9 @@ def get_branch(branchname):
         _branches[branchname] = branch
         return branch
 
-def try_match(filename, chunks, branch, rev):
+def try_match(filename, chunks, rev):
     try:
-        r = urllib2.urlopen("http://svn.python.org/view/*checkout*/python"+branch+"/"+filename+"?rev="+str(rev))
+        r = urllib2.urlopen("http://hg.python.org/cpython/raw-file/"+rev+"/"+filename)
     except urllib2.HTTPError:
         return None
     base = engine.UnifyLinebreaks(r.read())
@@ -43,90 +44,59 @@ def try_match(filename, chunks, branch, rev):
     #import pdb; pdb.set_trace()
     for (start, end), newrange, oldlines, newlines in chunks:
         if lines[start:end] != oldlines:
-            print "No match", filename, start, end
+            if verbose:
+                print "No match", filename, start, end
             return None
     return base
 
-def find_bases(data, rev):
-    c = connection.cursor()
-    startrev = rev
-    to_match = []
-    split = engine.SplitPatch(data)
-    # Check whether a prefix needs to be added to each file path
-    prefixes = None
-    if not split:
-        # Missing Index: line in patch
+def hg_splitpatch(data):
+    patches = []
+    filename = None
+    for line in data.splitlines(True):
+        if line.startswith('diff -r'):
+            if filename:
+                chunks = patching.ParsePatchToChunks(diff)
+                if not chunks:
+                    # diff cannot be parsed
+                    return None
+                patches.append((filename, ''.join(diff), chunks))
+            diff = []
+            filename = line.split()[-1]
+            continue
+        if filename:
+            diff.append(line)
+    return patches
+
+def find_bases(data):
+    first, second, rev = data.split()[:3]
+    if first != 'diff' or second != '-r' or len(rev) != 12:
         return None, None
-    for filename, data in split:
-        c.execute('select prefix from fileprefix where suffix=%s', (filename,))
-        res = c.fetchall()
-        if not res:
-            # prefix not known to Python at all - not a Python patch
-            return None, None
-        res = set(p[0] for p in res)
-        if prefixes is None:
-            prefixes = res
-        else:
-            prefixes = prefixes.intersection(res)
-        if not prefixes:
-            # no common prefix can be found
-            return None, None
-    # parse each file patch to chunks
-    for filename, data in split:
-        lines = data.splitlines(True)
-        chunks = patching.ParsePatchToChunks(lines)
-        if not chunks:
-            return None, None
-        to_match.append((filename, data, chunks))
-
     c = connection.cursor()
-    branches = set()
-    while 1:
-        if rev < startrev-5000:
-            if verbose:
-                print "Could not find base revision and branch"
-                return None, None
-        c.execute("select branch from svnbranch where rev=%s", (rev,))
-        branch = c.fetchone()
-        if not branch:
-            rev -= 1
-            continue
-        branch = branch[0]
-        if branch in branches:
-            # already tried
-            rev -= 1
-            continue
-        branches.add(branch)
-        if verbose:
-            print "Trying ", branch, rev
-
-        # if some file may occur with multiple prefixes,
-        # try them all - except that the intersection of all
-        # possible prefixes was taken above, so this should
-        # typically only use one round, and typically use ''
-        # as the prefix
-        for prefix in prefixes:
-            bases = []
-            for filename, data, chunks in to_match:
-                res = try_match(prefix+filename, chunks, branch, rev)
-                if not res:
-                    # try next prefix if any,
-                    # else go to previous revision
-                    break
-                bases.append((prefix+filename, data, chunks, res))
-            else:
-                if verbose:
-                    print "Found match", branch+prefix, rev
-                return branch, bases
-        rev -= 1
+    pieces = hg_splitpatch(data)
+    if not pieces:
+        return None, None
+    bases = []
+    for filename, data, chunks in pieces:
+        res = try_match(filename, chunks, rev)
+        if not res:
+            return None, None
+        bases.append((filename, data, chunks, res))
+    if verbose:
+        print "Found match", rev
+    return 'default', bases
 
 c = connection.cursor()
 c.execute("select id from _status where _name='closed'")
 closed = c.fetchone()[0]
 
-for f in (File.objects.filter(_revision__isnull=False,
-                              _patchset__isnull=True).
-          order_by('id')):
+#import pdb;pdb.set_trace()
+if len(sys.argv) == 2:
+    query = File.objects.filter(id = sys.argv[1])
+else:
+    query = (File.objects.filter(_patchset__isnull=True,
+                                 _creation__gt=datetime.datetime.utcnow()-datetime.timedelta(seconds=30*60)).
+          order_by('id'))
+for f in query:
     c.execute("select nodeid from issue_files where linkid=%s", (f.id,))
     nodeid = c.fetchone()
     if not nodeid:
@@ -153,10 +123,14 @@ for f in (File.objects.filter(_revision__isnull=False,
         print filename,"not found"
         continue
     data = open(filename).read()
+    if not data.startswith('diff -r '):
+        if verbose:
+            print filename, "is not a patch"
+            continue
     if verbose:
         print "Doing", f.id
     data = engine.UnifyLinebreaks(data)
-    branch, bases = find_bases(data, int(f._revision))
+    branch, bases = find_bases(data)
     if not branch:
         if f.id < 15000:
             f._patchset = "n/a"
