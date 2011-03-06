@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sys, os, urllib2, logging, datetime
-basedir = os.path.dirname(os.path.dirname(__file__))
+basedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(basedir+"/rietveld")
 os.environ["DJANGO_SETTINGS_MODULE"]="settings"
 import gae2django
@@ -109,14 +109,6 @@ for f in query:
         if verbose:
             print "issue",nodeid,"is closed"
         continue
-    issue = Issue.objects.filter(id=nodeid)
-    if not issue:
-        c.execute("select _title, _creator from _issue where id=%s", (nodeid,))
-        title, creator = c.fetchone()
-        issue = Issue(id=nodeid, subject=title, owner_id=creator)
-        issue.put()
-    else:
-        issue = issue[0]
     filename = os.path.join(basedir, "db", "files", "file",
                             str(f.id/1000), "file"+str(f.id))
     if not os.path.exists(filename):
@@ -127,6 +119,14 @@ for f in query:
         if verbose:
             print filename, "is not a patch"
             continue
+    issue = Issue.objects.filter(id=nodeid)
+    if not issue:
+        c.execute("select _title, _creator from _issue where id=%s", (nodeid,))
+        title, creator = c.fetchone()
+        issue = Issue(id=nodeid, subject=title, owner_id=creator)
+        issue.put()
+    else:
+        issue = issue[0]
     if verbose:
         print "Doing", f.id
     data = engine.UnifyLinebreaks(data)
