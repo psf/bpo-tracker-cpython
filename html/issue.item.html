@@ -46,7 +46,9 @@
 <fieldset><legend>classification</legend>
 <table class="form">
 <tr>
- <th class="required" i18n:translate="">Title:</th>
+ <th class="required" i18n:translate="">
+   <a href="http://docs.python.org/devguide/triaging.html#title"
+      target="_blank" i18n:translate="">Title</a>:</th>
  <td colspan="3" tal:condition="context/title/is_edit_ok"
      tal:content="structure python:context.title.field(size=60)">title</td>
  <td colspan="3" tal:condition="not:context/title/is_edit_ok">
@@ -57,22 +59,25 @@
 
 <tr>
  <th class="required" i18n:translate="">
-   <span tal:replace="structure python:db.issue_type.classhelp('id,name,description',label='Type')" />:
- </th>
+   <a href="http://docs.python.org/devguide/triaging.html#type"
+      target="_blank" i18n:translate="">Type</a>:</th>
  <td tal:content="structure context/type/menu">type</td>
  <th i18n:translate="">
-   <span tal:replace="structure python:db.stage.classhelp('id,name,description',label='Stage')" />:
+   <a href="http://docs.python.org/devguide/triaging.html#stage"
+      target="_blank" i18n:translate="">Stage</a>:
  </th>
- <td tal:content="structure context/stage/menu">components</td>
+ <td tal:content="structure context/stage/menu">stage</td>
 </tr>
 
 <tr>
  <th i18n:translate="">
-   <span tal:replace="structure python:db.component.classhelp('id,name,description',label='Components')" />:
+   <a href="http://docs.python.org/devguide/triaging.html#components"
+      target="_blank" i18n:translate="">Components</a>:
  </th>
  <td tal:content="structure context/components/menu">components</td>
  <th i18n:translate="">
-   <span tal:replace="structure python:db.version.classhelp('id,name,description',label='Versions')" />:
+   <a href="http://docs.python.org/devguide/triaging.html#versions"
+      target="_blank" i18n:translate="">Versions</a>:
  </th>
  <td tal:content="structure context/versions/menu">versions</td>
 </tr>
@@ -82,19 +87,22 @@
 <fieldset><legend>process</legend>
 <table class="form">
 <tr tal:condition="context/id">
- <th i18n:translate="">
-   <span tal:replace="structure python:db.status.classhelp('id,name,description',label='Status')" />:
- </th>
- <td tal:content="structure context/status/menu">status</td>
- <th i18n:translate="">Resolution:</th>
- <td tal:content="structure context/resolution/menu">resolution</td>
+  <th i18n:translate="">
+    <a href="http://docs.python.org/devguide/triaging.html#status"
+       target="_blank" i18n:translate="">Status</a>:
+  </th>
+  <td tal:content="structure context/status/menu">status</td>
+  <th i18n:translate="">
+     <a href="http://docs.python.org/devguide/triaging.html#resolution"
+        target="_blank" i18n:translate="">Resolution</a>:
+  </th>
+  <td tal:content="structure context/resolution/menu">resolution</td>
 </tr>
 
 <tr tal:condition="context/id">
  <th>
-  <tal:block i18n:translate="">Dependencies</tal:block>:
-  <!-- <span tal:condition="context/dependencies/is_edit_ok"
-        tal:replace="structure python:db.issue.classhelp('id,title,status', filter='status=0,1', property='dependencies')" /> -->
+    <a href="http://docs.python.org/devguide/triaging.html#dependencies"
+       target="_blank" i18n:translate="">Dependencies</a>:
  </th>
  <td>
   <span tal:replace="structure python:context.dependencies.field(showid=1,size=20)" />
@@ -103,9 +111,8 @@
   </span>
  </td>
  <th i18n:translate="">
-  <tal:block i18n:translate="">Superseder</tal:block>:
-  <!-- <span tal:condition="context/superseder/is_edit_ok"
-        tal:replace="structure python:db.issue.classhelp('id,title', filter='status=0,1', property='superseder')" /> -->
+    <a href="http://docs.python.org/devguide/triaging.html#superseder"
+       target="_blank" i18n:translate="">Superseder</a>:
  </th>
  <td>
   <span tal:replace="structure python:context.superseder.field(showid=1, size=20)" />
@@ -121,7 +128,10 @@
  </td>
  </tr>
  <tr>
- <th><tal:block i18n:translate="">Assigned To</tal:block>:</th>
+ <th>
+   <a href="http://docs.python.org/devguide/triaging.html#assigned-to"
+      target="_blank" i18n:translate="">Assigned To</a>:
+ </th>
  <td tal:condition="context/assignee/is_edit_ok">
   <select name="assignee">
    <option value="-1">nobody</option>
@@ -135,7 +145,10 @@
  <td tal:condition="not:context/assignee/is_edit_ok">
   <span tal:replace="structure context/assignee/plain" />
  </td>
- <th><tal:block i18n:translate="">Nosy List</tal:block><!-- <span tal:condition="context/nosy_count" tal:replace="python: ' (%d)' % context.nosy_count" /> -->:
+ <th>
+   <a href="http://docs.python.org/devguide/triaging.html#nosy-list"
+      target="_blank" i18n:translate="">Nosy List</a><!--
+        <span tal:condition="context/nosy_count" tal:replace="python: ' (%d)' % context.nosy_count" /> -->:
   <span tal:condition="context/nosy/is_edit_ok"
         tal:replace="structure python:db.user.classhelp('username,realname,address', property='nosy')" />
  </th>
@@ -150,16 +163,23 @@
 </tr>
 <tr>
  <th>
-   <span tal:replace="structure python:db.priority.classhelp('id,name,description',label='Priority')" />:
+   <a href="http://docs.python.org/devguide/triaging.html#priority"
+      target="_blank" i18n:translate="">Priority</a>:
  </th>
  <td tal:content="structure context/priority/menu">priority</td>
- <th tal:content="structure python:db.keyword.classhelp('id,name,description',label='Keywords:')" />
+ <th>
+    <a href="http://docs.python.org/devguide/triaging.html#keywords"
+      target="_blank" i18n:translate="">Keywords</a>:
+ </th>
  <td tal:content="structure python:context['keywords'].menu(height=5)">keywords</td>
 
 
 </tr>
 <tr tal:condition="context/is_edit_ok">
- <th><tal:block i18n:translate="">Comment</tal:block>:</th>
+ <th>
+   <a href="http://docs.python.org/devguide/triaging.html#generating-special-links-in-a-comment"
+      target="_blank" i18n:translate="">Comment</a>:
+ </th>
  <td colspan="3">
   <textarea tal:content="request/form/@note/value | default"
             name="@note" rows="10" cols="72"></textarea>

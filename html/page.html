@@ -74,7 +74,7 @@ status_all string:-1,1,2,3;
     <li><a href="http://python.org/community" title="">Community</a></li>
     <li><a href="http://python.org/psf" title="Python Software Foundation">PSF</a></li>
     <li><a href="http://python.org/links" title="">Links</a></li>
-    <li><a href="http://python.org/dev" title="Python Core Language Development">Core Development</a></li>
+    <li><a href="http://docs.python.org/devguide/" title="Python Core Language Development">Core Development</a></li>
     <li class="selected"><a href="." class="selected" title="Python Issue Tracker">Issue Tracker</a>
       <ul class="level-two">
         <li tal:condition="python:request.user.hasPermission('View', 'issue')">
@@ -242,8 +242,12 @@ status_all string:-1,1,2,3;
         <li>
           <strong i18n:translate="">Help</strong>
           <ul class="level-three">
-            <li><a href="http://wiki.python.org/moin/TrackerDocs/" i18n:translate="">Tracker Documentation</a></li>
-            <li><a href="http://psf.upfronthosting.co.za/roundup/meta">Report Tracker Problem</a></li>
+            <li><a href="http://docs.python.org/devguide/triaging.html">
+                Tracker Documentation</a></li>
+            <li><a href="http://wiki.python.org/moin/TrackerDevelopment">
+                Tracker Development</a></li>
+            <li><a href="http://psf.upfronthosting.co.za/roundup/meta">
+                Report Tracker Problem</a></li>
           </ul>
         </li>
 
