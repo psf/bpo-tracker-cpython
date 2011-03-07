@@ -126,9 +126,12 @@ for f in query:
             continue
     issue = Issue.objects.filter(id=nodeid)
     if not issue:
+        c.execute("select _address from _user,issue_nosy where nodeid=%s and id=linkid",
+                  (nodeid,))
+        cc = [r[0] for r in c.fetchall()]
         c.execute("select _title, _creator from _issue where id=%s", (nodeid,))
         title, creator = c.fetchone()
-        issue = Issue(id=nodeid, subject=title, owner_id=creator)
+        issue = Issue(id=nodeid, subject=title, owner_id=creator, cc=cc)
         issue.put()
     else:
         issue = issue[0]

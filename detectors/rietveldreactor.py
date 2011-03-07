@@ -15,7 +15,21 @@ def create_django_user(db, cl, nodeid, oldvalues):
               "values(%s, %s, %s, '!', '', '', false, true, false, now(), now())",
               (nodeid, username, email))
 
+def update_issue_cc(db, cl, nodeid, oldvalues):
+    if 'nosy' not in oldvalues:
+        return
+    c = db.cursor
+    c.execute("select count(*) from codereview_issue where id=%s", (nodeid,))
+    if c.fetchone()[0] == 0:
+        return
+    cc = []
+    for user in db.issue.get(nodeid, 'nosy'):
+        cc.append(db.user.get(user, 'address'))
+    cc = base64.encodestring(cPickle.dumps(cc))
+    c.execute("update codereview_issue set cc=%s where id=%s", (cc, nodeid))
+
 def init(db):
     db.user.react('create', create_django_user)
+    db.issue.react('set', update_issue_cc)
     # XXX react to email changes, roles
     # XXX react to subject, closed changes on issues
