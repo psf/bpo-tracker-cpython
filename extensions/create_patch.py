@@ -7,7 +7,7 @@ class NotChanged(ValueError):
 def download_patch(source, lastrev):
     from mercurial import hg, ui, localrepo, commands, bundlerepo
     UI = ui.ui()
-    bundle = tempfile.mktemp()
+    bundle = tempfile.mktemp(dir="/var/tmp")
     cwd = os.getcwd()
     os.chdir(base)
     try:
@@ -31,6 +31,8 @@ def download_patch(source, lastrev):
         result = repo.ui.popbuffer()
     finally:
         os.chdir(cwd)
+        if os.path.exists(bundle):
+            os.unlink(bundle)
     return result, rhead
 
 class CreatePatch(Action):
