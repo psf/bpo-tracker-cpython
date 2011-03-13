@@ -88,7 +88,7 @@ def find_bases(data):
     bases = []
     for filename, data, chunks in pieces:
         res = try_match(filename, chunks, rev)
-        if not res:
+        if res is None:
             return None, None
         bases.append((filename, data, chunks, res))
     if verbose:
