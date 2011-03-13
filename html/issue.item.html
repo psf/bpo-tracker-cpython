@@ -197,6 +197,15 @@
  <th><tal:block i18n:translate="">File Description</tal:block>:</th>
  <td colspan=3><input type="edit" name="file-1@description" size="40"></td>
 </tr>
+
+<tr tal:condition="context/is_edit_ok">
+ <th colspan=2><tal:block i18n:translate="">Mercurial Repo containing patches</tal:block>:</th>
+ <td colspan=2>
+  <input type="hidden" name="@link@hgrepos" value="hgrepo-1">
+   <input name="hgrepo-1@url" size="60">
+ </td>
+</tr>
+
 </table>
 </fieldset>
 <table class="form">
@@ -255,6 +264,24 @@
     <input type="submit" value="remove" i18n:attributes="value">
    </form>
   </td>
+ </tr>
+</table>
+
+<table class="files" tal:condition="context/hgrepos">
+ <tr><th class="Header" colspan="2">Repositories containing patches</th></tr>
+ <tr tal:repeat="hgrepo python:context.hgrepos.sorted('creation')">
+  <td>
+   <a tal:attributes="href hgrepo/url"
+      tal:content="hgrepo/url">link</a>
+  </td>
+  <td>
+   <form style="padding:0" method="post" tal:condition="context/is_edit_ok"
+         tal:attributes="action string:issue${context/id}">
+   <input type="hidden" name="@action" value="create_patch">
+    <input type="hidden" name="@repo" tal:attributes="value hgrepo/id">
+    <input type="submit" value="Create Patch" i18n:attributes="value">
+   </form>
+ </td>
  </tr>
 </table>
 

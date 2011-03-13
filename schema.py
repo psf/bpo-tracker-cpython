@@ -141,6 +141,10 @@ file = FileClass(db, "file",
                  # patchset exists for the issue
                  patchset=String(),)
 
+hgrepo = Class(db, "hgrepo",
+                   url=String(),
+                   lastrev=String())
+
 # IssueClass automatically gets these properties in addition to the Class ones:
 #   title = String()
 #   messages = Multilink("msg")
@@ -161,7 +165,8 @@ issue = IssueClass(db, "issue",
                    keywords=Multilink("keyword"),
                    stage=Link('stage'),
                    nosy_count=Number(),
-                   message_count=Number())
+                   message_count=Number(),
+                   hgrepos=Multilink('hgrepo'))
 
 #
 # TRACKER SECURITY SETTINGS
@@ -189,9 +194,14 @@ for r in 'User', 'Developer', 'Coordinator':
 
 for cl in ('issue_type', 'severity', 'component',
            'version', 'priority', 'stage', 'status', 'resolution',
-           'issue', 'keyword'):
+           'issue', 'keyword', 'hgrepo'):
     db.security.addPermissionToRole('User', 'View', cl)
     db.security.addPermissionToRole('Anonymous', 'View', cl)
+
+db.security.addPermissionToRole('User', 'Create', 'hgrepo')
+p = db.security.addPermission(name='Edit', klass='hgrepo',
+                              properties=['url'])
+db.security.addPermissionToRole('User', p)
 
 class may_view_spam:
     def __init__(self, klassname):
@@ -260,7 +270,7 @@ p = db.security.addPermission(name='Edit', klass='issue',
                               properties=('title', 'type',
                                           'components', 'versions',
                                           'severity',
-                                          'messages', 'files', 'nosy'),
+                                          'messages', 'files', 'nosy', 'hgrepos'),
                               description='User can report and discuss issues')
 db.security.addPermissionToRole('User', p)
 
