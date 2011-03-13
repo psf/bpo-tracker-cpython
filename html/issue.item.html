@@ -188,22 +188,22 @@
 
 <tr tal:condition="context/is_edit_ok">
  <th><tal:block i18n:translate="">File</tal:block>:</th>
- <td colspan=3>
+ <td colspan="3">
    <input type="hidden" name="@link@files" value="file-1">
-   <input type="file" name="file-1@content" size="40">
+   <input type="file" name="file-1@content" size="50">
  </td>
 </tr>
 <tr tal:condition="context/is_edit_ok">
  <th><tal:block i18n:translate="">File Description</tal:block>:</th>
- <td colspan=3><input type="edit" name="file-1@description" size="40"></td>
+ <td colspan="3"><input type="edit" name="file-1@description" size="50"></td>
 </tr>
 
 <tr tal:condition="context/is_edit_ok">
- <th colspan=2><a href="http://docs.python.org/devguide/triaging.html#mercurial-repository"
-      target="_blank" i18n:translate="">Mercurial Repo containing patches</a>:</th>
- <td colspan=2>
+ <th><a href="http://docs.python.org/devguide/triaging.html#mercurial-repository"
+      target="_blank" i18n:translate="">Remote hg repo</a>:</th>
+ <td colspan="3">
   <input type="hidden" name="@link@hgrepos" value="hgrepo-1">
-   <input name="hgrepo-1@url" size="60">
+   <input name="hgrepo-1@url" size="50">
  </td>
 </tr>
 
