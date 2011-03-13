@@ -169,5 +169,5 @@ for f in query:
         patch.content = content
         patch.put()
     transaction.commit()
-
+transaction.commit()
 transaction.leave_transaction_management()
