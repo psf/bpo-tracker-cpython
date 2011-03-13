@@ -38,10 +38,14 @@ def try_match(filename, chunks, rev):
     try:
         r = urllib2.urlopen("http://hg.python.org/cpython/raw-file/"+rev+"/"+filename)
     except urllib2.HTTPError:
-        return None
-    base = engine.UnifyLinebreaks(r.read())
+        # not found/not accessible
+        # assume that the file did not exist in the base revision
+        # and consider it empty. If the problem was different (i.e. there should have
+        # been a non-empty base, patching will fail.
+        base = ""
+    else:
+        base = engine.UnifyLinebreaks(r.read())
     lines = base.splitlines(True)
-    #import pdb; pdb.set_trace()
     for (start, end), newrange, oldlines, newlines in chunks:
         if lines[start:end] != oldlines:
             if verbose:
