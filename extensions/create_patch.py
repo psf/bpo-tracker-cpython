@@ -15,11 +15,14 @@ def download_patch(source, lastrev):
         repo0.ui.quiet=True
         repo0.ui.pushbuffer()
         commands.pull(repo0.ui, repo0, quiet=True)
+        repo0.ui.popbuffer() # discard all pull output
+        repo0.ui.pushbuffer()
         commands.incoming(repo0.ui, repo0, source=source, branch=['default'], bundle=bundle, force=False)
         rhead = repo0.ui.popbuffer()
         if rhead:
-            rhead = rhead.split(':')[1]
-        if rhead == 'lastrev':
+            # output is a list of revisions, one per line. last line should be newest revision
+            rhead = rhead.splitlines()[-1].split(':')[1]
+        if rhead == lastrev:
             raise NotChanged
         repo=bundlerepo.bundlerepository(UI, ".", bundle)
         repo.ui.pushbuffer()
@@ -49,15 +52,19 @@ class CreatePatch(Action):
         try:
             diff, head = download_patch(url, lastrev)
         except NotChanged:
-            self.client.error_message.append('%s is already available' % head)
+            self.client.error_message.append('%s.diff is already available' % lastrev)
             return
-        fileid = db.file.create(name='default.diff',
+        except Exception, e:
+            self.client.error_message.append(str(e))
+            return
+        fileid = db.file.create(name='%s.diff' % head,
                                 type='text/plain',
                                 content=diff)
         files = db.issue.get(self.nodeid, 'files')
         files.append(fileid)
         db.issue.set(self.nodeid, files=files)
         db.hgrepo.set(repo, lastrev=head)
+        self.client.ok_message.append('Successfully downloaded %s.diff' % head)
         db.commit()
 
 def init(instance):
