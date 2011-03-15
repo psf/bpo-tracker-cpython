@@ -95,6 +95,7 @@ user = Class(db, "user",
              contrib_form=Boolean(),
              contrib_form_date=Date(),
              openids=String(), # space separated list
+             iscommitter=Boolean(),
              )
 user.setkey("username")
 db.security.addPermission(name='Register', klass='user',
@@ -340,7 +341,8 @@ p = db.security.addPermission(name='Edit', klass='user', check=own_record,
                 'phone', 'organisation',
                 'alternate_addresses',
                 'queries',
-                'timezone')) # Note: 'roles' excluded - users should not be able to edit their own roles. Also excluded: contrib_form, contrib_form_date
+                'timezone')) # Note: 'roles' excluded - users should not be able to edit their own roles.
+                             # Also excluded: contrib_form, contrib_form_date, iscommitter
 for r in 'User', 'Developer':
     db.security.addPermissionToRole(r, p)
 

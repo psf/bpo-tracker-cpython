@@ -116,6 +116,11 @@ define="edit_ok context/is_edit_ok"
    </td>
 </tr>
 
+<tr>
+  <th>Is Committer</th>
+   <td><span tal:replace="structure context/iscommitter/field"/>
+  </td>
+</tr>
  <tr tal:define="name string:address; label string:E-mail address; value context/address">
   <th metal:use-macro="th_label">E-mail address</th>
   <td tal:define="mailto python:context.address.field(id='address');
