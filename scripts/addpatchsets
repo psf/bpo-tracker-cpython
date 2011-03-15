@@ -78,6 +78,10 @@ def hg_splitpatch(data):
     return patches
 
 def find_bases(data):
+    if not data.startswith("diff -r "):
+        # this should only be called if there is actually is a diff in the file
+        head, tail = data.split("\ndiff -r ", 1)
+        data = "diff -r "+tail
     first, second, rev = data.split()[:3]
     if first != 'diff' or second != '-r' or len(rev) != 12:
         return None, None
