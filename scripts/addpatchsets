@@ -124,7 +124,7 @@ for f in query:
         print filename,"not found"
         continue
     data = open(filename).read()
-    if not data.startswith('diff -r ') and data.find('\ndiff -r '):
+    if not data.startswith('diff -r ') and data.find('\ndiff -r ')==-1:
         if verbose:
             print filename, "is not a patch"
             continue
