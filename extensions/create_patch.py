@@ -15,6 +15,7 @@ def download_patch(source, lastrev):
         repo0.ui.quiet=True
         repo0.ui.pushbuffer()
         commands.pull(repo0.ui, repo0, quiet=True)
+        commands.update(repo0.ui, repo0)
         repo0.ui.popbuffer() # discard all pull output
         repo0.ui.pushbuffer()
         if commands.incoming(repo0.ui, repo0, source=source, branch=['default'], bundle=bundle, force=False) != 0:
