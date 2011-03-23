@@ -299,7 +299,7 @@
        i18n:name="author" /> (<tal:x replace="msg/author"/>)
        <tal:if condition="msg/author/contrib_form"><span title="Contributor form received">*</span></tal:if>
        <tal:if condition="msg/author/iscommitter">
-         <span title="Python committer"><img src="http://hg.python.org/static/hgicon.png"/></span>
+         <span title="Python committer"><img src="@@file/committer.png"/></span>
        </tal:if>
    </th>
    <th i18n:translate="">Date: <tal:x replace="python:msg.date.pretty('%Y-%m-%d %H:%M')"
