@@ -42,6 +42,7 @@ define="edit_ok context/is_edit_ok"
 <div tal:condition="context/is_view_ok">
 
 <form method="POST"
+      name="userdetails"
       tal:define="required python:'username address'.split()"
       enctype="multipart/form-data"
       tal:attributes="action context/designator;
@@ -110,8 +111,12 @@ define="edit_ok context/is_edit_ok"
  <tr>
    <th>Contributor Form Received</th>
    <td><span tal:replace="structure context/contrib_form/field"/>
-   <tal:if condition="python:context.contrib_form or utils.is_coordinator(request)">
+   <tal:if condition="python:context.contrib_form and not utils.is_coordinator(request)">
    on: <span tal:replace="structure context/contrib_form_date/field"/>
+   </tal:if>
+   <tal:if condition="python:utils.is_coordinator(request)">
+   <span tal:replace="structure python:context.contrib_form_date.field(popcal=False)"/>
+   <span tal:replace="structure python:context.contrib_form_date.popcal(form='userdetails')"/>
    </tal:if>
    </td>
 </tr>
