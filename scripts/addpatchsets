@@ -131,7 +131,7 @@ for f in query:
     if not data.startswith('diff -r ') and data.find('\ndiff -r ')==-1:
         if verbose:
             print filename, "is not a patch"
-            continue
+        continue
     issue = Issue.objects.filter(id=nodeid)
     if not issue:
         c.execute("select _address from _user,issue_nosy where nodeid=%s and id=linkid",
