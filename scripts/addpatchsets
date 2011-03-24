@@ -118,10 +118,10 @@ for f in query:
         continue
     nodeid = nodeid[0]
     roundup = RoundupIssue.objects.get(id=nodeid)
-    if roundup._status == closed:
-        if verbose:
-            print "issue",nodeid,"is closed"
-        continue
+    #if roundup._status == closed:
+    #    if verbose:
+    #        print "issue",nodeid,"is closed"
+    #    continue
     filename = os.path.join(basedir, "db", "files", "file",
                             str(f.id/1000), "file"+str(f.id))
     if not os.path.exists(filename):
