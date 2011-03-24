@@ -4,7 +4,7 @@ from roundup.cgi.actions import Action
 class NotChanged(ValueError):
     pass
 
-def download_patch(source, lastrev, patchbranch):
+def download_patch(source, lastrev, sourcebranch, patchbranch):
     from mercurial import hg, ui, localrepo, commands, bundlerepo
     UI = ui.ui()
     bundle = tempfile.mktemp(dir="/var/tmp")
@@ -30,7 +30,7 @@ def download_patch(source, lastrev, patchbranch):
             raise NotChanged
         repo=bundlerepo.bundlerepository(UI, ".", bundle)
         repo.ui.pushbuffer()
-        old = 'max(p1(min(outgoing() and branch(%s))) or p2(max(merge() and outgoing() and branch(%s))))' % (patchbranch, patchbranch)
+        old = 'max(p1(min(outgoing() and branch(%s))) or max(p2(merge() and outgoing() and branch(%s)) and branch(%s)))' % (patchbranch, patchbranch, sourcebranch)
         commands.diff(repo.ui, repo, rev=[old, patchbranch])
         result = repo.ui.popbuffer()
     finally:
@@ -56,11 +56,14 @@ class CreatePatch(Action):
             self.client.error_message.append('unknown hgrepo url')
             return
         lastrev = db.hgrepo.get(repo, 'lastrev')
-        branch = db.hgrepo.get(repo, 'patchbranch')
-        if not branch:
-            branch = 'default'
+        sourcebranch = db.hgrepo.get(repo, 'sourcebranch')
+        if not sourcebranch:
+            sourcebranch = 'default'
+        patchbranch = db.hgrepo.get(repo, 'patchbranch')
+        if not patchbranch:
+            patchbranch = 'default'
         try:
-            diff, head = download_patch(url, lastrev, branch)
+            diff, head = download_patch(url, lastrev, sourcebranch, patchbranch)
         except NotChanged:
             self.client.error_message.append('%s.diff is already available' % lastrev)
             return
