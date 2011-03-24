@@ -4,7 +4,7 @@ from roundup.cgi.actions import Action
 class NotChanged(ValueError):
     pass
 
-def download_patch(source, lastrev):
+def download_patch(source, lastrev, patchbranch):
     from mercurial import hg, ui, localrepo, commands, bundlerepo
     UI = ui.ui()
     bundle = tempfile.mktemp(dir="/var/tmp")
@@ -15,10 +15,12 @@ def download_patch(source, lastrev):
         repo0.ui.quiet=True
         repo0.ui.pushbuffer()
         commands.pull(repo0.ui, repo0, quiet=True)
-        commands.update(repo0.ui, repo0)
         repo0.ui.popbuffer() # discard all pull output
+        # find out what the head revision of the given branch is
         repo0.ui.pushbuffer()
-        if commands.incoming(repo0.ui, repo0, source=source, branch=['default'], bundle=bundle, force=False) != 0:
+        head = repo0.ui.popbuffer().strip()
+        repo0.ui.pushbuffer()
+        if commands.incoming(repo0.ui, repo0, source=source, branch=[patchbranch], bundle=bundle, force=False) != 0:
             raise ValueError, "Repository contains no changes"
         rhead = repo0.ui.popbuffer()
         if rhead:
@@ -28,7 +30,8 @@ def download_patch(source, lastrev):
             raise NotChanged
         repo=bundlerepo.bundlerepository(UI, ".", bundle)
         repo.ui.pushbuffer()
-        commands.diff(repo.ui, repo, rev=['ancestor(.,default)', 'default'])
+        old = 'max(p1(min(outgoing() and branch(%s))) or p2(max(merge() and outgoing() and branch(%s))))' % (patchbranch, patchbranch)
+        commands.diff(repo.ui, repo, rev=[old, patchbranch])
         result = repo.ui.popbuffer()
     finally:
         os.chdir(cwd)
@@ -53,8 +56,11 @@ class CreatePatch(Action):
             self.client.error_message.append('unknown hgrepo url')
             return
         lastrev = db.hgrepo.get(repo, 'lastrev')
+        branch = db.hgrepo.get(repo, 'patchbranch')
+        if not branch:
+            branch = 'default'
         try:
-            diff, head = download_patch(url, lastrev)
+            diff, head = download_patch(url, lastrev, branch)
         except NotChanged:
             self.client.error_message.append('%s.diff is already available' % lastrev)
             return

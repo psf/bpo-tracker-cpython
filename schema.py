@@ -143,8 +143,10 @@ file = FileClass(db, "file",
                  patchset=String(),)
 
 hgrepo = Class(db, "hgrepo",
-                   url=String(),
-                   lastrev=String())
+               url=String(),
+               lastrev=String(),
+               patchbranch=String(),
+               )
 
 # IssueClass automatically gets these properties in addition to the Class ones:
 #   title = String()
@@ -199,9 +201,11 @@ for cl in ('issue_type', 'severity', 'component',
     db.security.addPermissionToRole('User', 'View', cl)
     db.security.addPermissionToRole('Anonymous', 'View', cl)
 
+def may_edit_hgrepo(db, userid, itemid):
+    return userid == db.hgrepo.get(itemid, "creator")
 db.security.addPermissionToRole('User', 'Create', 'hgrepo')
-p = db.security.addPermission(name='Edit', klass='hgrepo',
-                              properties=['url'])
+p = db.security.addPermission(name='Edit', klass='hgrepo', check=may_edit_hgrepo,
+                              properties=['url', 'patchbranch'])
 db.security.addPermissionToRole('User', p)
 
 class may_view_spam:
@@ -305,7 +309,8 @@ for cl in ('issue', 'file', 'msg', 'keyword'):
 # Coordinator permissions
 ##########################
 for cl in ('issue_type', 'severity', 'component',
-           'version', 'priority', 'stage', 'status', 'resolution', 'issue', 'file', 'msg'):
+           'version', 'priority', 'stage', 'status', 'resolution', 'issue', 
+           'file', 'msg', 'hgrepo'):
     db.security.addPermissionToRole('Coordinator', 'View', cl)
     db.security.addPermissionToRole('Coordinator', 'Edit', cl)
     db.security.addPermissionToRole('Coordinator', 'Create', cl)

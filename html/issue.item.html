@@ -269,11 +269,27 @@
 </table>
 
 <table class="files" tal:condition="context/hgrepos">
- <tr><th class="Header" colspan="2">Repositories containing patches</th></tr>
+ <tr><th class="Header" colspan="4">Repositories containing patches</th></tr>
  <tr tal:repeat="hgrepo python:context.hgrepos.sorted('creation')">
   <td>
    <a tal:attributes="href hgrepo/url"
-      tal:content="hgrepo/url">link</a>
+      tal:content="hgrepo/url">link</a><tal:block 
+        tal:condition="hgrepo/patchbranch">:<a 
+        tal:attributes="href string:${hgrepo/url}/shortlog/${hgrepo/patchbranch}"
+        tal:content="hgrepo/patchbranch"/>
+   </tal:block>
+  </td>
+  <td><tal:block tal:condition="hgrepo/is_edit_ok"><a
+          tal:attributes="href string:hgrepo${hgrepo/id}">edit</a> (change branch)
+      </tal:block>
+  </td>
+  <td>
+   <form style="padding:0" method="post" tal:condition="hgrepo/is_edit_ok"
+         tal:attributes="action string:issue${context/id}">
+    <input type="hidden" name="@remove@files" tal:attributes="value hgrepo/id">
+    <input type="hidden" name="@action" value="edit">
+    <input type="submit" value="Remove">
+   </form>
   </td>
   <td>
    <form style="padding:0" method="post" tal:condition="context/is_edit_ok"
