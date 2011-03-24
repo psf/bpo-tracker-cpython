@@ -110,7 +110,7 @@ define="edit_ok context/is_edit_ok"
  <tr>
    <th>Contributor Form Received</th>
    <td><span tal:replace="structure context/contrib_form/field"/>
-   <tal:if condition="context/contrib_form">
+   <tal:if condition="python:context.contrib_form or utils.is_coordinator(request)">
    on: <span tal:replace="structure context/contrib_form_date/field"/>
    </tal:if>
    </td>
