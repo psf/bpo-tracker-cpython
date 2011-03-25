@@ -274,7 +274,7 @@
   <td>
    <a tal:attributes="href hgrepo/url"
       tal:content="hgrepo/url">link</a><tal:block 
-        tal:condition="hgrepo/patchbranch">:<a 
+        tal:condition="hgrepo/patchbranch">#<a 
         tal:attributes="href string:${hgrepo/url}/shortlog/${hgrepo/patchbranch}"
         tal:content="hgrepo/patchbranch"/>
    </tal:block>
