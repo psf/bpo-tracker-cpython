@@ -145,7 +145,6 @@ file = FileClass(db, "file",
 hgrepo = Class(db, "hgrepo",
                url=String(),
                lastrev=String(),
-               sourcebranch=String(),
                patchbranch=String(),
                )
 
@@ -206,7 +205,7 @@ def may_edit_hgrepo(db, userid, itemid):
     return userid == db.hgrepo.get(itemid, "creator")
 db.security.addPermissionToRole('User', 'Create', 'hgrepo')
 p = db.security.addPermission(name='Edit', klass='hgrepo', check=may_edit_hgrepo,
-                              properties=['url', 'sourcebranch', 'patchbranch'])
+                              properties=['url', 'patchbranch'])
 db.security.addPermissionToRole('User', p)
 
 class may_view_spam:

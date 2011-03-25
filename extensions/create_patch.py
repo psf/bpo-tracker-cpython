@@ -30,7 +30,7 @@ def download_patch(source, lastrev, sourcebranch, patchbranch):
             raise NotChanged
         repo=bundlerepo.bundlerepository(UI, ".", bundle)
         repo.ui.pushbuffer()
-        old = 'max(p1(min(outgoing() and branch(%s))) or max(p2(merge() and outgoing() and branch(%s)) and branch(%s) and not outgoing()))' % (patchbranch, patchbranch, sourcebranch)
+        old = 'max(ancestors(branch("%s")))-outgoing("%s"))' % (patchbranch, base)
         commands.diff(repo.ui, repo, rev=[old, patchbranch])
         result = repo.ui.popbuffer()
     finally:
