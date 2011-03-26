@@ -57,7 +57,7 @@ def hg_splitpatch(data):
     patches = []
     filename = None
     for line in data.splitlines(True):
-        if line.startswith('diff -r'):
+        if line.startswith('diff '):
             if filename:
                 chunks = patching.ParsePatchToChunks(diff)
                 if not chunks:
@@ -66,6 +66,9 @@ def hg_splitpatch(data):
                 patches.append((filename, ''.join(diff), chunks))
             diff = []
             filename = line.split()[-1]
+            if filename.startswith("b/"):
+                # git style
+                filename = filename[2:]
             continue
         if filename:
             diff.append(line)
@@ -78,13 +81,14 @@ def hg_splitpatch(data):
     return patches
 
 def find_bases(data):
-    if not data.startswith("diff -r "):
+    if not data.startswith("diff "):
         # this should only be called if there is actually is a diff in the file
-        head, tail = data.split("\ndiff -r ", 1)
-        data = "diff -r "+tail
-    first, second, rev = data.split()[:3]
-    if first != 'diff' or second != '-r' or len(rev) != 12:
-        return None, None
+        head, tail = data.split("\ndiff ", 1)
+        data = "diff "+tail
+    # default to default branch if no revision is found
+    rev = 'default'
+    if data.startswith("diff -r "):
+        first, second, rev = data.split()[:3]
     c = connection.cursor()
     pieces = hg_splitpatch(data)
     if not pieces:
@@ -128,7 +132,7 @@ for f in query:
         print filename,"not found"
         continue
     data = open(filename).read()
-    if not data.startswith('diff -r ') and data.find('\ndiff -r ')==-1:
+    if not data.startswith('diff ') and data.find('\ndiff ')==-1:
         if verbose:
             print filename, "is not a patch"
         continue
