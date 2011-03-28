@@ -1,4 +1,11 @@
 window.onload = function () {
+    var condensed = document.getElementById("condensed");
+    if(condensed) {
+        condensed.style.display = "block";
+        document.getElementById("classification").style.display="none";
+        document.getElementById("processfields").style.display="none";
+    }
+
     // create the input button and use it to replace the span/placeholder --
     // users without javascript won't notice anything.
     // This might eventually be replaced by jquery
@@ -40,4 +47,11 @@ function add_to_nosy(user) {
     add_me_button.style.display = 'none';
     nosy.style.display = 'inline';
     nosy.style.width = new_width + "px";
+}
+
+function unfold() {
+  document.getElementById("condensed").style.display = "none";
+  document.getElementById("classification").style.display = "block";
+  document.getElementById("processfields").style.display = "block";
+
 }

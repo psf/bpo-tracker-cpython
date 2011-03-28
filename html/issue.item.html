@@ -27,7 +27,7 @@
   replace="context/id" i18n:name="id" /> Editing</span>
 </tal:block>
 
-<td class="content" metal:fill-slot="content">
+<div class="content" metal:fill-slot="content">
 
 <p tal:condition="python:not (context.is_view_ok()
  or request.user.hasRole('Anonymous'))" i18n:translate="">
@@ -38,12 +38,22 @@
  Please login with your username and password.</p>
 
 <div tal:condition="context/is_view_ok">
+   <p style="display:none" id="condensed" tal:condition="context/id">
+     This is an <b tal:content="context/status"/>
+     <b tal:content="context/type"/> issue<tal:block
+   tal:condition="context/stage"> in stage
+     <b tal:content="context/stage"/></tal:block><tal:block
+   tal:condition="context/components"> applying to
+     <b tal:content="context/components"/></tal:block><tal:block tal:condition="context/versions"> in
+     <b tal:content="context/versions"/></tal:block>.
+     <a href="javascript:unfold()">Unfold edit form</a>
+   </p>
 
 <form method="POST" name="itemSynopsis"
       onSubmit="return submit_once()" enctype="multipart/form-data"
       tal:attributes="action context/designator">
 
-<fieldset><legend>classification</legend>
+<fieldset id="classification"><legend>classification</legend>
 <table class="form">
 <tr>
  <th class="required" i18n:translate="">
@@ -85,7 +95,7 @@
 </fieldset>
 
 <fieldset><legend>process</legend>
-<table class="form">
+<table class="form" id="processfields">
 <tr tal:condition="context/id">
   <th i18n:translate="">
     <a href="http://docs.python.org/devguide/triaging.html#status"
@@ -185,7 +195,8 @@
             name="@note" rows="10" cols="72"></textarea>
  </td>
 </tr>
-
+</table>
+<table class="form">
 <tr tal:condition="context/is_edit_ok">
  <th><tal:block i18n:translate="">File</tal:block>:</th>
  <td colspan="3">
@@ -347,6 +358,6 @@
 
 </div>
 
-</td>
+</div>
 
 </tal:block>
