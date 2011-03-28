@@ -185,6 +185,8 @@
 
 
 </tr>
+</table>
+<table class="form">
 <tr tal:condition="context/is_edit_ok">
  <th>
    <a href="http://docs.python.org/devguide/triaging.html#generating-special-links-in-a-comment"
@@ -195,8 +197,6 @@
             name="@note" rows="10" cols="72"></textarea>
  </td>
 </tr>
-</table>
-<table class="form">
 <tr tal:condition="context/is_edit_ok">
  <th><tal:block i18n:translate="">File</tal:block>:</th>
  <td colspan="3">
