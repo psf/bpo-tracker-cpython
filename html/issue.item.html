@@ -156,7 +156,7 @@
      <span tal:replace="structure context/nosy/field" />
      <span id="add_me_to_nosy" style="display: none"
         tal:define="current_user request/user/username"
-        tal:condition="python:request.user.username != 'anonymous' and current_user not in str(context.nosy).replace(' ','').split(',')"
+        tal:condition="python:request.user.username != 'anonymous' and current_user not in str(context.nosy).split(', ')"
         tal:attributes="onclick string:add_to_nosy('$current_user')"
         onclick="add_to_nosy(the_current_username)"></span>
  </td>
@@ -273,8 +273,8 @@
  <tr tal:repeat="hgrepo python:context.hgrepos.sorted('creation')">
   <td>
    <a tal:attributes="href hgrepo/url"
-      tal:content="hgrepo/url">link</a><tal:block 
-        tal:condition="hgrepo/patchbranch">#<a 
+      tal:content="hgrepo/url">link</a><tal:block
+        tal:condition="hgrepo/patchbranch">#<a
         tal:attributes="href string:${hgrepo/url}/shortlog/${hgrepo/patchbranch}"
         tal:content="hgrepo/patchbranch"/>
    </tal:block>
