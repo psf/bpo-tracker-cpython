@@ -21,7 +21,7 @@ a[href], a[href]:link {
   margin: 0px;
 }
 
-@media print 
+@media print
 {
   .index-controls { display: none;}
     #searchbox { display: none;}
@@ -34,17 +34,29 @@ div#body-title {
 }
 
 
-div#searchbox 
+div#searchbox
 {
   float: right;
   padding-top: 1em;
 }
 
-div#searchbox input#search-text 
+div#searchbox input#search-text
 {
   width: 10em;
 }
 
+#body-main {
+  margin-left: 14em;
+}
+
+#menu
+{
+  width: 13em;
+}
+#menu ul.level-one li a
+{
+  margin-left: 0;
+}
 #menu ul.level-two li
 {
   background-image: none;
@@ -53,11 +65,11 @@ div#searchbox input#search-text
   border: 0;
   border-top: 1px solid #DDD;
   padding: 0.1em;
-  margin: 0 3em 0px 1.5em;
+  margin: 0;
   color: #3C4B7B;
   background: none;
   width: 11em !important;
-  width /**/: 3.2em;  
+  width /**/: 3.2em;
   font-family: Arial, Verdana, Geneva, "Bitstream Vera Sans", Helvetica, sans-serif;
   text-transform: none;
 }
@@ -72,7 +84,7 @@ div#searchbox input#search-text
   color: #5E72A5;
   background-image: none;
   width: 10em !important;
-  width /**/: 11.4em;  
+  width /**/: 11.4em;
   font-family: Arial, Verdana, Geneva, "Bitstream Vera Sans", Helvetica, sans-serif;
   font-size: 95%;
 }
@@ -100,25 +112,25 @@ textarea {
 }
 
 
-td.date, th.date { 
+td.date, th.date {
   white-space: nowrap;
 }
 
-p.ok-message 
+p.ok-message
 {
   background-color: #22bb22;
   padding: 5px;
   color: white;
   font-weight: bold;
 }
-p.error-message 
+p.error-message
 {
   background-color: #bb2222;
   padding: 5px;
   color: white;
   font-weight: bold;
 }
-p.error-message a[href] 
+p.error-message a[href]
 {
   color: white;
   text-decoration: underline;
@@ -143,7 +155,7 @@ table.form {
   padding: 2px;
   border-spacing: 5px;
   border-collapse: collapse;
-/* background-color: #e0e0e0; */  
+/* background-color: #e0e0e0; */
   margin: 5px;
 }
 
@@ -203,7 +215,7 @@ table.list th {
 table.list th a[href]:hover { color: #404070 }
 table.list th a[href]:link { color: #404070 }
 table.list th a[href] { color: #404070 }
-table.list th.group 
+table.list th.group
 {
   background-color: #e0e0e0;
   text-align: center;
@@ -364,7 +376,7 @@ table.classlist th {
 
 
 /* style for class help display */
-table.classhelp {      /* the table-layout: fixed;        */ 
+table.classhelp {      /* the table-layout: fixed;        */
   table-layout: fixed; /* compromises quality for speed   */
   overflow: hidden;
   font-size: .9em;
