@@ -23,7 +23,7 @@ window.onload = function () {
 function add_to_nosy(user) {
     var add_me_button = document.getElementById('add_me_to_nosy');
     var nosy = document.getElementsByName('nosy')[0];
-    var nosy_text = nosy.value.replace(/\s+/g, '');
+    var nosy_text = nosy.value.replace(/,\s+/g, ',');
     if (nosy_text == "") {
         // nosy_list is empty, add the user
         nosy.value = user;
