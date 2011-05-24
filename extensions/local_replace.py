@@ -21,6 +21,23 @@ substitutions = [
 ]
 '''
 
+def make_file_link(match):
+    baseurl = 'http://hg.python.org/cpython/file/default/'
+    sep = match.group('sep')
+    path = match.group('path')
+    lnum = match.group('lnum') or ''  # the match includes the ':'
+    if not path.endswith('/'):
+        # files without and with line number
+        if not lnum:
+            return '<a href="%s%s">%s%s</a>' % (baseurl, path, sep, path)
+        else:
+            return '<a href="%s%s#l%s">%s%s%s</a>' % (baseurl, path, lnum[1:],
+                                                      sep, path, lnum)
+    else:
+        # dirs
+        return '<a href="%s%s">%s%s</a>%s' % (baseurl, path, sep, path, lnum)
+
+
 substitutions = [
     # r12345, r 12345, rev12345, rev 12345, revision12345, revision 12345
     (re.compile(r'\b(?<![/?&;])(?P<revstr>r(ev(ision)?)?\s*)(?P<revision>\d+)'),
@@ -32,11 +49,11 @@ substitutions = [
     (re.compile(r'\b(?<![/?&;])(?P<revision>[a-fA-F0-9]{12})\b'),
      r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
 
-    # Lib/somefile.py, Modules/somemodule.c, Doc/somedocfile.rst, ...
+    # Lib/somefile.py, Lib/somefile.py:123, Modules/somemodule.c:123, ...
     (re.compile(r'(?P<sep>(?<!\w/)|(?<!\w)/)(?P<path>(?:Demo|Doc|Grammar|'
                 r'Include|Lib|Mac|Misc|Modules|Parser|PC|PCbuild|Python|'
-                'RISCOS|Tools|Objects)/[-.a-zA-Z0-9_/]+[a-zA-Z0-9]/?)'),
-     r'<a href="http://hg.python.org/cpython/file/default/\g<path>">\g<sep>\g<path></a>'),
+                r'RISCOS|Tools|Objects)/[-.\w/]+[a-zA-Z0-9]/?)(?P<lnum>:\d{1,5})?'),
+     make_file_link),
 ]
 
 # if the issue number is too big the db will explode -- limit it to 7 digits
