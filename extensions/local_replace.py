@@ -21,22 +21,51 @@ substitutions = [
 ]
 '''
 
+
 def make_file_link(match):
     baseurl = 'http://hg.python.org/cpython/file/default/'
     sep = match.group('sep')
     path = match.group('path')
+    npath = path.replace('\\', '/')  # normalize the path separators
     lnum = match.group('lnum') or ''  # the match includes the ':'
-    if not path.endswith('/'):
+    if not npath.endswith('/'):
         # files without and with line number
         if not lnum:
-            return '<a href="%s%s">%s%s</a>' % (baseurl, path, sep, path)
+            return '<a href="%s%s">%s%s</a>' % (baseurl, npath, sep, path)
         else:
-            return '<a href="%s%s#l%s">%s%s%s</a>' % (baseurl, path, lnum[1:],
+            return '<a href="%s%s#l%s">%s%s%s</a>' % (baseurl, npath, lnum[1:],
                                                       sep, path, lnum)
     else:
         # dirs
-        return '<a href="%s%s">%s%s</a>%s' % (baseurl, path, sep, path, lnum)
+        return '<a href="%s%s">%s%s</a>%s' % (baseurl, npath, sep, path, lnum)
 
+
+def guess_version(path):
+    """Search for Python version hints in the file path."""
+    match = re.search(r'((?<=[Pp]ython)[23]\d|[23]\.\d)', path)
+    if not match:
+        return 'default'
+    version = match.group(1)
+    if '.' not in version:
+        version = '.'.join(version)
+    if version in ['2.5', '2.6', '2.7', '3.1', '3.2']:
+        return version
+    return 'default'
+
+
+def make_traceback_link(match):
+    """Convert the file/line in the traceback lines in a link."""
+    baseurl = 'http://hg.python.org/cpython/file/'
+    path = match.group('path')  # first part of the path
+    branch = guess_version(match.group('fullpath'))  # guessed branch
+    file = match.group('file')  # second part after Lib/
+    nfile = file.replace('\\', '/')  # normalize the path separators
+    lnum = match.group('lnum')
+    return ('File "%s<a href="%s%s/Lib/%s#l%s">%s</a>", line %s' %
+            (path, baseurl, branch, nfile, lnum, file, lnum))
+
+
+# these regexs have test in tests/test_local_replace.py
 
 substitutions = [
     # r12345, r 12345, rev12345, rev 12345, revision12345, revision 12345
@@ -54,7 +83,16 @@ substitutions = [
                 r'Include|Lib|Mac|Misc|Modules|Parser|PC|PCbuild|Python|'
                 r'RISCOS|Tools|Objects)/[-.\w/]+[a-zA-Z0-9]/?)(?P<lnum>:\d{1,5})?'),
      make_file_link),
+
+    # traceback lines: File "Lib/somefile.py", line 123 in some_func
+    # note: this regex is not 100% accurate, it might get the wrong part of
+    # the path or link to non-existing files, but it usually works fine
+    (re.compile(r'File "(?P<fullpath>(?P<path>[-.\w/\\:]+(?<!var)[/\\][Ll]ib[/\\]'
+                r'(?!.*site-packages)(python[\d.]*[/\\])?)(?P<file>[-.\w/\\]+?\.py))", '
+                r'line (?P<lnum>\d{1,5})'),
+     make_traceback_link),
 ]
+
 
 # if the issue number is too big the db will explode -- limit it to 7 digits
 issue_re = re.compile(r'(?P<text>(\#|\b(?<!/)issue)\s*(?P<id>1?\d{1,6}))\b', re.I)

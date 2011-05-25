@@ -1,0 +1,170 @@
+## test data for test_local_replace.py - odd lines are plain text, even lines are linkified
+## lines starting with '##' are ignored, but they have to be in an even number
+##
+## revisions - r12345, r 12345, rev12345, rev 12345, revision12345, revision 12345
+r222
+<a href="http://hg.python.org/lookup/r222">r222</a>
+ r222
+ <a href="http://hg.python.org/lookup/r222">r222</a>
+ r 222
+ <a href="http://hg.python.org/lookup/r222">r 222</a>
+ rev222
+ <a href="http://hg.python.org/lookup/r222">rev222</a>
+ rev  222
+ <a href="http://hg.python.org/lookup/r222">rev  222</a>
+ revision222
+ <a href="http://hg.python.org/lookup/r222">revision222</a>
+ revision 222
+ <a href="http://hg.python.org/lookup/r222">revision 222</a>
+wordthatendswithr 222
+wordthatendswithr 222
+##
+## issues - the lowest issue id on bugs.python.org is #1000, the highest is #1779871
+ #1
+ #1
+ #10
+ #10
+ #999
+ #999
+ # 999
+ # 999
+#1000
+<a class="open" title="[open] Mock title" href="issue1000">#1000</a>
+ #1000
+ <a class="open" title="[open] Mock title" href="issue1000">#1000</a>
+ # 1000
+ <a class="open" title="[open] Mock title" href="issue1000"># 1000</a>
+ #5555
+ <a class="open" title="[open] Mock title" href="issue5555">#5555</a>
+ # 5555
+ <a class="open" title="[open] Mock title" href="issue5555"># 5555</a>
+ #555555
+ <a class="open" title="[open] Mock title" href="issue555555">#555555</a>
+ # 555555
+ <a class="open" title="[open] Mock title" href="issue555555"># 555555</a>
+ #1999999
+ <a class="open" title="[open] Mock title" href="issue1999999">#1999999</a>
+ # 1999999
+ <a class="open" title="[open] Mock title" href="issue1999999"># 1999999</a>
+ #1020
+ #1020
+ #2000000
+ #2000000
+ # 2000000
+ # 2000000
+ #1234567890123
+ #1234567890123
+pyissue1000
+pyissue1000
+##
+## files - Lib/somefile.py, Modules/somemodule.c, Doc/somedocfile.rst, ...
+Lib/cgi.py
+<a href="http://hg.python.org/cpython/file/default/Lib/cgi.py">Lib/cgi.py</a>
+/Lib/cgi.py
+<a href="http://hg.python.org/cpython/file/default/Lib/cgi.py">/Lib/cgi.py</a>
+see Lib/cgi.py.
+see <a href="http://hg.python.org/cpython/file/default/Lib/cgi.py">Lib/cgi.py</a>.
+see /Lib/cgi.py.
+see <a href="http://hg.python.org/cpython/file/default/Lib/cgi.py">/Lib/cgi.py</a>.
+(Lib/cgi.py)
+(<a href="http://hg.python.org/cpython/file/default/Lib/cgi.py">Lib/cgi.py</a>)
+(/Lib/cgi.py)
+(<a href="http://hg.python.org/cpython/file/default/Lib/cgi.py">/Lib/cgi.py</a>)
+/Lib/http
+<a href="http://hg.python.org/cpython/file/default/Lib/http">/Lib/http</a>
+/Lib/http/
+<a href="http://hg.python.org/cpython/file/default/Lib/http/">/Lib/http/</a>
+##
+## files with line number - Lib/somefile.py:123, Modules/somemodule.c:123, ...
+see Lib/cgi.py:123,
+see <a href="http://hg.python.org/cpython/file/default/Lib/cgi.py#l123">Lib/cgi.py:123</a>,
+see Lib/cgi.py: foo
+see <a href="http://hg.python.org/cpython/file/default/Lib/cgi.py">Lib/cgi.py</a>: foo
+see Lib/cgi.py: 123
+see <a href="http://hg.python.org/cpython/file/default/Lib/cgi.py">Lib/cgi.py</a>: 123
+/Lib/http/:123
+<a href="http://hg.python.org/cpython/file/default/Lib/http/">/Lib/http/</a>:123
+##
+## URLs
+http://svn.python.org/view/python/tags/r265
+<a href="http://svn.python.org/view/python/tags/r265">http://svn.python.org/view/python/tags/r265</a>
+http://svn.python.org/view/python/tags/r265/Lib/cgi.py
+<a href="http://svn.python.org/view/python/tags/r265/Lib/cgi.py">http://svn.python.org/view/python/tags/r265/Lib/cgi.py</a>
+http://svn.python.org/view/python/tags/r265/Lib/cgi.py?view=markup
+<a href="http://svn.python.org/view/python/tags/r265/Lib/cgi.py?view=markup">http://svn.python.org/view/python/tags/r265/Lib/cgi.py?view=markup</a>
+http://bugs.python.org/issue1000
+<a href="http://bugs.python.org/issue1000">http://bugs.python.org/issue1000</a>
+http://svn.python.org/view/python/branches/release26-maint/Lib/socket.py?r1=83624&r2=83623&pathrev=83624
+<a href="http://svn.python.org/view/python/branches/release26-maint/Lib/socket.py?r1=83624&amp;r2=83623&amp;pathrev=83624">http://svn.python.org/view/python/branches/release26-maint/Lib/socket.py?r1=83624&amp;r2=83623&amp;pathrev=83624</a>
+##
+## tracebacks
+File "/usr/lib/python2.7/socket.py", line 553, in create_connection
+File "/usr/lib/python2.7/<a href="http://hg.python.org/cpython/file/2.7/Lib/socket.py#l553">socket.py</a>", line 553, in create_connection
+File "D:\cygwin\home\user\buildarea\3.x-windows\build\lib\test\test_logging.py", line 3599, in test_rollover
+File "D:\cygwin\home\user\buildarea\3.x-windows\build\lib\<a href="http://hg.python.org/cpython/file/default/Lib/test/test_logging.py#l3599">test\test_logging.py</a>", line 3599, in test_rollover
+File "/home2/buildbot/slave/3.x-sun/build/Lib/ssl.py", line 60, in <module>
+File "/home2/buildbot/slave/3.x-sun/build/Lib/<a href="http://hg.python.org/cpython/file/default/Lib/ssl.py#l60">ssl.py</a>", line 60, in &lt;module&gt;
+File "/export/home/buildbot/32bits/3.x-indiana-x86/build/Lib/sysconfig.py", line 436, in get_path
+File "/export/home/buildbot/32bits/3.x-indiana-x86/build/Lib/<a href="http://hg.python.org/cpython/file/default/Lib/sysconfig.py#l436">sysconfig.py</a>", line 436, in get_path
+File "/Users/user/src/python-svn/Lib/test/test_codecs.py", line 531, in
+File "/Users/user/src/python-svn/Lib/<a href="http://hg.python.org/cpython/file/default/Lib/test/test_codecs.py#l531">test/test_codecs.py</a>", line 531, in
+File "/home/user/code/src/cpython/python/Lib/shutil.py", line 98, in copyfile
+File "/home/user/code/src/cpython/python/Lib/<a href="http://hg.python.org/cpython/file/default/Lib/shutil.py#l98">shutil.py</a>", line 98, in copyfile
+File "/srv/buildbot/buildarea/3.1-ubuntu/build/Lib/distutils/spawn.py", line 138, in _spawn_posix
+File "/srv/buildbot/buildarea/3.1-ubuntu/build/Lib/<a href="http://hg.python.org/cpython/file/3.1/Lib/distutils/spawn.py#l138">distutils/spawn.py</a>", line 138, in _spawn_posix
+File "D:\Buildslave\3.x-windows\build\lib\test\test_urllib2_localnet.py", line 364, in urlopen
+File "D:\Buildslave\3.x-windows\build\lib\<a href="http://hg.python.org/cpython/file/default/Lib/test/test_urllib2_localnet.py#l364">test\test_urllib2_localnet.py</a>", line 364, in urlopen
+File "D:\Buildslave\3.x-windows\build\lib\urllib\request.py", line 1116, in do_open
+File "D:\Buildslave\3.x-windows\build\lib\<a href="http://hg.python.org/cpython/file/default/Lib/urllib/request.py#l1116">urllib\request.py</a>", line 1116, in do_open
+File "/var/lib/buildslave/3.x-gentoo/build/Lib/socketserver.py", line 713, in finish
+File "/var/lib/buildslave/3.x-gentoo/build/Lib/<a href="http://hg.python.org/cpython/file/default/Lib/socketserver.py#l713">socketserver.py</a>", line 713, in finish
+File "/home/user/cpython/Lib/test/support.py", line 217, in make_legacy_pyc
+File "/home/user/cpython/Lib/<a href="http://hg.python.org/cpython/file/default/Lib/test/support.py#l217">test/support.py</a>", line 217, in make_legacy_pyc
+File "/home/buildbot/buildarea/3.x-fedora/build/Lib/importlib/_bootstrap.py", line 342, in _load_module
+File "/home/buildbot/buildarea/3.x-fedora/build/Lib/<a href="http://hg.python.org/cpython/file/default/Lib/importlib/_bootstrap.py#l342">importlib/_bootstrap.py</a>", line 342, in _load_module
+File "/Users/buildbot/buildarea/custom-tiger-1/build/Lib/subprocess.py", line 1531, in wait
+File "/Users/buildbot/buildarea/custom-tiger-1/build/Lib/<a href="http://hg.python.org/cpython/file/default/Lib/subprocess.py#l1531">subprocess.py</a>", line 1531, in wait
+File "/sw/lib/python3.1/subprocess.py", line 719, in communicate
+File "/sw/lib/python3.1/<a href="http://hg.python.org/cpython/file/3.1/Lib/subprocess.py#l719">subprocess.py</a>", line 719, in communicate
+File "c:\Python26\lib\traceback.py", line 57, in print_tb
+File "c:\Python26\lib\<a href="http://hg.python.org/cpython/file/2.6/Lib/traceback.py#l57">traceback.py</a>", line 57, in print_tb
+File "C:\Programme\Python26\lib\logging\handlers.py", line 76, in emit
+File "C:\Programme\Python26\lib\<a href="http://hg.python.org/cpython/file/2.6/Lib/logging/handlers.py#l76">logging\handlers.py</a>", line 76, in emit
+File "C:\www\Python27\lib\subprocess.py", line 486, in call return Popen
+File "C:\www\Python27\lib\<a href="http://hg.python.org/cpython/file/2.7/Lib/subprocess.py#l486">subprocess.py</a>", line 486, in call return Popen
+File "C:\www\Python2.7\lib\subprocess.py", line 486, in call return Popen
+File "C:\www\Python2.7\lib\<a href="http://hg.python.org/cpython/file/2.7/Lib/subprocess.py#l486">subprocess.py</a>", line 486, in call return Popen
+##
+## tracebacks - these lines are not linkified because they are not files in Lib/*:
+File "C:\Python31\lib\site-packages\unittest2\main.py", line 237, in main_
+File "C:\Python31\lib\site-packages\unittest2\main.py", line 237, in main_
+File "C:\Users\user\Downloads\a\test_import_symlink_package.py", line 66, in <module>
+File "C:\Users\user\Downloads\a\test_import_symlink_package.py", line 66, in &lt;module&gt;
+File "/usr/lib/python2.5/site-packages/mp-2.6.2.1-py2.5-cygwin-1.7.1-i686.egg/multiprocessing/queues.py", line 91, in get_path
+File "/usr/lib/python2.5/site-packages/mp-2.6.2.1-py2.5-cygwin-1.7.1-i686.egg/multiprocessing/queues.py", line 91, in get_path
+File " x.py", line 12, in <module>
+File " x.py", line 12, in &lt;module&gt;
+File "build/build.py", line 173, in runCmd subprocess.call(cmd)
+File "build/build.py", line 173, in runCmd subprocess.call(cmd)
+##
+## emails
+fixed@europython.eu
+<a href="mailto:fixed@europython.eu">fixed@europython.eu</a>
+<fixed@europython.eu>
+&lt;<a href="mailto:fixed@europython.eu">fixed@europython.eu</a>&gt;
+##
+## items
+see msg1000.
+see <a href="msg1000">msg1000</a>.
+see msg 1000.
+see <a href="msg1000">msg 1000</a>.
+see file1000.
+see <a href="file1000">file1000</a>.
+see file 1000.
+see <a href="file1000">file 1000</a>.
+##
+## only msgs and files are linkified
+see version1000.
+see version1000.
+see version 1000.
+see version 1000.
