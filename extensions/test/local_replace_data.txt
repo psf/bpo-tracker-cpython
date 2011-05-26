@@ -96,6 +96,10 @@ http://bugs.python.org/issue1000
 <a href="http://bugs.python.org/issue1000">http://bugs.python.org/issue1000</a>
 http://svn.python.org/view/python/branches/release26-maint/Lib/socket.py?r1=83624&r2=83623&pathrev=83624
 <a href="http://svn.python.org/view/python/branches/release26-maint/Lib/socket.py?r1=83624&amp;r2=83623&amp;pathrev=83624">http://svn.python.org/view/python/branches/release26-maint/Lib/socket.py?r1=83624&amp;r2=83623&amp;pathrev=83624</a>
+see http://www.python.org/dev/peps/pep-3127/#removal-of-old-octal-syntax
+see <a href="http://www.python.org/dev/peps/pep-3127/#removal-of-old-octal-syntax">http://www.python.org/dev/peps/pep-3127/#removal-of-old-octal-syntax</a>
+see http://docs.python.org/whatsnew/2.6.html#pep-371-the-multiprocessing-package
+see <a href="http://docs.python.org/whatsnew/2.6.html#pep-371-the-multiprocessing-package">http://docs.python.org/whatsnew/2.6.html#pep-371-the-multiprocessing-package</a>
 ##
 ## tracebacks
 File "/usr/lib/python2.7/socket.py", line 553, in create_connection
@@ -168,3 +172,19 @@ see version1000.
 see version1000.
 see version 1000.
 see version 1000.
+##
+##
+see PEP 8
+see <a href="http://www.python.org/dev/peps/pep-0008/">PEP 8</a>
+see PEP8
+see <a href="http://www.python.org/dev/peps/pep-0008/">PEP8</a>
+see pep 8
+see <a href="http://www.python.org/dev/peps/pep-0008/">pep 8</a>
+see PEP 008
+see <a href="http://www.python.org/dev/peps/pep-0008/">PEP 008</a>
+see PEP 3000
+see <a href="http://www.python.org/dev/peps/pep-3000/">PEP 3000</a>
+see PEP 15000
+see PEP 15000
+write a PEP!
+write a PEP!

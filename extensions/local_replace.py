@@ -64,6 +64,11 @@ def make_traceback_link(match):
     return ('File "%s<a href="%s%s/Lib/%s#l%s">%s</a>", line %s' %
             (path, baseurl, branch, nfile, lnum, file, lnum))
 
+def make_pep_link(match):
+    text = match.group(0)
+    pepnum = match.group(1).zfill(4)
+    return '<a href="http://www.python.org/dev/peps/pep-%s/">%s</a>' % (pepnum, text)
+
 
 # these regexs have test in tests/test_local_replace.py
 
@@ -91,6 +96,10 @@ substitutions = [
                 r'(?!.*site-packages)(python[\d.]*[/\\])?)(?P<file>[-.\w/\\]+?\.py))", '
                 r'line (?P<lnum>\d{1,5})'),
      make_traceback_link),
+
+    # PEP 8, PEP8, PEP 0008, ...
+    (re.compile(r'PEP\s*(\d{1,4})\b', re.I),
+     make_pep_link),
 ]
 
 
