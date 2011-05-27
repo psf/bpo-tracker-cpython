@@ -41,3 +41,17 @@ function add_to_nosy(user) {
     nosy.style.display = 'inline';
     nosy.style.width = new_width + "px";
 }
+
+$(document).ready(function() {
+    /* Add a "Show/Hide history" button that (un)folds the history. See #401 */
+    var th = $('<td colspan="4">Show History</td>');
+    th.css({'cursor': 'pointer', 'text-align': 'center',
+            'border': '1px solid #ccc'});
+    /* select and hide all the tr except the first one ("History") */
+    $('table.history tr:not(:first-child)').toggle();
+    th.click(function() {
+        $('table.history tr:not(:first-child)').toggle();
+        th.text(th.text() == 'Show History' ? 'Hide History' : 'Show History');
+    });
+    $('table.history').append(th.wrap('<tr id="togglehistory" />'));
+})
