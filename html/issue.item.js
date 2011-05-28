@@ -50,8 +50,8 @@ $(document).ready(function() {
     /* select and hide all the tr except the first one ("History") */
     $('table.history tr:not(:first-child)').toggle();
     th.click(function() {
-        $('table.history tr:not(:first-child)').toggle();
+        $('table.history tr:not(:first-child):not(#togglehistory)').toggle();
         th.text(th.text() == 'Show History' ? 'Hide History' : 'Show History');
     });
-    $('table.history').append(th.wrap('<tr id="togglehistory" />'));
+    $('table.history').append(th.wrap('<tr id="togglehistory">').parent());
 })
