@@ -42,16 +42,22 @@ function add_to_nosy(user) {
     nosy.style.width = new_width + "px";
 }
 
+
 $(document).ready(function() {
-    /* Add a "Show/Hide history" button that (un)folds the history. See #401 */
-    var th = $('<td colspan="4">Show History</td>');
-    th.css({'cursor': 'pointer', 'text-align': 'center',
-            'border': '1px solid #ccc'});
-    /* select and hide all the tr except the first one ("History") */
-    $('table.history tr:not(:first-child)').toggle();
-    th.click(function() {
-        $('table.history tr:not(:first-child):not(#togglehistory)').toggle();
-        th.text(th.text() == 'Show History' ? 'Hide History' : 'Show History');
+    /* When the user hits the 'end' key the first time, jump to the last
+       message rather than to the end of the page.  After that restore the
+       normal 'end' behavior. */
+    // get the offset to the last message
+    var offset = $('table.messages tr th a:last').offset()
+    $(document).keydown(function (event) {
+        var node = event.target.nodeName;
+        // 35 == end key. Don't do anything if the focus is on form elements
+        if ((event.keyCode == 35) && (node != 'TEXTAREA')
+            && (node != 'INPUT') && (node != 'SELECT')) {
+            // jump at the last message and restore the usual behavior
+            window.scrollTo(offset.left, offset.top);
+            $(document).unbind('keydown')
+            return false;
+        }
     });
-    $('table.history').append(th.wrap('<tr id="togglehistory">').parent());
 })
