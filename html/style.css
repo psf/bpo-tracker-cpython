@@ -185,7 +185,6 @@ table.form td {
   color: #333;
   empty-cells: show;
   padding: 5px;
-  white-space: nowrap;
 }
 
 table.form td.optional {
