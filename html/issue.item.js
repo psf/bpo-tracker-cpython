@@ -55,7 +55,7 @@ $(document).ready(function() {
         if ((event.keyCode == 35) && (node != 'TEXTAREA')
             && (node != 'INPUT') && (node != 'SELECT')) {
             // jump at the last message and restore the usual behavior
-            window.scrollTo(offset.left, offset.top);
+            window.scrollTo(0, offset.top);
             $(document).unbind('keydown')
             return false;
         }
