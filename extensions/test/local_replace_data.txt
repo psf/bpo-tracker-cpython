@@ -2,22 +2,24 @@
 ## lines starting with '##' are ignored, but they have to be in an even number
 ##
 ## revisions - r12345, r 12345, rev12345, rev 12345, revision12345, revision 12345
-r222
-<a href="http://hg.python.org/lookup/r222">r222</a>
- r222
- <a href="http://hg.python.org/lookup/r222">r222</a>
- r 222
- <a href="http://hg.python.org/lookup/r222">r 222</a>
- rev222
- <a href="http://hg.python.org/lookup/r222">rev222</a>
- rev  222
- <a href="http://hg.python.org/lookup/r222">rev  222</a>
- revision222
- <a href="http://hg.python.org/lookup/r222">revision222</a>
- revision 222
- <a href="http://hg.python.org/lookup/r222">revision 222</a>
-wordthatendswithr 222
-wordthatendswithr 222
+r2222
+<a href="http://hg.python.org/lookup/r2222">r2222</a>
+ r2222
+ <a href="http://hg.python.org/lookup/r2222">r2222</a>
+ r 2222
+ <a href="http://hg.python.org/lookup/r2222">r 2222</a>
+ rev2222
+ <a href="http://hg.python.org/lookup/r2222">rev2222</a>
+ rev  2222
+ <a href="http://hg.python.org/lookup/r2222">rev  2222</a>
+ revision2222
+ <a href="http://hg.python.org/lookup/r2222">revision2222</a>
+ revision 2222
+ <a href="http://hg.python.org/lookup/r2222">revision 2222</a>
+wordthatendswithr 2222
+wordthatendswithr 2222
+I uploaded http://pypi.python.org/pypi/ctypesgen/0.r125
+I uploaded <a href="http://pypi.python.org/pypi/ctypesgen/0.r125">http://pypi.python.org/pypi/ctypesgen/0.r125</a>
 ##
 ## issues - the lowest issue id on bugs.python.org is #1000, the highest is #1779871
  #1
