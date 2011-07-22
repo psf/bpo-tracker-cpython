@@ -240,7 +240,6 @@
   <th i18n:translate="">Uploaded</th>
   <th i18n:translate="">Description</th>
   <th i18n:translate="">Edit</th>
-  <th i18n:translate="">Remove</th>
  </tr>
  <tr tal:repeat="file python:context.files.sorted('creation')">
   <td>
@@ -257,14 +256,6 @@
       <tal:block tal:define="rvlink python:utils.rietveldlink(request,context.id,file.id)">
       <a tal:condition="rvlink" tal:attributes="href rvlink">review</a>
       </tal:block>
-  </td>
-  <td>
-   <form style="padding:0" method="post" tal:condition="file/is_edit_ok"
-         tal:attributes="action string:issue${context/id}">
-    <input type="hidden" name="@remove@files" tal:attributes="value file/id">
-    <input type="hidden" name="@action" value="edit">
-    <input type="submit" value="remove" i18n:attributes="value">
-   </form>
   </td>
  </tr>
 </table>
@@ -321,14 +312,6 @@
    </th>
    <th i18n:translate="">Date: <tal:x replace="python:msg.date.pretty('%Y-%m-%d %H:%M')"
        i18n:name="date" /></th>
-   <th>
-    <form style="padding:0" method="post" tal:condition="msg/is_edit_ok"
-          tal:attributes="action string:issue${context/id}">
-     <input type="hidden" name="@remove@messages" tal:attributes="value msg/id">
-     <input type="hidden" name="@action" value="edit">
-     <input type="submit" value="remove" i18n:attributes="value">
-    </form>
-   </th>
   </tr>
   <tr>
    <td colspan="4" class="content">
