@@ -233,18 +233,23 @@ table.list td {
   empty-cells: show;
 }
 
-table.list tr.navigation th {
-  width: 33%;
-  border-style: hidden;
+div.navigation {
+  background-color: #e0e0e0;
+}
+
+div.navigation span {
+  display: block;
+  width: 33.33%;
+  float: left;
   text-align: center;
+  font-weight: bold;
+  color: #234764;
+  background-color: #e0e0e0;
 }
-table.list tr.navigation td {
-    border: none
-}
-table.list tr.navigation th:first-child {
+div.navigation span:first-child {
   text-align: left;
 }
-table.list tr.navigation th:last-child {
+div.navigation span:last-child {
   text-align: right;
 }
 

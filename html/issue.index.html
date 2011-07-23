@@ -93,36 +93,32 @@
   </tr>
 
  </tal:block>
-
- <metal:index define-macro="batch-footer">
- <tr tal:condition="batch">
-  <th tal:attributes="colspan python:len(request.columns)">
-   <table width="100%">
-    <tr class="navigation">
-     <th>
-      <a tal:define="prev batch/previous" tal:condition="prev"
-         tal:attributes="href python:request.indexargs_url(request.classname,
-         {'@startwith':prev.first, '@pagesize':prev.size})"
-         i18n:translate="">&lt;&lt; previous</a>
-      &nbsp;
-     </th>
-     <th i18n:translate=""><span tal:replace="batch/start" i18n:name="start"
-     />..<span tal:replace="python: batch.start + batch.length -1" i18n:name="end"
-     /> out of <span tal:replace="batch/sequence_length" i18n:name="total"
-     /></th>
-     <th>
-      <a tal:define="next batch/next" tal:condition="next"
-         tal:attributes="href python:request.indexargs_url(request.classname,
-         {'@startwith':next.first, '@pagesize':next.size})"
-         i18n:translate="">next &gt;&gt;</a>
-      &nbsp;
-     </th>
-    </tr>
-   </table>
-  </th>
- </tr>
- </metal:index>
 </table>
+
+<metal:index define-macro="batch-footer">
+ <div tal:condition="batch" class="navigation">
+     <span>
+         <a tal:define="prev batch/previous" tal:condition="prev"
+            tal:attributes="href python:request.indexargs_url(request.classname,
+            {'@startwith':prev.first, '@pagesize':prev.size})"
+            i18n:translate="">&lt;&lt; previous</a>
+         &nbsp;
+     </span>
+     <span>
+         <span tal:replace="batch/start" name="start" />..
+         <span tal:replace="python: batch.start + batch.length -1" name="end"/> out of
+         <span tal:replace="batch/sequence_length" name="total"/>
+     </span>
+     <span>
+         <a tal:define="next batch/next" tal:condition="next"
+            tal:attributes="href python:request.indexargs_url(request.classname,
+            {'@startwith':next.first, '@pagesize':next.size})"
+            i18n:translate="">next &gt;&gt;</a>
+         &nbsp;
+     </span>
+   </div>
+</metal:index>
+
 
 <a tal:attributes="href python:request.indexargs_url('issue',
             {'@action':'export_csv'})" i18n:translate="">Download as CSV</a>
