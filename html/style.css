@@ -272,8 +272,16 @@ table.messages th.header{
 table.messages th {
   font-weight: bold;
   color: black;
-  text-align: left;
+  text-align: center;
   border-bottom: 1px solid #afafaf;
+}
+
+table.messages th:last-child {
+  text-align: right;
+}
+
+table.messages th:first-child {
+  text-align: left;
 }
 
 table.messages td {

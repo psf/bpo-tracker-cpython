@@ -98,11 +98,11 @@
 <metal:index define-macro="batch-footer">
  <div tal:condition="batch" class="navigation">
      <span>
+         &nbsp;
          <a tal:define="prev batch/previous" tal:condition="prev"
             tal:attributes="href python:request.indexargs_url(request.classname,
             {'@startwith':prev.first, '@pagesize':prev.size})"
             i18n:translate="">&lt;&lt; previous</a>
-         &nbsp;
      </span>
      <span>
          <span tal:replace="batch/start" name="start" />..
