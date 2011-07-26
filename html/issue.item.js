@@ -23,7 +23,8 @@ window.onload = function () {
 function add_to_nosy(user) {
     var add_me_button = document.getElementById('add_me_to_nosy');
     var nosy = document.getElementsByName('nosy')[0];
-    var nosy_text = nosy.value.replace(/,\s+/g, ',');
+    // remove spaces at the beginning/end of the string and around the commas
+    var nosy_text = nosy.value.replace(/^[\s,]*|[\s,]*$/g, '').replace(/\s*,\s*/g, ',');
     if (nosy_text == "") {
         // nosy_list is empty, add the user
         nosy.value = user;
@@ -31,7 +32,7 @@ function add_to_nosy(user) {
     else {
         re = new RegExp("(^|,)" + user + "(,|$)");
         if (!re.test(nosy_text)) {
-            // make sure the user not in nosy and then add it at the beginning
+            // make sure the user is not in nosy and then add it at the beginning
             nosy.value = user + ',' + nosy_text;
         }
     }
