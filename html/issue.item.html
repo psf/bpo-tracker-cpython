@@ -108,7 +108,9 @@
  <td>
   <span tal:replace="structure python:context.dependencies.field(showid=1,size=20)" />
   <span tal:condition="context/dependencies" tal:repeat="d python:context.dependencies.sorted('creation')">
-   <br/>View: <a tal:attributes="href string:issue${d/id}; class string:${d/status}" tal:content="d/id"></a>
+   <br/>View:
+     <a tal:content="d/id"
+        tal:attributes="href string:issue${d/id}; class string:${d/status}; title d/title;"></a>
   </span>
  </td>
  <th i18n:translate="">
@@ -122,9 +124,10 @@
      <a tal:repeat="sup context/superseder"
         tal:content="python:sup['id'] + ', '*(not repeat['sup'].end)"
         tal:attributes="href string:issue${sup/id}; title sup/title;"></a> -->
-   <br><span i18n:translate="">View</span>:
-     <a tal:content="context/superseder/id"
-        tal:attributes="href string:issue${context/superseder/id}; title context/superseder/title;"></a>
+   <br>View:
+     <a tal:define="s context/superseder"
+        tal:content="s/id"
+        tal:attributes="href string:issue${s/id}; class string:${s/status}; title s/title;"></a>
   </span>
  </td>
  </tr>
