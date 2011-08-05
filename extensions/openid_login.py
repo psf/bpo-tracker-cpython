@@ -2,6 +2,7 @@ import openid2rp, urllib, cgi, collections, calendar, time
 from roundup.cgi.actions import Action, LoginAction, RegisterAction
 from roundup.cgi.exceptions import *
 from roundup import date, password
+from M2Crypto.SSL.Checker import NoCertificate
 
 providers = {}
 for p in (
@@ -126,7 +127,11 @@ class OpenidProviderLogin(Action, Openid):
             self.client.error_message.append(self._('Unsupported provider'))
             return
         provider_id = providers[provider][2]
-        session = self.get_session(provider_id)
+        try:
+            session = self.get_session(provider_id)
+        except NoCertificate:
+            self.client.error_message.append(self._('Peer did not return certificate'))
+            return
         realm = self.base+"?@action=openid_return"
         return_to = realm + "&__came_from=%s" % urllib.quote(self.client.path)
         url = openid2rp.request_authentication(session.stypes, session.url,
