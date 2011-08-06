@@ -38,9 +38,8 @@
 	   height="15" border="0"></a>
 </span>
 {%endif%}
-    Issue <a href="{%url codereview.views.show issue.key.id%}"
-               onmouseover="M_showPopUp(this, 'popup-issue');">
-            {{issue.key.id}}</a>:
+    <a href="/issue{{issue.key.id}}"
+       onmouseover="M_showPopUp(this, 'popup-issue');">#{{issue.key.id}}</a>:
     {{issue.subject}} {%if issue.closed %} (Closed) {%endif%}
   </h2>
 
