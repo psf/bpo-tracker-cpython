@@ -481,12 +481,12 @@ textarea:focus, select:focus {
 
 
 #demowarning {
-   position: absolute;
-   top: 10px;
-   left: 260px;
-   font-weight: bold;
-   font-size: 110%;
-   color: red;
+  position: absolute;
+  top: 10px;
+  left: 260px;
+  font-weight: bold;
+  font-size: 110%;
+  color: red;
 }
 
 
@@ -499,5 +499,17 @@ textarea:focus, select:focus {
 }
 
 .closed {
-text-decoration: line-through !important;
+  text-decoration: line-through !important;
+}
+
+.calendar_display {
+  text-align: center;
+}
+
+.calendar_display td {
+  padding: 1px 4px 1px 4px;
+}
+
+.calendar_display .today {
+  background-color: #afafaf;
 }
