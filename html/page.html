@@ -348,8 +348,8 @@ See issue.search.html in the classic template for examples.
 </td>
 
 <td metal:define-macro="search_select_keywords">
-  <div tal:attributes="id python:'''keywords_%s'''%name">
-    <select tal:attributes="name name; id name"
+  <div id="keywords_keyword">
+    <select name="keywords" id="keywords"
             tal:define="value python:request.form.getvalue(name)">
       <option value="" i18n:translate="">don't care</option>
       <metal:slot define-slot="extra_options" />
@@ -359,7 +359,7 @@ See issue.search.html in the classic template for examples.
               tal:content="python:s[db_content]"></option>
     </select>
     <a class="classhelp"
-          tal:attributes="href python:'''javascript:help_window('issue?@template=keywords_expr&property=%s&form=itemSynopsis', 350, 200)'''%name">(expr)</a>
+       href="javascript:help_window('issue?@template=keywords_expr&property=keyword&form=itemSynopsis', 500, 200)">(expr)</a>
   </div>
 </td>
 
