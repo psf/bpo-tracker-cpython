@@ -281,7 +281,7 @@
   <td>
    <form style="padding:0" method="post" tal:condition="hgrepo/is_edit_ok"
          tal:attributes="action string:issue${context/id}">
-    <input type="hidden" name="@remove@files" tal:attributes="value hgrepo/id">
+    <input type="hidden" name="@remove@hgrepos" tal:attributes="value hgrepo/id">
     <input type="hidden" name="@action" value="edit">
     <input type="submit" value="Remove">
    </form>
