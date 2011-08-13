@@ -513,3 +513,16 @@ textarea:focus, select:focus {
 .calendar_display .today {
   background-color: #afafaf;
 }
+
+.ui-autocomplete-category {
+    font-weight: bold;
+    padding: 0 .2em;
+    line-height: 1.2;
+}
+
+.ui-autocomplete {
+    font-size: 75% !important;
+    max-height: 25em;
+    max-width: 20em;
+    overflow: auto;
+}

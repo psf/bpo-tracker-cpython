@@ -1,0 +1,4 @@
+<tal:block tal:condition="context/is_view_ok"
+           content="python:utils.devs_as_json(context)">
+    [["username1","Real Name1"],["username2", "Real Name2"],...]
+</tal:block>
