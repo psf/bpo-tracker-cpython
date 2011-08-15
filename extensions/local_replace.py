@@ -100,6 +100,10 @@ substitutions = [
     # PEP 8, PEP8, PEP 0008, ...
     (re.compile(r'PEP\s*(\d{1,4})\b', re.I),
      make_pep_link),
+
+    # devguide
+    (re.compile(r'(?<!/)(devguide(?:/\w+(?:.html)?(?:#[\w-]+)?)?)'),
+     r'<a href="http://docs.python.org/\1">\1</a>'),
 ]
 
 

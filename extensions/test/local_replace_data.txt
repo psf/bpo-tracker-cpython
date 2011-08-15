@@ -190,3 +190,19 @@ see PEP 15000
 see PEP 15000
 write a PEP!
 write a PEP!
+##
+##
+see the devguide.
+see the <a href="http://docs.python.org/devguide">devguide</a>.
+see http://docs.python.org/devguide/.
+see <a href="http://docs.python.org/devguide/.">http://docs.python.org/devguide/.</a>
+see devguide/triaging.
+see <a href="http://docs.python.org/devguide/triaging">devguide/triaging</a>.
+see devguide/triaging.html.
+see <a href="http://docs.python.org/devguide/triaging.html">devguide/triaging.html</a>.
+see http://docs.python.org/devguide/committing.html#using-several-working-copies
+see <a href="http://docs.python.org/devguide/committing.html#using-several-working-copies">http://docs.python.org/devguide/committing.html#using-several-working-copies</a>
+see devguide/committing.html#using-several-working-copies
+see <a href="http://docs.python.org/devguide/committing.html#using-several-working-copies">devguide/committing.html#using-several-working-copies</a>
+see devguide/committing#using-several-working-copies
+see <a href="http://docs.python.org/devguide/committing#using-several-working-copies">devguide/committing#using-several-working-copies</a>
