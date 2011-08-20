@@ -188,7 +188,7 @@ status_all string:-1,1,2,3;
             <li>
                 <tal:span i18n:translate="">Login</tal:span>&nbsp;(OpenID&nbsp;possible)<br />
                 <a style="display:inline;width:0;margin:0" tal:repeat="prov python:utils.openid_links(request)" tal:attributes="href prov/href">
-                  <img hspace="0" vspace="0" width="16" height="16" tal:attributes="src prov/src;title prov/title"/></a>
+                  <img hspace="0" vspace="0" width="16" height="16" tal:attributes="src prov/src;title prov/title;alt prov/alt"/></a>
                 <input size="10" name="openid_identifier" style="background:url(http://wiki.openid.net/f/openid-16x16.gif)
                   center left no-repeat;padding-left:16px"/><br/>
                 <input size="10" type="password" name="__login_password"/><br/>

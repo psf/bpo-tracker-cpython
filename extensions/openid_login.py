@@ -295,7 +295,8 @@ def openid_links(request):
     for prov, icon, url in providers.values():
         res.append({'href':request.env['PATH_INFO']+'?@action=openid_login&provider='+prov,
                     'src':icon,
-                    'title':prov})
+                    'title':prov,
+                    'alt':prov})
     return res
 
 def init(instance):

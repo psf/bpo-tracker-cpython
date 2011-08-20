@@ -30,7 +30,7 @@
   replace="context/id" i18n:name="id" /> Editing</span>
 </tal:block>
 
-<td class="content" metal:fill-slot="content">
+<tal:block metal:fill-slot="content">
 
 <p tal:condition="python:not (context.is_view_ok()
  or request.user.hasRole('Anonymous'))" i18n:translate="">
@@ -42,7 +42,7 @@
 
 <div tal:condition="context/is_view_ok">
 
-<form method="POST" name="itemSynopsis"
+<form method="post" name="itemSynopsis"
       onSubmit="return submit_once()" enctype="multipart/form-data"
       tal:attributes="action context/designator">
 
@@ -201,7 +201,7 @@
 </tr>
 <tr tal:condition="context/is_edit_ok">
  <th><tal:block i18n:translate="">File Description</tal:block>:</th>
- <td colspan="3"><input type="edit" name="file-1@description" size="50"></td>
+ <td colspan="3"><input type="text" name="file-1@description" size="50"></td>
 </tr>
 
 <tr tal:condition="context/is_edit_ok">
@@ -312,7 +312,7 @@
        i18n:name="author" /> (<tal:x replace="msg/author"/>)
        <tal:if condition="msg/author/contrib_form"><span title="Contributor form received">*</span></tal:if>
        <tal:if condition="msg/author/iscommitter">
-         <span title="Python committer"><img src="@@file/committer.png"/></span>
+         <img src="@@file/committer.png" title="Python committer" alt="(Python committer)"/>
        </tal:if>
    </th>
    <th i18n:translate="">Date: <tal:x replace="python:msg.date.pretty('%Y-%m-%d %H:%M')"
@@ -336,6 +336,6 @@
 
 </div>
 
-</td>
+</tal:block>
 
 </tal:block>
