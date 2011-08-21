@@ -234,6 +234,9 @@
  by <b><tal:x replace="context/creator" i18n:name="creator" /></b>,
  last changed <b><tal:x replace="python:context.activity.pretty('%Y-%m-%d %H:%M')" i18n:name="activity" /></b>
  by <b><tal:x replace="context/actor" i18n:name="actor" /></b>.
+ <tal:block tal:condition="python:str(context.status) == 'closed'">
+  This issue is now <strong style="color:#00F; background-color:inherit;">closed</strong>.
+ </tal:block>
 </p>
 
 <table class="files" tal:condition="context/files">
