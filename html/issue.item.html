@@ -222,10 +222,8 @@
   <input type="hidden" name="@template" value="item">
   <input type="hidden" name="@required" value="title">
  </td>
- <td colspan=3>
+ <td colspan="3" id="submit_td">
   <span tal:replace="structure context/submit">submit button</span>
-  <a tal:condition="context/id" tal:attributes="href context/copy_url"
-   i18n:translate="">Make a copy</a>
  </td>
 </tr>
 </table>

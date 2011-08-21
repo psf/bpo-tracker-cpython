@@ -502,6 +502,11 @@ textarea:focus, select:focus {
   text-decoration: line-through !important;
 }
 
+#submit_td input{
+  padding: .3em .7em;
+  font-size: 90%;
+}
+
 .calendar_display {
   text-align: center;
 }
