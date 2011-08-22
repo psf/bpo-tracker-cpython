@@ -98,7 +98,7 @@ substitutions = [
      make_traceback_link),
 
     # PEP 8, PEP8, PEP 0008, ...
-    (re.compile(r'PEP\s*(\d{1,4})\b', re.I),
+    (re.compile(r'\b(?<!/)PEP\s*(\d{1,4})\b', re.I),
      make_pep_link),
 
     # devguide

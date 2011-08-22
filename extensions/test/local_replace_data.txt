@@ -190,6 +190,8 @@ see PEP 15000
 see PEP 15000
 write a PEP!
 write a PEP!
+http://wiki.python.org/moin/SummerOfCode/2011/PEP393
+<a href="http://wiki.python.org/moin/SummerOfCode/2011/PEP393">http://wiki.python.org/moin/SummerOfCode/2011/PEP393</a>
 ##
 ##
 see the devguide.
