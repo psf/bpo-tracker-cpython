@@ -192,6 +192,14 @@ write a PEP!
 write a PEP!
 http://wiki.python.org/moin/SummerOfCode/2011/PEP393
 <a href="http://wiki.python.org/moin/SummerOfCode/2011/PEP393">http://wiki.python.org/moin/SummerOfCode/2011/PEP393</a>
+see https://bitbucket.org/rndblnch/cpython-pep380/raw/tip/pep380
+see <a href="https://bitbucket.org/rndblnch/cpython-pep380/raw/tip/pep380">https://bitbucket.org/rndblnch/cpython-pep380/raw/tip/pep380</a>
+see https://bitbucket.org/rndblnch/cpython-pep380/qseries?apply=t&qs_apply=pep380
+see <a href="https://bitbucket.org/rndblnch/cpython-pep380/qseries?apply=t&amp;qs_apply=pep380">https://bitbucket.org/rndblnch/cpython-pep380/qseries?apply=t&amp;qs_apply=pep380</a>
+see https://bitbucket.org/rndblnch/cpython-pep380/wiki
+see <a href="https://bitbucket.org/rndblnch/cpython-pep380/wiki">https://bitbucket.org/rndblnch/cpython-pep380/wiki</a>
+see http://www.python.org/dev/peps/pep-0008/
+see <a href="http://www.python.org/dev/peps/pep-0008/">http://www.python.org/dev/peps/pep-0008/</a>
 ##
 ##
 see the devguide.

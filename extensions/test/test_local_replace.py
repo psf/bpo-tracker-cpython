@@ -59,7 +59,9 @@ class TestPyDevStringHTMLProperty(TemplatingTestCase):
                 continue  # skip the comments
             p = PyDevStringHTMLProperty(self.client, 'test', '1',
                                         None, 'test', text)
-            self.assertEqual(p.pydev_hyperlinked(), expected_result)
+            # decode the str -- Unicode strings have a better diff
+            self.assertEqual(p.pydev_hyperlinked().decode(),
+                             expected_result.decode())
 
 # run the tests
 unittest.main()
