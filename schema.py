@@ -267,7 +267,7 @@ p = db.security.addPermission(name='Create', klass='issue',
                               properties=('title', 'type',
                                           'components', 'versions',
                                           'severity',
-                                          'messages', 'files', 'nosy'),
+                                          'messages', 'files', 'nosy', 'hgrepos'),
                               description='User can report and discuss issues')
 db.security.addPermissionToRole('User', p)
 
