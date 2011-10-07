@@ -45,20 +45,88 @@ function add_to_nosy(user) {
 
 
 $(document).ready(function() {
-    /* When the user hits the 'end' key the first time, jump to the last
-       message rather than to the end of the page.  After that restore the
-       normal 'end' behavior. */
-    // get the offset to the last message
-    var offset = $('table.messages tr th a:last').offset()
+    /* Keyboard shortcuts */
+    function is_editing(node) {
+        // return true if the focus is on a form element
+        var element = node.nodeName;
+        return ((element == 'TEXTAREA') || (element == 'SELECT') ||
+                (element == 'INPUT' && node.type != 'file'));
+    }
+    function scroll_to(node) {
+        // scroll the page to the given node
+        window.scrollTo(0, node.offset().top)
+    }
+    function add_help() {
+        // add some help to the sidebar
+        $(['<li><strong>Keyboard shortcuts</strong>',
+           '<ul id="help" class="level-three">',
+           '  <li><a>f/h: first msg</a></li>',
+           '  <li><a>p/k: previous msg</a></li>',
+           '  <li><a>n/j: next msg</a></li>',
+           '  <li><a>l: last msg</a></li>',
+           '  <li><a>r/i: focus textarea</a></li>',
+           '  <li><a>ESC: unfocus textarea</a></li>',
+           '</ul></div>'].join('\n')).appendTo('div#menu ul.level-two');
+        // the empty <a> are just an hack to get the style right,
+        // this help will anyway be moved to the devguide soon
+    }
+    add_help()
+    var textarea = $('textarea').first();
+    var messages = $('table.messages tr th a:first-child');
+    var last_index = messages.length - 1;
+    // start from -1 so 'n' sends to the first message at the beginning
+    var current = -1;
     $(document).keydown(function (event) {
-        var node = event.target.nodeName;
-        // 35 == end key. Don't do anything if the focus is on form elements
-        if ((event.keyCode == 35) && (node != 'TEXTAREA')
-            && (node != 'INPUT') && (node != 'SELECT')) {
-            // jump at the last message and restore the usual behavior
-            window.scrollTo(0, offset.top);
-            $(document).unbind('keydown')
-            return false;
+        // disable the shortcuts while editing form elements (except ESC)
+        if (is_editing(event.target)) {
+            // ESC - unfocus the form
+            if (event.keyCode == 27) {
+                $(event.target).blur();
+                return false;
+            }
+            return true;
+        }
+
+        // support two groups of shortcuts for first/prev/next/last/reply:
+        //    mnemonics: f/p/n/l/r
+        //    vim-style: h/k/j/l/i
+        switch (event.which) {
+            // f/h - first
+            case 70:
+            case 72:
+                scroll_to(messages.first());
+                current = 0;
+                return false;
+            // p/k - previous
+            case 80:
+            case 75:
+                if (current <= 0)
+                    return false;
+                scroll_to(messages.eq(--current));
+                return false;
+            // n/j - next
+            case 78:
+            case 74:
+                if (current >= last_index)
+                    return false;
+                scroll_to(messages.eq(++current));
+                return false;
+            // l - last
+            case 76:
+                scroll_to(messages.last());
+                current = last_index;
+                return false;
+            // r/i - reply
+            case 82:
+            case 73:
+                // do nothing if the textarea is not available
+                if (textarea.length == 0)
+                    return false;
+                scroll_to(textarea);
+                textarea.focus();
+                return false;
+            default:
+                return true;
         }
     });
 })
