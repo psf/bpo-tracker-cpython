@@ -77,8 +77,8 @@ $(document).ready(function() {
     // start from -1 so 'n' sends to the first message at the beginning
     var current = -1;
     $(document).keydown(function (event) {
-        // do nothing if ctrl/alt/shift are pressed
-        if (event.ctrlKey || event.altKey || event.shiftKey)
+        // do nothing if ctrl/alt/shift/meta are pressed
+        if (event.ctrlKey || event.altKey || event.shiftKey || event.metaKey)
             return true;
 
         // disable the shortcuts while editing form elements (except ESC)
