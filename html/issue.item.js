@@ -304,3 +304,12 @@ $(document).ready(function() {
     get_json('experts', data.add);
     get_json('devs', data.add);
 });
+
+
+$(document).ready(function() {
+    /* Make the "clear this message" link in the ok_message point
+     * to issue page without including any extra arg */
+    var link = $('p.ok-message a.form-small').first();
+    if (link.length != 0)
+        link.attr('href', link.attr('href').split('?')[0]);
+});
