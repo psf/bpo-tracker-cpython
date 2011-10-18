@@ -74,9 +74,9 @@ def make_pep_link(match):
 
 substitutions = [
     # deadbeeffeed  (hashes with exactly twelve or forty chars)
-    (re.compile(r'\b(?<![/?&;])(?P<revision>[a-fA-F0-9]{40})\b'),
+    (re.compile(r'\b(?<![/?&;=])(?P<revision>[a-fA-F0-9]{40})\b'),
      r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
-    (re.compile(r'\b(?<![/?&;])(?P<revision>[a-fA-F0-9]{12})\b'),
+    (re.compile(r'\b(?<![/?&;=])(?P<revision>[a-fA-F0-9]{12})\b'),
      r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
 
     # r12345, r 12345, rev12345, rev 12345, revision12345, revision 12345

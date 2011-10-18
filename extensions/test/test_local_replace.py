@@ -47,6 +47,7 @@ class PyDevMockDatabase(MockDatabase):
 
 class TestPyDevStringHTMLProperty(TemplatingTestCase):
     def test_replacement(self):
+        self.maxDiff = None
         # create a db with a few issue/msg/file ids
         self.client.db = self._db = PyDevMockDatabase(
                 [1000, 5555, 555555, 1999999, 2000000, 1234567890123])

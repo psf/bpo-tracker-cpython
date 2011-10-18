@@ -21,6 +21,10 @@ wordthatendswithr 2222
 I uploaded http://pypi.python.org/pypi/ctypesgen/0.r125
 I uploaded <a href="http://pypi.python.org/pypi/ctypesgen/0.r125">http://pypi.python.org/pypi/ctypesgen/0.r125</a>
 ##
+## hg revisions
+http://code.google.com/p/spyderlib/source/detail?spec=svne5d86b685619a470d593aa5f9ee360ba60779bc1&r=323c6c697f045166e384cdc15803d40eebed0a2b
+<a href="http://code.google.com/p/spyderlib/source/detail?spec=svne5d86b685619a470d593aa5f9ee360ba60779bc1&amp;r=323c6c697f045166e384cdc15803d40eebed0a2b">http://code.google.com/p/spyderlib/source/detail?spec=svne5d86b685619a470d593aa5f9ee360ba60779bc1&amp;r=323c6c697f045166e384cdc15803d40eebed0a2b</a>
+##
 ## issues - the lowest issue id on bugs.python.org is #1000, the highest is #1779871
  #1
  #1
