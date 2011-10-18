@@ -1,3 +1,8 @@
+import random
+from roundup.cgi.actions import Action
+from roundup.cgi.exceptions import Redirect
+
+
 def is_history_ok(request):
     user = request.client.userid
     db = request.client.db
@@ -35,8 +40,20 @@ def issueid_and_action_from_class(cls):
         return last_entry[4][1], last_action
     return None, None
 
+
+class RandomIssueAction(Action):
+    def handle(self):
+        """Redirect to a random open issue."""
+        issue = self.context['context']
+        # use issue._klass to get a list of ids, and not a list of instances
+        issue_ids = issue._klass.filter(None, {'status': 1})
+        url = self.db.config.TRACKER_WEB + 'issue' + random.choice(issue_ids)
+        raise Redirect(url)
+
+
 def init(instance):
     instance.registerUtil('is_history_ok', is_history_ok)
     instance.registerUtil('is_coordinator', is_coordinator)
     instance.registerUtil('issueid_and_action_from_class',
                           issueid_and_action_from_class)
+    instance.registerAction('random', RandomIssueAction)
