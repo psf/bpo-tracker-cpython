@@ -313,3 +313,14 @@ $(document).ready(function() {
     if (link.length != 0)
         link.attr('href', link.attr('href').split('?')[0]);
 });
+
+
+$(document).ready(function() {
+    /* Mark automated messages with a different background */
+    $('table.messages th:nth-child(2)').each(function (i, e) {
+        var e = $(e);
+        if (/\(python-dev\)$/.test(e.text()))
+            e.parent().next().find('td.content').css(
+                'background-color', '#efeff9');
+    });
+});
