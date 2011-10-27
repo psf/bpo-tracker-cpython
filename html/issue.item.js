@@ -1,4 +1,4 @@
-window.onload = function () {
+$(document).ready(function () {
     // create the input button and use it to replace the span/placeholder --
     // users without javascript won't notice anything.
     // This might eventually be replaced by jquery
@@ -17,7 +17,7 @@ window.onload = function () {
     add_me_button.style.display = 'inline';
     add_me_parent.replaceChild(add_me_button, add_me_span);
     add_me_button.id = node_id;
-}
+})
 
 
 function add_to_nosy(user) {
