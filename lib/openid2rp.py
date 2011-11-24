@@ -379,7 +379,7 @@ def btwoc(l):
     return res[3+b2i(res[3]):3:-1]
 
 def unbtwoc(B):
-    return cPickle.loads(b('\x80\x02\x8a')+bytes_from_ints([len(B)])+B[::-1]+(b'.'))
+    return cPickle.loads(b('\x80\x02\x8a')+bytes_from_ints([len(B)])+B[::-1]+b('.'))
 
 # Appendix B; DH default prime
 dh_prime = """
