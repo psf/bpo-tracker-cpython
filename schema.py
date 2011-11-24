@@ -101,10 +101,16 @@ user.setkey("username")
 db.security.addPermission(name='Register', klass='user',
                           description='User is allowed to register new user')
 
+openid_discovery = Class(db, 'openid_discovery',
+                         url=String(), # key
+                         services=String(), # space-separated list
+                         op_endpoint=String(),
+                         op_local=String())
+openid_discovery.setkey('url')
+openid_discovery.disableJournalling()
+
 openid_session = Class(db, 'openid_session',
-                       provider_id=String(), # or user id
                        url=String(),
-                       stypes=String(), # space-separated list of session types
                        assoc_handle=String(),
                        expires=Date(),
                        mac_key=String())
