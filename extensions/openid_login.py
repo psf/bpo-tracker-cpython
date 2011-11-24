@@ -16,24 +16,16 @@ class Openid:
     'Helper class for OpenID'
 
     # Session management: Recycle expired session objects
-    def get_session(self, provider, discovered=None):
-        sessions = self.db.openid_session.filter(None, {'provider_id':provider})
+    def get_session(self, url, stypes):
+        sessions = self.db.openid_session.filter(None, {'url':url})
         for session_id in sessions:
             # Match may not have been exact
-            if self.db.openid_session.get(session_id, 'provider_id') != provider:
-                continue
-            if discovered and discovered[1] != self.db.openid_session.get(session_id, 'url'):
-                # User has changed provider; don't reuse session
+            if self.db.openid_session.get(session_id, 'url') != url:
                 continue
             expires = self.db.openid_session.get(session_id, 'expires')
             if  expires > date.Date('.')+date.Interval("1:00"):
                 # valid for another hour
                 return self.db.openid_session.getnode(session_id)
-        # need to create new session, or recycle an expired one
-        if discovered:
-            stypes, url, op_local = discovered
-        else:
-            stypes, url, op_local = openid2rp.discover(provider)
         now = date.Date('.')
         session_data = openid2rp.associate(stypes, url)
         # check whether a session has expired a day ago
@@ -44,40 +36,77 @@ class Openid:
         else:
             session_id = self.db.openid_session.create(assoc_handle=session_data['assoc_handle'])
             session = self.db.openid_session.getnode(session_id)
-        session.provider_id = provider
         session.url = url
-        session.stypes = " ".join(stypes)
         session.mac_key = session_data['mac_key']
         session.expires = now + date.Interval(int(session_data['expires_in']))
         self.db.commit()
         return session
 
-    def authenticate(self, session, query):
+    def discover(self, url):
+        '''Return cached discovery results or None.'''
+        try:
+            discovered = self.db.openid_discovery.lookup(url)
+        except KeyError:
+            return None
+        discovered = self.db.openid_discovery.getnode(discovered)
+        op_local = discovered.op_local
+        if op_local == '':
+            op_local = None
+        return discovered.services.split(), discovered.op_endpoint, op_local
+
+    def store_discovered(self, url, stypes, op_endpoint, op_local):
+        if op_local is None:
+            op_local = ''
+        try:
+            discovered = self.db.openid_discovery.lookup(url)
+        except KeyError:
+            self.db.openid_discovery.create(url=url, services=" ".join(stypes),
+                                            op_endpoint=op_endpoint, op_local=op_local)
+        else:
+            discovered = self.db.openid_discovery.getnode(discovered)
+            discovered.services = " ".join(stypes)
+            discovered.op_endpoint = op_endpoint
+            discovered.op_local = op_local
+            self.db.commit()
+
+    def find_association(self, handle):
+        try:
+            session = self.db.openid_session.lookup(handle)
+            session = self.db.openid_session.getnode(session)
+            return session
+        except KeyError:
+            return None
+
+    def nonce_seen(self, nonce):
+        try:
+            self.db.openid_nonce.lookup(nonce)
+            return True
+        except KeyError:
+            return False
+
+    def authenticate(self, query):
         '''Authenticate an OpenID indirect response, and return the claimed ID'''
         try:
-            signed = openid2rp.authenticate(session, query)
+            signed, claimed = openid2rp.verify(query, self.discover,
+                                               self.find_association,
+                                               self.nonce_seen)
         except Exception, e:
             raise ValueError, "Authentication failed: "+str(e)
-        if openid2rp.is_op_endpoint(session.stypes):
-            # Provider-guided login: provider ought to report claimed ID
-            if 'openid.claimed_id' in query:
-                claimed = query['openid.claimed_id'][0]
-            else:
-                raise ValueError, 'incomplete response'
-            # OpenID 11.2: verify that provider is authorized to assert ID
-            discovered = openid2rp.discover(claimed)
-            if not discovered or discovered[1] != session.url:
-                raise ValueError, "Provider %s is not authorized to make assertions about %s" % (session.url, claimed)
-        else:
-            # User entered claimed ID, stored in session object
-            claimed = session.provider_id
-            if not openid2rp.is_compat_1x(session.stypes):
-                # can only check correct claimed ID for OpenID 2.0
-                if 'openid.claimed_id' not in query or claimed != query['openid.claimed_id'][0]:
-                    # assertion is not about an ID, or about a different ID; refuse to accept
-                    raise ValueError, "Provider did not assert your ID"
         return claimed
 
+    def store_nonce(self, query):
+        '''Store a nonce in the database.'''
+        if 'openid.response_nonce' in query:
+            nonce = query['openid.response_nonce'][0]
+            stamp = openid2rp.parse_nonce(nonce)
+            # Consume nonce; reuse expired nonces
+            old = self.db.openid_nonce.filter(None, {'created':';.-1d'})
+            stamp = date.Date(stamp)
+            if old:
+                self.db.openid_nonce.set(old[0], created=stamp, nonce=nonce)
+            else:
+                self.db.openid_nonce.create(created=stamp, nonce=nonce)
+            self.db.commit()
         
 class OpenidLogin(LoginAction, Openid):
     'Extended versoin of LoginAction, supporting OpenID identifiers in username field.'
@@ -106,11 +135,12 @@ class OpenidLogin(LoginAction, Openid):
         discovered = openid2rp.discover(claimed)
         if not discovered:
             raise ValueError, "OpenID provider discovery failed"
+        self.store_discovered(claimed, *discovered)
         stypes, url, op_local = discovered
-        session = self.get_session(claimed, discovered) # one session per claimed id
+        session = self.get_session(url, stypes)
         realm = self.base+"?@action=openid_return"
         return_to = realm + "&__came_from=%s" % urllib.quote(self.client.path)
-        url = openid2rp.request_authentication(session.stypes, session.url,
+        url = openid2rp.request_authentication(stypes, url,
                                             session.assoc_handle, return_to, realm=realm,
                                             claimed=claimed, op_local=op_local)
         raise Redirect, url
@@ -127,14 +157,20 @@ class OpenidProviderLogin(Action, Openid):
             self.client.error_message.append(self._('Unsupported provider'))
             return
         provider_id = providers[provider][2]
+        # For most providers, it would be reasonable to cache the discovery
+        # results. However, the risk of login breaking if a provider does change
+        # its service URL outweighs the cost of another HTTP request to perform
+        # the discovery during login.
+        services, op_endpoint, op_local = openid2rp.discover(provider_id)
+        session = self.get_session(op_endpoint, services)
         try:
-            session = self.get_session(provider_id)
+            session = self.get_session(op_endpoint, services)
         except NoCertificate:
             self.client.error_message.append(self._('Peer did not return certificate'))
             return
         realm = self.base+"?@action=openid_return"
         return_to = realm + "&__came_from=%s" % urllib.quote(self.client.path)
-        url = openid2rp.request_authentication(session.stypes, session.url,
+        url = openid2rp.request_authentication(services, op_endpoint,
                                             session.assoc_handle, return_to, realm=realm)
         raise Redirect, url
 
@@ -156,40 +192,21 @@ class OpenidReturn(Action, Openid):
             ''' % self.base
             self.client.additional_headers['Content-Type'] = 'application/xrds+xml'
             return payload
-        if 'openid.response_nonce' in query:
-            nonce = query['openid.response_nonce'][0]
-            stamp = openid2rp.parse_nonce(nonce)
-            utc = calendar.timegm(stamp.utctimetuple())
-            if utc < time.time()-3600:
-                # Old nonce
-                raise ValueError, "Replay detected"
-            try:
-                self.db.openid_nonce.lookup(nonce)
-            except KeyError:
-                pass
-            else:
-                raise ValueError, "Replay detected"
-            # Consume nonce; reuse expired nonces
-            old = self.db.openid_nonce.filter(None, {'created':';.-1d'})
-            stamp = date.Date(stamp)
-            if old:
-                self.db.openid_nonce.set(old[0], created=stamp, nonce=nonce)
-            else:
-                self.db.openid_nonce.create(created=stamp, nonce=nonce)
-            self.db.commit()
         handle = query['openid.assoc_handle'][0]
         try:
             session = self.db.openid_session.lookup(handle)
         except KeyError:
             raise ValueError, 'Not authenticated (no session)'
         session = self.db.openid_session.getnode(session)
-        claimed = self.authenticate(session, query)
+        claimed = self.authenticate(query)
         if self.user != 'anonymous':
             # Existing user claims OpenID
 
             # ID must be currently unassigned
             if self.db.user.filter(None, {'openids':claimed}):
                 raise ValueError, 'OpenID already claimed'
+            # Consume nonce
+            self.store_nonce(query)
             openids = self.db.user.get(self.userid, 'openids')
             if openids:
                 openids += ' '
@@ -203,6 +220,8 @@ class OpenidReturn(Action, Openid):
         # Check whether this is a successful login
         user = self.db.user.filter(None, {'openids':claimed})
         if user:
+            # Consume nonce
+            self.store_nonce(query)
             # there should be only one user with that ID
             assert len(user)==1
             self.client.userid = user[0]
@@ -267,12 +286,6 @@ class OpenidRegister(RegisterAction, Openid):
         query = {}
         if 'openid.identity' not in self.form:
             raise ValueError, "OpenID fields missing"
-        try:
-            handle = self.form['openid.assoc_handle'].value
-            session = self.db.openid_session.lookup(handle)
-            session = self.db.openid_session.getnode(session)
-        except Exception, e:
-            raise ValueError, "Not authenticated (no session): "+str(e)
         # re-authenticate fields
         for key in self.form:
             if key.startswith("openid"):
@@ -281,9 +294,13 @@ class OpenidRegister(RegisterAction, Openid):
                     query[key].append(value)
                 except KeyError:
                     query[key] = [value]
-        claimed = self.authenticate(session, query)
+        claimed = self.authenticate(query)
         # OpenID signature is still authentic, now pass it on to the base
         # register method; also fake password
+
+        # Consume nonce first
+        self.store_nonce(query)
+        
         self.form.value.append(cgi.MiniFieldStorage('openids', claimed))
         pwd = password.generatePassword()
         self.form.value.append(cgi.MiniFieldStorage('password', pwd))
