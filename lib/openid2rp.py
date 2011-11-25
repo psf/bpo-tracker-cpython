@@ -42,7 +42,7 @@ if sys.version_info < (2,6):
     # Add getcode into 2.5
     class _addinfourl(urllib.addinfourl):
         def __init__(self, fp, headers, url, code=None):
-            urllib.addinfourl(self, fp, headers, url)
+            urllib.addinfourl.__init__(self, fp, headers, url)
             self.code = code
         def getcode(self):
             return self.code
