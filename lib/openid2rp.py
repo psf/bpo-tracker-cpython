@@ -435,7 +435,7 @@ def associate(services, url):
         if data['openid.session_type'] == "no-encryption":
             data['openid.session_type'] = ''
         del data['openid.ns']
-    res = FancyURLopener(url, b(urllib.urlencode(data)))
+    res = FancyURLopener().open(url, b(urllib.urlencode(data)))
     if res.getcode() != 200:
         raise ValueError, "OpenID provider refuses connection with status %d" % res.getcode()
     data = parse_response(res.read())
@@ -567,7 +567,7 @@ def verify_signature_directly(op_endpoint, response):
     # Exact copies of all fields from the authentication response, except for
     # "openid.mode"
     request.extend((k, v) for k, (v,) in response.items() if 'openid.mode' != k)
-    res = FancyURLopener(op_endpoint, urllib.urlencode(request))
+    res = FancyURLopener().open(op_endpoint, urllib.urlencode(request))
     if 200 != res.getcode():
         raise NotAuthenticated(NotAuthenticated.CONNECTION_REFUSED, res.getcode())
     response = parse_response(res.read())
