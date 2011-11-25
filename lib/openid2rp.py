@@ -38,6 +38,21 @@ else:
         return char
     bytes_from_ints = bytes
 
+if sys.version_info < (2,6):
+    # Add getcode into 2.5
+    class _addinfourl(urllib.addinfourl):
+        def __init__(self, fp, headers, url, code=None):
+            urllib.addinfourl(self, fp, headers, url)
+            self.code = code
+        def getcode(self):
+            return self.code
+
+    class FancyURLOpener(urllib.FancyURLopener):
+        def http_error_default(self, url, fp, errcode, errmsg, headers):
+            return _addinfourl(fp, headers, "http:" + url, errcode)
+else:
+    FancyURLopener = urllib.FancyURLopener
+
 class NotAuthenticated(Exception):
     CONNECTION_REFUSED = 1
     DIRECT_VERIFICATION_FAILED = 2
@@ -420,7 +435,7 @@ def associate(services, url):
         if data['openid.session_type'] == "no-encryption":
             data['openid.session_type'] = ''
         del data['openid.ns']
-    res = urllib.urlopen(url, b(urllib.urlencode(data)))
+    res = FancyURLopener(url, b(urllib.urlencode(data)))
     if res.getcode() != 200:
         raise ValueError, "OpenID provider refuses connection with status %d" % res.getcode()
     data = parse_response(res.read())
@@ -552,7 +567,7 @@ def verify_signature_directly(op_endpoint, response):
     # Exact copies of all fields from the authentication response, except for
     # "openid.mode"
     request.extend((k, v) for k, (v,) in response.items() if 'openid.mode' != k)
-    res = urllib.urlopen(op_endpoint, urllib.urlencode(request))
+    res = FancyURLopener(op_endpoint, urllib.urlencode(request))
     if 200 != res.getcode():
         raise NotAuthenticated(NotAuthenticated.CONNECTION_REFUSED, res.getcode())
     response = parse_response(res.read())
