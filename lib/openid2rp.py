@@ -47,7 +47,7 @@ if sys.version_info < (2,6):
         def getcode(self):
             return self.code
 
-    class FancyURLOpener(urllib.FancyURLopener):
+    class FancyURLopener(urllib.FancyURLopener):
         def http_error_default(self, url, fp, errcode, errmsg, headers):
             return _addinfourl(fp, headers, "http:" + url, errcode)
 else:
