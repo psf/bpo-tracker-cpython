@@ -164,6 +164,7 @@ class OpenidProviderLogin(Action, Openid):
         result = openid2rp.discover(provider_id)
         if result is None:
             self.client.error_message.append('Provider %s appears to be down' % providers[provider][0])
+            return
         services, op_endpoint, op_local = result
         session = self.get_session(op_endpoint, services)
         try:
