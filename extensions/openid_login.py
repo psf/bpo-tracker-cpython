@@ -161,7 +161,10 @@ class OpenidProviderLogin(Action, Openid):
         # results. However, the risk of login breaking if a provider does change
         # its service URL outweighs the cost of another HTTP request to perform
         # the discovery during login.
-        services, op_endpoint, op_local = openid2rp.discover(provider_id)
+        result = openid2rp.discover(provider_id)
+        if result is None:
+            self.client.error_message.append('Provider %s appears to be down' % providers[provider][0])
+        services, op_endpoint, op_local = result
         session = self.get_session(op_endpoint, services)
         try:
             session = self.get_session(op_endpoint, services)
