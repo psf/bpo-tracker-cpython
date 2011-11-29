@@ -8,10 +8,14 @@ r2222
  <a href="http://hg.python.org/lookup/r2222">r2222</a>
  r 2222
  <a href="http://hg.python.org/lookup/r2222">r 2222</a>
+ r. 2222
+ <a href="http://hg.python.org/lookup/r2222">r. 2222</a>
  rev2222
  <a href="http://hg.python.org/lookup/r2222">rev2222</a>
  rev  2222
  <a href="http://hg.python.org/lookup/r2222">rev  2222</a>
+ rev.  2222
+ <a href="http://hg.python.org/lookup/r2222">rev.  2222</a>
  revision2222
  <a href="http://hg.python.org/lookup/r2222">revision2222</a>
  revision 2222
@@ -62,6 +66,8 @@ http://code.google.com/p/spyderlib/source/detail?spec=svne5d86b685619a470d593aa5
  #1234567890123
 pyissue1000
 pyissue1000
+http://mail.python.org/pipermail/python-ideas/2011-October/thread.html#12459
+<a href="http://mail.python.org/pipermail/python-ideas/2011-October/thread.html#12459">http://mail.python.org/pipermail/python-ideas/2011-October/thread.html#12459</a>
 ##
 ## files - Lib/somefile.py, Modules/somemodule.c, Doc/somedocfile.rst, ...
 Lib/cgi.py

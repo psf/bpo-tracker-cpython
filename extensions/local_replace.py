@@ -79,8 +79,8 @@ substitutions = [
     (re.compile(r'\b(?<![/?&;=])(?P<revision>[a-fA-F0-9]{12})\b'),
      r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
 
-    # r12345, r 12345, rev12345, rev 12345, revision12345, revision 12345
-    (re.compile(r'\b(?<![/?&;])(?P<revstr>r(ev(ision)?)?\s*)(?P<revision>\d{4,})'),
+    # r12345, r 12345, rev12345, rev. 12345, revision12345, revision 12345
+    (re.compile(r'\b(?<![/?&;])(?P<revstr>r\.?(ev\.?(ision)?)?\s*)(?P<revision>\d{4,})'),
      r'<a href="http://hg.python.org/lookup/r\g<revision>">\g<revstr>\g<revision></a>'),
 
     # Lib/somefile.py, Lib/somefile.py:123, Modules/somemodule.c:123, ...
