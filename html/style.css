@@ -531,3 +531,49 @@ textarea:focus, select:focus {
     max-width: 20em;
     overflow: auto;
 }
+
+/* styles for the keyboard shortcut help popup */
+div#shortcuts-help {
+    background-color: #efefef;
+    border: 1px solid #afafaf;
+    position: fixed;
+    top: 6em;
+    left: 50%;
+    z-index: 42;
+    width: 400px;
+    margin-left: -200px;
+    padding: 1em;
+    text-align: center;
+    opacity: 0.95;
+}
+div#shortcuts-help table {
+    margin: 0 auto;
+    border: 1px solid #afafaf;
+}
+div#shortcuts-help caption {
+    font-weight: bold;
+    padding: .2em;
+}
+div#shortcuts-help th, div#shortcuts-help td {
+    text-align: center;
+    padding: .2em;
+    background-color: #dddddd;
+}
+div#shortcuts-help tr th:first-child {
+    text-align: right;
+}
+div#shortcuts-help p {
+    margin: 1em 2.5em 1.5em;
+    font-size: 80%;
+}
+div#shortcuts-help span {
+    cursor: pointer;
+    border: 1px solid #afafaf;
+    padding: .2em;
+    background-color: #dddddd;
+}
+li#menu-shortcuts-help span {
+    margin-left: .9em;
+    padding-left: 1em;
+    cursor: help;
+}

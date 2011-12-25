@@ -56,31 +56,53 @@ $(document).ready(function() {
         // scroll the page to the given node
         window.scrollTo(0, node.offset().top)
     }
-    function add_help() {
-        // add some help to the sidebar
-        $(['<li><strong>Keyboard shortcuts</strong>',
-           '<ul id="help" class="level-three">',
-           '  <li><a>f/h: first msg</a></li>',
-           '  <li><a>p/k: previous msg</a></li>',
-           '  <li><a>n/j: next msg</a></li>',
-           '  <li><a>l: last msg</a></li>',
-           '  <li><a>r/i: focus textarea</a></li>',
-           '  <li><a>ESC: unfocus textarea</a></li>',
-           '</ul></div>'].join('\n')).appendTo('div#menu ul.level-two');
-        // the empty <a> are just an hack to get the style right,
-        // this help will anyway be moved to the devguide soon
+    function create_help_popup() {
+        // create a popup that lists the available shortcuts
+        var div = $([
+           '<div id="shortcuts-help"><table>',
+           '  <caption>Keyboard shortcuts</caption>',
+           '  <tr><th></th><th>mnemonic</th><th>vim-style</th></tr>',
+           '  <tr><th>first message</th><td>f</td><td>h</td></tr>',
+           '  <tr><th>previous message</th><td>p</td><td>k</td></tr>',
+           '  <tr><th>next message</th><td>n</td><td>j</td></tr>',
+           '  <tr><th>last message</th><td>l</td><td>l</td></tr>',
+           '  <tr><th>focus textarea</th><td>r</td><td>i</td></tr>',
+           '  <tr><th>unfocus textarea</th><td>Esc</td><td>Esc</td></tr>',
+           '  <tr><th>shortcuts help</th><td>?</td><td>?</td></tr>',
+           '</table>',
+           '<p>All these shortcuts can be used at any time to',
+           'navigate through the messages in the issue page.</p>',
+           '<span id="close-help">Close shortcuts help</span></div>'].join('\n'))
+        // this should point to the devguide once a section with the shortcuts
+        // is added
+        var menu = $('div#menu ul.level-three:last');
+        $('<li id="menu-shortcuts-help"><span>Keyb. shortcuts ' +
+          '(?)</span></li>').appendTo(menu);
+        menu.find('li#menu-shortcuts-help span').click(
+            function() { div.toggle(); return false; })
+        div.find('span').click(function() { div.hide() })
+        div.hide()
+        div.appendTo('body');
     }
-    add_help()
+    create_help_popup()
+
+    var help_popup = $('#shortcuts-help');
     var textarea = $('textarea').first();
     var messages = $('table.messages tr th a:first-child');
     var last_index = messages.length - 1;
     // start from -1 so 'n' sends to the first message at the beginning
     var current = -1;
     $(document).keydown(function (event) {
+        // '?' shows the help if the user is not editing the form.
+        // this is here because usually '?' requires 'shift' too, and the
+        // switch below is not reached when shift is pressed
+        if (event.shiftKey && (event.which == 191) && !is_editing(event.target)) {
+            help_popup.toggle()
+            return false;
+        }
         // do nothing if ctrl/alt/shift/meta are pressed
         if (event.ctrlKey || event.altKey || event.shiftKey || event.metaKey)
             return true;
-
         // disable the shortcuts while editing form elements (except ESC)
         if (is_editing(event.target)) {
             // ESC - unfocus the form
@@ -89,6 +111,11 @@ $(document).ready(function() {
                 return false;
             }
             return true;
+        }
+        // ESC hides the help if the user is not editing
+        if (event.keyCode == 27) {
+            help_popup.hide();
+            return false;
         }
 
         // support two groups of shortcuts for first/prev/next/last/reply:
