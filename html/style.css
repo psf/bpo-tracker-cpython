@@ -577,3 +577,33 @@ li#menu-shortcuts-help span {
     padding-left: 1em;
     cursor: help;
 }
+
+
+/* styles for printing */
+@media print {
+
+#left-hand-navigation, #google, #document-navigation,
+#border-corner, #smallcorner, #searchcorner, #logo,
+#search, #utility-menu, #skiptonav, #footer, iframe {
+    display:none;
+}
+
+#content-body {
+    font-family: Georgia, "Bitstream Vera Serif", "New York", Palatino, serif;
+    font-size: 11pt;
+}
+
+#content-body a {
+    color: #000000;
+    text-decoration: none;
+}
+
+#body-main {
+    margin: 0;
+}
+
+#body-main a {
+    font-weight: bold;
+}
+
+}
