@@ -15,6 +15,12 @@ def create_django_user(db, cl, nodeid, oldvalues):
               "values(%s, %s, %s, '!', '', '', false, true, false, now(), now())",
               (nodeid, username, email))
 
+def update_django_user(db, cl, nodeid, oldvalues):
+    if 'username' in oldvalues:
+        newname = cl.get(nodeid, 'username')
+        c = db.cursor
+        c.execute("update auth_user set username=%s where id=%s", (newname, nodeid))
+
 def update_issue_cc(db, cl, nodeid, oldvalues):
     if 'nosy' not in oldvalues:
         return
@@ -30,6 +36,7 @@ def update_issue_cc(db, cl, nodeid, oldvalues):
 
 def init(db):
     db.user.react('create', create_django_user)
+    db.user.react('set', update_django_user)
     db.issue.react('set', update_issue_cc)
     # XXX react to email changes, roles
     # XXX react to subject, closed changes on issues
