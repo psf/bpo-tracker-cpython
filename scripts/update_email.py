@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# cron job to update rietveld tables when the email address changes
+# Update rietveld tables when the email address changes
 # this updates auth_user.email, codereview_account.email 
 # and codereview_issue.cc, based on the nosy list s
 # it does not update codereview_issue.reviewers, since it would be
@@ -7,6 +7,9 @@
 # is something that has to be filled out separately in Rietveld.
 # It also does not update codereview_message, since these have already
 # been sent with the email addresses recorded in the database.
+#
+# This script is now part of rietveldreactor
+
 import sys, os, base64, cPickle
 sys.path.insert(1,'/home/roundup/roundup/lib/python2.5/site-packages')
 import roundup.instance

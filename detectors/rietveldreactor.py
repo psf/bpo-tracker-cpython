@@ -16,10 +16,30 @@ def create_django_user(db, cl, nodeid, oldvalues):
               (nodeid, username, email))
 
 def update_django_user(db, cl, nodeid, oldvalues):
+    user = nodeid
     if 'username' in oldvalues:
         newname = cl.get(nodeid, 'username')
         c = db.cursor
-        c.execute("update auth_user set username=%s where id=%s", (newname, nodeid))
+        c.execute("update auth_user set username=%s where id=%s", (newname, user))
+
+    if 'address' in oldvalues:
+        old = oldvalues['address'].decode('ascii')
+        new = cl.get(nodeid, 'address').decode('ascii')
+        c = db.cursor
+        c.execute('update auth_user set email=%s where id=%s', (new, user))
+        c.execute('update codereview_account set email=%s where id=%s', (new, user))
+        # find issues where user is on nosy
+        c.execute('select nodeid,cc from issue_nosy, codereview_issue '
+                  'where linkid=%s and nodeid=id', (user,))
+        for issue, cc in c.fetchall():
+            cc = cPickle.loads(base64.decodestring(cc))
+            try:
+                cc[cc.index(old)] = new
+            except ValueError:
+                cc.append(new)
+            cc = base64.encodestring(cPickle.dumps(cc))
+            c.execute('update codereview_issue set cc=%s where id=%s', (cc, user))
+        
 
 def update_issue_cc(db, cl, nodeid, oldvalues):
     if 'nosy' not in oldvalues:
