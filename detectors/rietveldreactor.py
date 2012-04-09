@@ -17,14 +17,15 @@ def create_django_user(db, cl, nodeid, oldvalues):
 
 def update_django_user(db, cl, nodeid, oldvalues):
     user = nodeid
-    if 'username' in oldvalues:
-        newname = cl.get(nodeid, 'username')
+    oldname = oldvalues['username']
+    newname = cl.get(nodeid, 'username')
+    if oldname != newname:
         c = db.cursor
         c.execute("update auth_user set username=%s where id=%s", (newname, user))
 
-    if 'address' in oldvalues:
-        old = oldvalues['address'].decode('ascii')
-        new = cl.get(nodeid, 'address').decode('ascii')
+    old = oldvalues['address'].decode('ascii')
+    new = cl.get(nodeid, 'address').decode('ascii')
+    if old != new:
         c = db.cursor
         c.execute('update auth_user set email=%s where id=%s', (new, user))
         c.execute('update codereview_account set email=%s where id=%s', (new, user))
