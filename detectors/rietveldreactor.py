@@ -39,7 +39,7 @@ def update_django_user(db, cl, nodeid, oldvalues):
             except ValueError:
                 cc.append(new)
             cc = base64.encodestring(cPickle.dumps(cc))
-            c.execute('update codereview_issue set cc=%s where id=%s', (cc, user))
+            c.execute('update codereview_issue set cc=%s where id=%s', (cc, issue))
         
 
 def update_issue_cc(db, cl, nodeid, oldvalues):
