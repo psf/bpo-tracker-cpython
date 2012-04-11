@@ -108,6 +108,11 @@ define="edit_ok context/is_edit_ok"
   </td>
  </tr>
 
+ <tr tal:define="name string:homepage; label string:Homepage; value context/homepage">
+  <th metal:use-macro="th_label">Home page</th>
+  <td><input name="organisation" metal:use-macro="normal_input"></td>
+ </tr>
+
  <tr>
    <th>Contributor Form Received</th>
    <td><span tal:replace="structure context/contrib_form/field"/>

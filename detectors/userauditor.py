@@ -20,6 +20,8 @@
 #
 #$Id: userauditor.py,v 1.3 2006/09/18 03:24:38 tobias-herp Exp $
 
+import urlparse
+
 def audit_user_fields(db, cl, nodeid, newvalues):
     ''' Make sure user properties are valid.
 
@@ -39,6 +41,10 @@ def audit_user_fields(db, cl, nodeid, newvalues):
             if not "admin" in [x.lower().strip() for x in cl.get(nodeid, 'roles').split(",")]:
                 raise ValueError, "Only Admins may assign the Admin role!"
 
+    if newvalues.get('homepage'):
+        scheme = urlparse.urlparse(newvalues['homepage'])[0]
+        if scheme not in ('http', 'https'):
+            raise ValueError, "Invalid URL scheme in homepage URL"
 
 def init(db):
     # fire before changes are made

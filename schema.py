@@ -96,6 +96,7 @@ user = Class(db, "user",
              contrib_form_date=Date(),
              openids=String(), # space separated list
              iscommitter=Boolean(),
+             homepage=String(),
              )
 user.setkey("username")
 db.security.addPermission(name='Register', klass='user',

@@ -310,7 +310,10 @@
      <a tal:content="mid" tal:attributes="id mid;
         href string:#$mid;"></a> - <a tal:attributes="href mid">(view)</a></th>
    <th i18n:translate="">Author: <tal:x replace="python:msg.author.realname.plain(unchecked=1)"
-       i18n:name="author" /> (<tal:x replace="msg/author"/>)
+       i18n:name="author" /> (<a tal:condition="msg/author/homepage"
+             tal:attributes="href msg/author/homepage"
+             tal:content="msg/author"/><tal:x
+                     condition="not:msg/author/homepage" content="msg/author"/>)
        <tal:if condition="msg/author/contrib_form"><span title="Contributor form received">*</span></tal:if>
        <tal:if condition="msg/author/iscommitter">
          <img src="@@file/committer.png" title="Python committer" alt="(Python committer)"/>
