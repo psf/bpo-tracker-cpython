@@ -60,10 +60,8 @@ def hg_splitpatch(data):
         if line.startswith('diff '):
             if filename:
                 chunks = patching.ParsePatchToChunks(diff)
-                if not chunks:
-                    # diff cannot be parsed
-                    return None
-                patches.append((filename, ''.join(diff), chunks))
+                if chunks:
+                    patches.append((filename, ''.join(diff), chunks))
             diff = []
             filename = line.split()[-1]
             if filename.startswith("b/"):
@@ -75,9 +73,8 @@ def hg_splitpatch(data):
     # add last patch
     if filename:
         chunks = patching.ParsePatchToChunks(diff)
-        if not chunks:
-            return None
-        patches.append((filename, ''.join(diff), chunks))
+        if chunks:
+            patches.append((filename, ''.join(diff), chunks))
     return patches
 
 def find_bases(data):
@@ -92,6 +89,8 @@ def find_bases(data):
     c = connection.cursor()
     pieces = hg_splitpatch(data)
     if not pieces:
+        if verbose:
+            print "Splitting failed"
         return None, None
     bases = []
     for filename, data, chunks in pieces:
