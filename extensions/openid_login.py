@@ -2,7 +2,6 @@ import openid2rp, urllib, cgi, collections, calendar, time
 from roundup.cgi.actions import Action, LoginAction, RegisterAction
 from roundup.cgi.exceptions import *
 from roundup import date, password
-from M2Crypto.SSL.Checker import NoCertificate
 
 providers = {}
 for p in (
