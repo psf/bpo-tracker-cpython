@@ -56,6 +56,11 @@ def update_issue_cc(db, cl, nodeid, oldvalues):
     c.execute("update codereview_issue set cc=%s where id=%s", (cc, nodeid))
 
 def init(db):
+    c = db.cursor
+    c.execute("select table_name from information_schema.tables where table_name='auth_user'")
+    if not c.fetchall():
+        # Rietveld tables not present
+        return
     db.user.react('create', create_django_user)
     db.user.react('set', update_django_user)
     db.issue.react('set', update_issue_cc)
