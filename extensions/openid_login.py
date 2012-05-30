@@ -166,11 +166,6 @@ class OpenidProviderLogin(Action, Openid):
             return
         services, op_endpoint, op_local = result
         session = self.get_session(op_endpoint, services)
-        try:
-            session = self.get_session(op_endpoint, services)
-        except NoCertificate:
-            self.client.error_message.append(self._('Peer did not return certificate'))
-            return
         realm = self.base+"?@action=openid_return"
         return_to = realm + "&__came_from=%s" % urllib.quote(self.client.path)
         url = openid2rp.request_authentication(services, op_endpoint,
