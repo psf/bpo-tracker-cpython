@@ -16,7 +16,7 @@ else:
 from codereview.models import (Repository, Branch, Patch, 
                                PatchSet, Issue, Content)
 from django.contrib.auth.models import User
-from codereview import engine, patching
+from codereview import patching, utils
 from roundup_helper.models import File, RoundupIssue
 from django.db import connection, transaction
 from google.appengine.ext import db as gae_db
@@ -44,7 +44,7 @@ def try_match(filename, chunks, rev):
         # been a non-empty base, patching will fail.
         base = ""
     else:
-        base = engine.UnifyLinebreaks(r.read())
+        base = utils.unify_linebreaks(r.read())
     lines = base.splitlines(True)
     for (start, end), newrange, oldlines, newlines in chunks:
         if lines[start:end] != oldlines:
@@ -148,7 +148,7 @@ for f in query:
         issue = issue[0]
     if verbose:
         print "Doing", f.id
-    data = engine.UnifyLinebreaks(data)
+    data = utils.unify_linebreaks(data)
     branch, bases = find_bases(data)
     if not branch:
         if f.id < 15000:
@@ -159,7 +159,6 @@ for f in query:
 
     blob = gae_db.Blob(data)
     patchset = PatchSet(issue=issue, data=blob, parent=issue,
-                        owner=User.objects.get(id=f._creator),
                         created=f._creation, modified=f._creation)
     patchset.put()
     issue.patchset=patchset
@@ -168,10 +167,10 @@ for f in query:
     f._patchset = str(patchset.id)
     f.save()
     for filename, data, chunks, base in bases:
-        patch = Patch(patchset=patchset, text=engine.ToText(data),
+        patch = Patch(patchset=patchset, text=utils.to_dbtext(data),
                       filename=filename, parent=patchset)
         patch.put()
-        content = Content(text=engine.ToText(base), parent=patch)
+        content = Content(text=utils.to_dbtext(base), parent=patch)
         content.put()
         patch.content = content
         patch.put()
