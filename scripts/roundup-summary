@@ -40,7 +40,7 @@ Options:
 
 import sys
 # hardcode the path to roundup
-sys.path.insert(1, '/home/roundup/lib/python2.5/site-packages')
+sys.path.insert(1, '/home/roundup/lib/python2.6/site-packages')
 #sys.path.insert(1, '/opt/tracker-roundup/lib/python2.6/site-packages/')
 
 import cgi
