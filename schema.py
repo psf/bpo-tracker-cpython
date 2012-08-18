@@ -254,9 +254,9 @@ for cl in ('file', 'msg'):
     p = db.security.addPermission(name='View', klass=cl,
                                   description="Allowed to see content of object regardless of spam status",
                                   properties = ('content', 'summary'))
-    
-    db.security.addPermissionToRole('User', p)        
-    
+
+    db.security.addPermissionToRole('User', p)
+
     spamcheck = db.security.addPermission(name='View', klass=cl,
                                           description="allowed to see content if not spam",
                                           properties=('content', 'summary'),
@@ -316,7 +316,7 @@ for cl in ('issue', 'file', 'msg', 'keyword'):
 # Coordinator permissions
 ##########################
 for cl in ('issue_type', 'severity', 'component',
-           'version', 'priority', 'stage', 'status', 'resolution', 'issue', 
+           'version', 'priority', 'stage', 'status', 'resolution', 'issue',
            'file', 'msg', 'hgrepo'):
     db.security.addPermissionToRole('Coordinator', 'View', cl)
     db.security.addPermissionToRole('Coordinator', 'Edit', cl)
@@ -326,6 +326,7 @@ for cl in ('issue_type', 'severity', 'component',
     db.security.addPermissionToRole('Coordinator', p)
 
 db.security.addPermissionToRole('Coordinator', 'SB: May Classify')
+db.security.addPermissionToRole('Developer', 'SB: May Classify')
 
 # May users view other user information? Comment these lines out
 # if you don't want them to
