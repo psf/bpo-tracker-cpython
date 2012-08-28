@@ -108,12 +108,15 @@
        target="_blank" i18n:translate="">Dependencies</a>:
  </th>
  <td>
-  <span tal:replace="structure python:context.dependencies.field(showid=1,size=20)" />
-  <span tal:condition="context/dependencies" tal:repeat="d python:context.dependencies.sorted('creation')">
-   <br/>View:
+  <span tal:condition="context/is_edit_ok"
+        tal:replace="structure python:context.dependencies.field(showid=1,size=20)" />
+  <tal:block tal:condition="python:context.dependencies and context.is_edit_ok()">
+        <br>View:</tal:block>
+  <tal:block tal:condition="context/dependencies"
+             tal:repeat="d python:context.dependencies.sorted('creation')">
      <a tal:content="d/id"
         tal:attributes="href string:issue${d/id}; class string:${d/status}; title d/title;"></a>
-  </span>
+  </tal:block>
  </td>
  <th i18n:translate="">
     <a href="http://docs.python.org/devguide/triaging.html#superseder"
