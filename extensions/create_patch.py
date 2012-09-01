@@ -11,7 +11,7 @@ def download_patch(source, lastrev, patchbranch):
     cwd = os.getcwd()
     os.chdir(base)
     try:
-    	repo0 = hg.repository(UI,base)
+        repo0 = hg.repository(UI,base)
         repo0.ui.quiet=True
         repo0.ui.pushbuffer()
         commands.pull(repo0.ui, repo0, quiet=True)
@@ -30,7 +30,7 @@ def download_patch(source, lastrev, patchbranch):
             raise NotChanged
         repo=bundlerepo.bundlerepository(UI, ".", bundle)
         repo.ui.pushbuffer()
-        old = 'max(ancestors(branch("%s")))-outgoing("%s"))' % (patchbranch, base)
+        old = 'max(ancestors(branch("%s"))-outgoing("%s"))' % (patchbranch, base)
         commands.diff(repo.ui, repo, rev=[old, patchbranch])
         result = repo.ui.popbuffer()
     finally:
