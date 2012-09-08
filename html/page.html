@@ -227,7 +227,7 @@ status_all string:-1,1,2,3;
             <li tal:condition="python:request.user.hasPermission('View', 'user') or request.user.hasPermission('Edit', 'user')">
                 <a href="user?@sort=username"  i18n:translate="">User List</a></li>
             <li tal:condition="python:request.user.hasPermission('View', 'user') or request.user.hasPermission('Edit', 'user')">
-                <a href="user?iscommitter=1&@action=search&@sort=username&@pagesize=300">Commiter List</a></li>
+                <a href="user?iscommitter=1&@action=search&@sort=username&@pagesize=300">Committer List</a></li>
             <li tal:condition="python:request.user.hasPermission('Create', 'user')">
                 <a href="user?@template=item" i18n:translate="">Add User</a></li>
             <li tal:condition="python:request.user.hasPermission('Edit', 'keyword')">
