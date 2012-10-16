@@ -12,6 +12,8 @@ RELEASE_MANAGERS = {
     'Python 2.7': '4455', # benjamin.peterson
     'Python 3.1': '4455', # benjamin.peterson
     'Python 3.2': '93',   # georg.brandl
+    'Python 3.3': '93',   # georg.brandl
+    'Python 3.4': '2731', # larry
 }
 
 def autonosy(db, cl, nodeid, newvalues):
