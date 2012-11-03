@@ -48,7 +48,7 @@ def guess_version(path):
     version = match.group(1)
     if '.' not in version:
         version = '.'.join(version)
-    if version in ['2.5', '2.6', '2.7', '3.1', '3.2']:
+    if version in ['2.5', '2.6', '2.7', '3.1', '3.2', '3.3']:
         return version
     return 'default'
 
