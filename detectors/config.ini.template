@@ -17,3 +17,6 @@ spambayes_may_classify = Coordinator
 spambayes_may_report_misclassified = User,Coordinator,Developer
 
 ciavc_server = http://localhost/not_here
+
+[irker]
+channels = irc://chat.freenode.net/python-dev
