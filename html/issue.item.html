@@ -312,15 +312,19 @@
     <th tal:define="mid string:msg${msg/id}">
      <a tal:content="mid" tal:attributes="id mid;
         href string:#$mid;"></a> - <a tal:attributes="href mid">(view)</a></th>
-   <th i18n:translate="">Author: <tal:x replace="python:msg.author.realname.plain(unchecked=1)"
-       i18n:name="author" /> (<a tal:condition="msg/author/homepage"
-             tal:attributes="href msg/author/homepage"
-             tal:content="msg/author"/><tal:x
-                     condition="not:msg/author/homepage" content="msg/author"/>)
-       <tal:if condition="msg/author/contrib_form"><span title="Contributor form received">*</span></tal:if>
-       <tal:if condition="msg/author/iscommitter">
-         <img src="@@file/committer.png" title="Python committer" alt="(Python committer)"/>
-       </tal:if>
+   <th i18n:translate="">Author:
+       <tal:block define="author_name python:msg.author.realname.plain(unchecked=1)">
+         <a tal:condition="python:msg.author.homepage and msg.author.homepage.is_view_ok()"
+            tal:attributes="href msg/author/homepage" tal:content="author_name">
+         </a><tal:x condition="python: not msg.author.homepage or not msg.author.homepage.is_view_ok()"
+                    replace="author_name" />
+       </tal:block>
+       (<a tal:condition="python:utils.is_coordinator(request)"
+           tal:attributes="href python:'user%s' % msg.author.id"
+           tal:content="msg/author"/><tal:x condition="python:not utils.is_coordinator(request)" content="msg/author"/>)
+       <span tal:condition="msg/author/contrib_form" title="Contributor form received">*</span>
+       <img tal:condition="msg/author/iscommitter" src="@@file/committer.png"
+            title="Python committer" alt="(Python committer)"/>
    </th>
    <th i18n:translate="">Date: <tal:x replace="python:msg.date.pretty('%Y-%m-%d %H:%M')"
        i18n:name="date" /></th>
