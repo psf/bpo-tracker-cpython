@@ -4,7 +4,7 @@ import os.path
 
 if len(sys.argv) != 2:
     sys.exit('Error: You have to provide the path of Roundup in order to run '
-             'the tests (e.g. /opt/tracker-roundup/lib/python2.6/site-packages/).')
+             'the tests (e.g. /opt/tracker-roundup/lib/python2.7/site-packages/).')
 # add to sys.path the dir where roundup is installed (local_replace will try
 # to import it)
 sys.path.append(sys.argv.pop())
@@ -14,7 +14,7 @@ dirs = testdir.split(os.path.sep)
 # add the dir where local_replace is (i.e. one level up)
 sys.path.append(os.path.sep.join(dirs[:-1]))
 # add the dir where the roundup tests are
-sys.path.append(os.path.sep.join(dirs[:-4] + ['roundup-src', 'test']))
+sys.path.append(os.path.sep.join(dirs[:-3] + ['roundup', 'test']))
 
 
 from local_replace import PyDevStringHTMLProperty
