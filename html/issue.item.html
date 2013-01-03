@@ -144,7 +144,8 @@
  <td tal:condition="context/assignee/is_edit_ok">
   <select name="assignee">
    <option value="-1">nobody</option>
-   <option tal:attributes="value request/user/id"
+   <option tal:attributes="value request/user/id;
+                           selected python:request.user.id == context.assignee._value"
            tal:content="request/user/username">current_user</option>
    <tal:block tal:repeat="userdata python:sorted(db._db.user.filter_sql('select id,_username from _user where _roles like \'%Developer%\''), key=lambda user:user[1].lower())">
    <option tal:condition="python:str(userdata[0]) != request.user.id"
