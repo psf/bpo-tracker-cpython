@@ -72,15 +72,16 @@ def make_pep_link(match):
 
 # these regexs have test in tests/test_local_replace.py
 
+seps = r'\b(?<![-/?&;=_])'  # these chars should not precede the targets
 substitutions = [
     # deadbeeffeed  (hashes with exactly twelve or forty chars)
-    (re.compile(r'\b(?<![/?&;=])(?P<revision>[a-fA-F0-9]{40})\b'),
+    (re.compile(r'%s(?P<revision>[a-fA-F0-9]{40})\b' % seps),
      r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
-    (re.compile(r'\b(?<![/?&;=])(?P<revision>[a-fA-F0-9]{12})\b'),
+    (re.compile(r'%s(?P<revision>[a-fA-F0-9]{12})\b' % seps),
      r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
 
     # r12345, r 12345, rev12345, rev. 12345, revision12345, revision 12345
-    (re.compile(r'\b(?<![/?&;])(?P<revstr>r\.?(ev\.?(ision)?)?\s*)(?P<revision>\d{4,})'),
+    (re.compile(r'%s(?P<revstr>r\.?(ev\.?(ision)?)?\s*)(?P<revision>\d{4,})' % seps),
      r'<a href="http://hg.python.org/lookup/r\g<revision>">\g<revstr>\g<revision></a>'),
 
     # Lib/somefile.py, Lib/somefile.py:123, Modules/somemodule.c:123, ...
@@ -98,11 +99,11 @@ substitutions = [
      make_traceback_link),
 
     # PEP 8, PEP8, PEP 0008, ...
-    (re.compile(r'\b(?<![/=-])PEP\s*(\d{1,4})(?!/)\b', re.I),
+    (re.compile(r'%s\b(?<![/=-])PEP\s*(\d{1,4})(?!/)\b' % seps, re.I),
      make_pep_link),
 
     # devguide
-    (re.compile(r'(?<!/)(devguide(?:/\w+(?:.html)?(?:#[\w-]+)?)?)'),
+    (re.compile(r'%s(devguide(?:/\w+(?:.html)?(?:#[\w-]+)?)?)' % seps),
      r'<a href="http://docs.python.org/\1">\1</a>'),
 ]
 
