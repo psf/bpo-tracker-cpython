@@ -118,6 +118,8 @@ http://www.microsoft.com/downloads/details.aspx?familyid=32BC1BEE-A3F9-4C13-9C99
 <a href="http://www.microsoft.com/downloads/details.aspx?familyid=32BC1BEE-A3F9-4C13-9C99-220B62A191EE&amp;displaylang=en">http://www.microsoft.com/downloads/details.aspx?familyid=32BC1BEE-A3F9-4C13-9C99-220B62A191EE&amp;displaylang=en</a>
 http://hg.python.org/sandbox/morph-devguide/shortlog/a92d431ef749
 <a href="http://hg.python.org/sandbox/morph-devguide/shortlog/a92d431ef749">http://hg.python.org/sandbox/morph-devguide/shortlog/a92d431ef749</a>
+http://bazaar.launchpad.net/~ipython-dev/ipython/trunk/annotate/head%3A/IPython/testing/_paramtestpy3.py
+<a href="http://bazaar.launchpad.net/~ipython-dev/ipython/trunk/annotate/head%3A/IPython/testing/_paramtestpy3.py">http://bazaar.launchpad.net/~ipython-dev/ipython/trunk/annotate/head%3A/IPython/testing/_paramtestpy3.py</a>
 ##
 ## tracebacks
 File "/usr/lib/python2.7/socket.py", line 553, in create_connection

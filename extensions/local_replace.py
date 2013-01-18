@@ -85,7 +85,7 @@ substitutions = [
      r'<a href="http://hg.python.org/lookup/r\g<revision>">\g<revstr>\g<revision></a>'),
 
     # Lib/somefile.py, Lib/somefile.py:123, Modules/somemodule.c:123, ...
-    (re.compile(r'(?P<sep>(?<!\w/)|(?<!\w)/)(?P<path>(?:Demo|Doc|Grammar|'
+    (re.compile(r'(?P<sep>(?<!\w/)|(?<!\w)/)\b(?P<path>(?:Demo|Doc|Grammar|'
                 r'Include|Lib|Mac|Misc|Modules|Parser|PC|PCbuild|Python|'
                 r'RISCOS|Tools|Objects)/[-.\w/]+[a-zA-Z0-9]/?)(?P<lnum>:\d{1,5})?'),
      make_file_link),
