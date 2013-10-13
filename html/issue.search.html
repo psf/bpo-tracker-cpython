@@ -241,8 +241,8 @@
   <th i18n:translate="">Status:</th>
   <td metal:use-macro="search_select_translated">
     <tal:block metal:fill-slot="extra_options">
-      <option value="-1,1,3" i18n:translate=""
-              tal:attributes="selected python:value == '-1,1,3'">not closed</option>
+      <option value="-1,1,3,4" i18n:translate=""
+              tal:attributes="selected python:value == '-1,1,3,4'">not closed</option>
       <option value="-1" i18n:translate=""
               tal:attributes="selected python:value == '-1'">not selected</option>
     </tal:block>
