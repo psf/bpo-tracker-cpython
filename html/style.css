@@ -507,6 +507,13 @@ textarea:focus, select:focus {
   font-size: 90%;
 }
 
+p#contribform {
+    border: 1px solid #000000;
+    padding: .5em;
+    color: #000000;
+    background-color: #eee;
+}
+
 .calendar_display {
   text-align: center;
 }

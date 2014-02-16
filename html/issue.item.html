@@ -273,6 +273,16 @@
  </tr>
 </table>
 
+<p tal:condition="python: context.id and not request.user.contrib_form and
+                  any(file.creator.id == request.user.id for file in context.files)"
+   id="contribform">
+    In order to accept your patches, core developers have to verify that you
+    have signed the contributor agreement.<br>
+    If you haven't done so yet, please <a href="http://www.python.org/psf/contrib/contrib-form/">
+    fill in the contributor agreement form</a>.<br>
+    (Note that it might take a few days before your tracker profile is updated;
+     once it's done your name will have a * next to it.)</p>
+
 <table class="files" tal:condition="context/hgrepos">
  <tr><th class="Header" colspan="4">Repositories containing patches</th></tr>
  <tr tal:repeat="hgrepo python:context.hgrepos.sorted('creation')">
