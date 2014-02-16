@@ -264,8 +264,7 @@ status_all string:-1,1,2,3;
     tal:repeat="m options/error_message" tal:content="m" />
  <p tal:condition="options/ok_message | nothing" class="ok-message">
   <span style="white-space:pre" tal:content="python:
-        '\n'.join(', '.join(m.strip() for m in line.split(',') if '_count' not in m)
-                  for line in options['ok_message']) + '\n'" />
+        utils.clean_ok_message(options['ok_message'])" />
   <a class="form-small" tal:attributes="href request/current_url"
      i18n:translate="">clear this message</a>
  </p>

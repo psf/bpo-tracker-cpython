@@ -1,3 +1,4 @@
+import re
 import random
 from roundup.cgi.actions import Action
 from roundup.cgi.exceptions import Redirect
@@ -18,6 +19,11 @@ def is_coordinator(request):
     user = request.client.userid
     db = request.client.db
     return 'Coordinator' in db.user.get(user, 'roles')
+
+def clean_ok_message(ok_message):
+    """Remove nosy_count and message_count from the ok_message."""
+    pattern = '\s*(?:nosy|message)_count,|,\s*(?:nosy|message)_count(?= edited)'
+    return '\n'.join(re.sub(pattern, '', line) for line in ok_message) + '\n'
 
 
 def issueid_and_action_from_class(cls):
@@ -54,6 +60,7 @@ class RandomIssueAction(Action):
 def init(instance):
     instance.registerUtil('is_history_ok', is_history_ok)
     instance.registerUtil('is_coordinator', is_coordinator)
+    instance.registerUtil('clean_ok_message', clean_ok_message)
     instance.registerUtil('issueid_and_action_from_class',
                           issueid_and_action_from_class)
     instance.registerAction('random', RandomIssueAction)
