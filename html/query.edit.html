@@ -72,7 +72,7 @@ function retire(qid) {
   <select tal:attributes="name string:query${query/id}@private_for">
    <option tal:attributes="selected python:query.private_for == uid;
            value uid" i18n:translate="">yes</option>
-   <option tal:attributes="selected python:query.private_for == None"
+   <option tal:attributes="selected python:not query.private_for"
            value="-1" i18n:translate="">no</option>
   </select>
  </td>
