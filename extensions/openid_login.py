@@ -248,7 +248,7 @@ class OpenidReturn(Action, Openid):
         for key in self.form:
             if key.startswith('openid'):
                 openid_fields.append((key, self.form.getfirst(key)))
-        pt = self.client.instance.templates.get('user', 'openid')
+        pt = self.client.instance.templates.get('user.openid')
         username = openid2rp.get_username(query)
         realname = None
         if username:
