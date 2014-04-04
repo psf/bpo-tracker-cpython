@@ -74,7 +74,7 @@ class CreatePatch(Action):
         files.append(fileid)
         db.issue.set(self.nodeid, files=files)
         db.hgrepo.set(repo, lastrev=head)
-        self.client.ok_message.append('Successfully downloaded %s.diff' % head)
+        self.client.add_ok_message('Successfully downloaded %s.diff' % head)
         db.commit()
 
 def init(instance):
