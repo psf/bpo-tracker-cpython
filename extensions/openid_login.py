@@ -149,11 +149,11 @@ class OpenidProviderLogin(Action, Openid):
     'Login action with provider-guided login'
     def handle(self):
         if 'provider' not in self.form:
-            self.client.error_message.append(self._('Provider name required'))
+            self.client.add_error_message(self._('Provider name required'))
             return
         provider = self.form['provider'].value
         if provider not in providers:
-            self.client.error_message.append(self._('Unsupported provider'))
+            self.client.add_error_message(self._('Unsupported provider'))
             return
         provider_id = providers[provider][2]
         # For most providers, it would be reasonable to cache the discovery
@@ -165,7 +165,7 @@ class OpenidProviderLogin(Action, Openid):
         except Exception:
             result = None
         if result is None:
-            self.client.error_message.append('Provider %s appears to be down' % providers[provider][0])
+            self.client.add_error_message('Provider %s appears to be down' % providers[provider][0])
             return
         services, op_endpoint, op_local = result
         session = self.get_session(op_endpoint, services)
@@ -268,7 +268,7 @@ class OpenidReturn(Action, Openid):
 class OpenidDelete(Action):
     def handle(self):
         if not self.form.has_key('openid'):
-            self.client.error_message.append('OpenID required')
+            self.client.add_error_message('OpenID required')
             return
         ID = self.form['openid'].value
         openids = self.db.user.get(self.userid, 'openids')

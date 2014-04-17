@@ -48,12 +48,12 @@ class CreatePatch(Action):
         if self.classname != 'issue':
             raise Reject, "create_patch is only useful for issues"
         if not self.form.has_key('@repo'):
-            self.client.error_message.append('hgrepo missing')
+            self.client.add_error_message('hgrepo missing')
             return
         repo = self.form['@repo'].value
         url = db.hgrepo.get(repo, 'url')
         if not url:
-            self.client.error_message.append('unknown hgrepo url')
+            self.client.add_error_message('unknown hgrepo url')
             return
         lastrev = db.hgrepo.get(repo, 'lastrev')
         patchbranch = db.hgrepo.get(repo, 'patchbranch')
@@ -62,10 +62,10 @@ class CreatePatch(Action):
         try:
             diff, head = download_patch(url, lastrev, patchbranch)
         except NotChanged:
-            self.client.error_message.append('%s.diff is already available' % lastrev)
+            self.client.add_error_message('%s.diff is already available' % lastrev)
             return
         except Exception, e:
-            self.client.error_message.append(str(e))
+            self.client.add_error_message(str(e))
             return
         fileid = db.file.create(name='%s.diff' % head,
                                 type='text/plain',
