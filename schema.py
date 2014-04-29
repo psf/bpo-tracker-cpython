@@ -328,10 +328,13 @@ for cl in ('issue_type', 'severity', 'component',
 db.security.addPermissionToRole('Coordinator', 'SB: May Classify')
 db.security.addPermissionToRole('Developer', 'SB: May Classify')
 
-# May users view other user information? Comment these lines out
-# if you don't want them to
-db.security.addPermissionToRole('User', 'View', 'user')
-db.security.addPermissionToRole('Developer', 'View', 'user')
+# Allow Users and Developers to view most user properties.
+p =  db.security.addPermission(name='View', klass='user',
+   properties=('username', 'address', 'realname', 'phone',
+         'organisation', 'alternate_addresses', 'timezone'))
+db.security.addPermissionToRole('User', p)
+db.security.addPermissionToRole('Developer', p)
+# Coordinator may view all user properties.
 db.security.addPermissionToRole('Coordinator', 'View', 'user')
 
 # Allow Coordinator to edit any user, including their roles.

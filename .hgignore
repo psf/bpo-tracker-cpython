@@ -6,3 +6,4 @@ db/backend_name
 html/recent-changes.xml
 **.pyc
 **~
+*.swp
