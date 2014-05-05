@@ -329,9 +329,10 @@ db.security.addPermissionToRole('Coordinator', 'SB: May Classify')
 db.security.addPermissionToRole('Developer', 'SB: May Classify')
 
 # Allow Users and Developers to view most user properties.
-p =  db.security.addPermission(name='View', klass='user',
-   properties=('id', 'username', 'address', 'realname', 'phone',
-         'organisation', 'alternate_addresses', 'timezone'))
+p = db.security.addPermission(name='View', klass='user',
+        properties=('id', 'username', 'address', 'realname', 'phone',
+                    'organisation', 'alternate_addresses', 'timezone',
+                    'roles', 'contrib_form', 'iscommitter', 'homepage'))
 db.security.addPermissionToRole('User', p)
 db.security.addPermissionToRole('Developer', p)
 # Coordinator may view all user properties.
