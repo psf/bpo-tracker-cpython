@@ -32,6 +32,8 @@ Options:
                         Print journal for all the transactions in the given
                         date range.
     -D, --DEBUG         Print email content without sending it if -m is used.
+    --update-stats-file=FILENAME
+                        Append tracker stats to JSON file FILENAME.
 """
 
 # This script has a class (Report) that filters the issues and generates txt
@@ -41,9 +43,10 @@ Options:
 import sys
 # hardcode the path to roundup
 sys.path.insert(1, '/home/roundup/lib/python2.6/site-packages')
-#sys.path.insert(1, '/opt/tracker-roundup/lib/python2.6/site-packages/')
 
 import cgi
+import json
+import os.path
 import optparse
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -131,6 +134,9 @@ def get_options_and_home():
     advanced.add_option(
         '-D', '--DEBUG', dest='debug', action='store_true', default=False,
         help='Print email content without sending it if -m is used.')
+    advanced.add_option(
+        '--update-stats-file', dest='update_stats', metavar='FILENAME',
+        help='Append tracker stats to JSON file FILENAME.')
     parser.add_option_group(advanced)
 
     # Get the command line args:
@@ -712,6 +718,33 @@ def send_report(recipient, txt_report, html_report=None):
         smtp.sendmail(config.ADMIN_EMAIL, recipient, msg.as_string())
 
 
+def update_stats_file(stats, filename):
+    # This function will look for a JSON file in the html/ dir of the instance
+    # and append the data for the current week.  If the file doesn't exist it
+    # will create a new one.  This function won't happend the same data twice
+    # in a single day, but if this script is run on different dates it will.
+    # In order to generate an initial JSON file with historical data, use
+    # the scripts/issuestats.py script.  These data are used by the
+    # issue.stats.html page.
+    stats = dict(stats)  # make a copy
+    stats_file = os.path.join(instance_home, 'html', OPTIONS.update_stats)
+    try:
+        with open(stats_file) as fi:
+            j = json.load(fi)
+    except IOError:
+        j = dict(open=[], closed=[], total=[], timespan=[], patches=[],
+                 open_delta=[], closed_delta=[], total_delta=[])
+    timespan = stats.pop('timespan').split(' - ')
+    if timespan in j['timespan']:
+        return  # we already updated the file today
+    j['timespan'].append(timespan)
+    for k, v in stats.items():
+        if k in j:
+            j[k].append(v)
+    with open(stats_file, 'w') as fo:
+        json.dump(j, fo)
+
+
 def main():
     """Create the report and print or send it."""
     issue_attrs = issues_map()
@@ -727,6 +760,8 @@ def main():
         for recipient in OPTIONS.mailTo.split(','):
             send_report(recipient, txt_report, html_report)
 
+    if OPTIONS.update_stats:
+        update_stats_file(report.header_content, OPTIONS.update_stats)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,107 @@
+<tal:block metal:use-macro="templates/page/macros/icing">
+<title metal:fill-slot="head_title" >
+  <span tal:omit-tag="true" i18n:translate="" >Issues stats</span>
+  <span tal:condition="request/dispname"
+   tal:replace="python:' - %s '%request.dispname"
+  /> - <span tal:replace="config/TRACKER_NAME" />
+</title>
+
+<metal:slot fill-slot="more-javascript">
+<script type="text/javascript" src="http://cdn.jsdelivr.net/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.jsdelivr.net/jqplot/1.0.8/jquery.jqplot.js"></script>
+<link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/jqplot/1.0.8/jquery.jqplot.css">
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.dateAxisRenderer.min.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.barRenderer.min.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.canvasTextRenderer.min.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.pointLabels.min.js"></script>
+
+<script type="text/javascript">
+function make_chart(id, title, series, type, labels, ticks) {
+    if (labels == null)
+        var legend = {show: false};
+    else
+        var legend = {show: true, location: 'nw', labels: labels};
+    if (type == 'line') {
+        var series_renderer = $.jqplot.LineRenderer;
+        var axis_renderer = $.jqplot.DateAxisRenderer;
+        var show_label = false;
+    }
+    else {
+        var series_renderer = $.jqplot.BarRenderer;
+        var axis_renderer = $.jqplot.CategoryAxisRenderer;
+        var show_label = true;
+    }
+    var plot = $.jqplot(id, series, {
+        title: title,
+        seriesColors: ["#3771a0", "#fcd449"],
+        seriesDefaults: {renderer:series_renderer, showMarker:false,
+                         pointLabels: { show: show_label },
+                         rendererOptions: {fillToZero: true}},
+        axes: {xaxis:{renderer:axis_renderer, ticks:ticks,
+                      tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                      tickOptions: {angle: -30}}},
+        legend: legend,
+    });
+}
+
+function zip(first, second) {
+    var res = [];
+    // assume same length
+    for (var k = 0; k < first.length; k++) {
+        res.push([first[k], second[k]]);
+    }
+    return res;
+}
+
+$(document).ready(function(){
+    $.getJSON("@@file/issue.stats.json", function(j) {
+        var dates = [];
+        for (var k = 0; k < j.timespan.length; k++) {
+            dates.push(j.timespan[k][1]);
+        }
+
+        var num = -25;  // show only last 25 weeks
+
+        make_chart('open_patches', 'Open issues (total)',
+                   [zip(dates, j.open), zip(dates, j.patches)],
+                   'line', ['Open issues', 'Open issues with patches']);
+        make_chart('open_deltas', 'Open issues deltas (weekly)',
+                   [j.open_delta.slice(num)], 'bar', null, dates.slice(num));
+        make_chart('open_closed_week', 'Opened and Closed (weekly)',
+                   [j.total_delta.slice(num), j.closed_delta.slice(num)],
+                   'bar', ['Opened', 'Closed'], dates.slice(num));
+        make_chart('closed_total', 'Closed and Total issues (total)',
+                   [zip(dates, j.closed), zip(dates, j.total)],
+                   'line', ['Closed', 'Total']);
+    });
+});
+</script>
+</metal:slot>
+
+<span metal:fill-slot="body_title" tal:omit-tag="true">
+  <span tal:omit-tag="true" i18n:translate="" >Issues stats</span>
+  <span tal:condition="request/dispname"
+   tal:replace="python:' - %s' % request.dispname" />
+</span>
+<tal:block metal:fill-slot="content">
+
+<p>These charts are updated weekly.  JavaScript must be enabled to see the charts.</p>
+
+<p>Total number of open issues and open issues with patches:</p>
+<div id="open_patches"></div>
+
+<p>Delta of open issues compared with the previous week.  If the delta is positive,
+the total number of open issues increased; if negative, the total number decreased.</p>
+<div id="open_deltas"></div>
+
+<p>Number of issues that have been opened and closed during each week.
+The difference between these two values is shown in the previous graph.</p>
+<div id="open_closed_week"></div>
+
+<p>The number of closed issues, and the number of issues regardless of their status:</p>
+<div id="closed_total"></div>
+
+</tal:block>
+</tal:block>
