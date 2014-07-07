@@ -23,7 +23,7 @@ def is_coordinator(request):
 def clean_ok_message(ok_message):
     """Remove nosy_count and message_count from the ok_message."""
     pattern = '\s*(?:nosy|message)_count,|,\s*(?:nosy|message)_count(?= edited)'
-    return '\n'.join(re.sub(pattern, '', line) for line in ok_message) + '\n'
+    return ''.join(re.sub(pattern, '', line) for line in ok_message) + '<br>'
 
 
 def issueid_and_action_from_class(cls):
