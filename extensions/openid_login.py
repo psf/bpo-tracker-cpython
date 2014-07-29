@@ -6,7 +6,6 @@ from roundup import date, password
 providers = {}
 for p in (
     ('Google', 'https://www.google.com/favicon.ico', 'https://www.google.com/accounts/o8/id'),
-    ('myOpenID', 'https://www.myopenid.com/favicon.ico', 'https://www.myopenid.com/'),
     ('Launchpad', 'https://login.launchpad.net/favicon.ico', 'https://login.launchpad.net/')
     ):
     providers[p[0]] = p
