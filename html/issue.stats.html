@@ -19,27 +19,34 @@
 
 <script type="text/javascript">
 function make_chart(id, title, series, type, labels, ticks) {
-    if (labels == null)
-        var legend = {show: false};
-    else
-        var legend = {show: true, location: 'nw', labels: labels};
-    if (type == 'line') {
-        var series_renderer = $.jqplot.LineRenderer;
-        var axis_renderer = $.jqplot.DateAxisRenderer;
-        var show_label = false;
+    var legend,
+        series_renderer,
+        axis_renderer,
+        show_label;
+
+    if (labels === undefined) {
+        legend = {show: false};
+    } else {
+        legend = {show: true, location: 'nw', labels: labels};
     }
-    else {
-        var series_renderer = $.jqplot.BarRenderer;
-        var axis_renderer = $.jqplot.CategoryAxisRenderer;
-        var show_label = true;
+
+    if (type === 'line') {
+        series_renderer = $.jqplot.LineRenderer;
+        axis_renderer = $.jqplot.DateAxisRenderer;
+        show_label = false;
+    } else {
+        series_renderer = $.jqplot.BarRenderer;
+        axis_renderer = $.jqplot.CategoryAxisRenderer;
+        show_label = true;
     }
-    var plot = $.jqplot(id, series, {
+
+    $.jqplot(id, series, {
         title: title,
         seriesColors: ["#3771a0", "#fcd449"],
-        seriesDefaults: {renderer:series_renderer, showMarker:false,
+        seriesDefaults: {renderer: series_renderer, showMarker: false,
                          pointLabels: { show: show_label },
                          rendererOptions: {fillToZero: true}},
-        axes: {xaxis:{renderer:axis_renderer, ticks:ticks,
+        axes: {xaxis: {renderer: axis_renderer, ticks: ticks,
                       tickRenderer: $.jqplot.CanvasAxisTickRenderer,
                       tickOptions: {angle: -30}}},
         legend: legend,
@@ -47,22 +54,24 @@ function make_chart(id, title, series, type, labels, ticks) {
 }
 
 function zip(first, second) {
-    var res = [];
+    var res = [],
+        k;
     // assume same length
-    for (var k = 0; k < first.length; k++) {
+    for (k = 0; k < first.length; k += 1) {
         res.push([first[k], second[k]]);
     }
     return res;
 }
 
-$(document).ready(function(){
-    $.getJSON("@@file/issue.stats.json", function(j) {
-        var dates = [];
-        for (var k = 0; k < j.timespan.length; k++) {
+$(document).ready(function () {
+    $.getJSON("@@file/issue.stats.json", function (j) {
+        var dates = [],
+            num = -25,  // show only last 25 weeks
+            k;
+
+        for (k = 0; k < j.timespan.length; k += 1) {
             dates.push(j.timespan[k][1]);
         }
-
-        var num = -25;  // show only last 25 weeks
 
         make_chart('open_patches', 'Open issues (total)',
                    [zip(dates, j.open), zip(dates, j.patches)],
