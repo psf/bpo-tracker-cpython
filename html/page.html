@@ -184,7 +184,7 @@ status_all string:-1,1,2,3;
 
         <li tal:condition="python:request.user.username=='anonymous'">
           <strong i18n:translate="">User</strong>
-          <form method="post" action="#">
+          <form method="post" tal:attributes="action string:${request/env/PATH_INFO}">
           <ul class="level-three">
             <li>
                 <tal:span i18n:translate="">Login</tal:span>&nbsp;(OpenID&nbsp;possible)<br />
