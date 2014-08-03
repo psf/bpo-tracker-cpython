@@ -153,7 +153,7 @@ use_browser_language = no
 # tracker admin.
 # Allowed values: yes, no
 # Default: no
-debug = no
+debug = yes
 
 # Settings in this section are used by Postgresql and MySQL backends only
 [rdbms]
@@ -222,7 +222,7 @@ level = ERROR
 
 # Domain name used for email addresses.
 # Default: NO DEFAULT
-#domain = NO DEFAULT
+domain = NODEFAULT
 
 # SMTP mail host that roundup will use to send mail
 # Default: NO DEFAULT
@@ -275,7 +275,7 @@ charset = utf-8
 # The path may be either absolute or relative
 # to the directory containig this config file.
 # Default: 
-debug = 
+debug = debugmail.txt
 
 # Roundup Mail Gateway options
 [mailgw]
