@@ -24,7 +24,7 @@ function make_chart(id, title, series, type, labels, ticks) {
         axis_renderer,
         show_label;
 
-    if (labels === undefined) {
+    if ((labels === undefined) || (labels === null)) {
         legend = {show: false};
     } else {
         legend = {show: true, location: 'nw', labels: labels};
