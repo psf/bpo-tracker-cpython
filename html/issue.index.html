@@ -28,7 +28,7 @@
    <th tal:condition="request/show/creation" i18n:translate="">Creation</th>
    <th tal:condition="request/show/activity" i18n:translate="">Activity</th>
    <th tal:condition="request/show/actor" i18n:translate="">Actor</th>
-   <th tal:condition="request/show/title" i18n:translate="">Title</th>
+   <th tal:condition="request/show/title" i18n:translate="" colspan="2">Title</th>
    <th tal:condition="request/show/components"  i18n:translate="">Components</th>
    <th tal:condition="request/show/versions" i18n:translate="">Versions</th>
    <th tal:condition="request/show/stage" i18n:translate="">Stage</th>
@@ -65,6 +65,10 @@
    <td tal:condition="request/show/title">
     <a tal:attributes="href string:issue${i/id}"
 		tal:content="python:str(i.title.plain(hyperlink=0)) or '[no title]'">title</a>
+   </td>
+   <td tal:condition="request/show/title" class="patch">
+     <img tal:condition="python:'patch' in list(str(x.name) for x in i.keywords)"
+          src="@@file/patch-icon.png" alt="has patch" title="has patch" />
    </td>
    <td tal:condition="request/show/components"
        tal:content="python:i.components.plain() or default">&nbsp;</td>

@@ -116,6 +116,14 @@ td.date, th.date {
   white-space: nowrap;
 }
 
+td.patch {
+    width: 16px;
+}
+
+tr.even td.patch {
+    border-left-color: #f0f0f0;
+}
+
 p.ok-message
 {
   background-color: #22bb22;
