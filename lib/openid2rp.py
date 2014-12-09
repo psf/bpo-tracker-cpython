@@ -484,7 +484,8 @@ AX.last      = "http://axschema.org/namePerson/last"
 def request_authentication(services, url, assoc_handle, return_to,
                            claimed=None, op_local=None, realm=None,
                            sreg = (('nickname', 'email'), ()),
-                           ax = ((AX.email, AX.first, AX.last), ())):
+                           ax = ((AX.email, AX.first, AX.last), ()),
+                           extra = {}):
     '''Request authentication (OpenID section 9).
     services is the list of discovered service types,
     url the OP service URL, assoc_handle the established session
@@ -519,6 +520,7 @@ def request_authentication(services, url, assoc_handle, return_to,
         'openid.realm':realm,
         'openid.sreg.required':'nickname,email',
         }
+    data.update(extra)
     sreg_req, sreg_opt = sreg
     sreg11 = {}
     if sreg_req or sreg_opt:

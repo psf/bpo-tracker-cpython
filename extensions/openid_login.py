@@ -5,8 +5,8 @@ from roundup import date, password
 
 providers = {}
 for p in (
-    ('Google', 'https://www.google.com/favicon.ico', 'https://www.google.com/accounts/o8/id'),
-    ('Launchpad', 'https://launchpad.net/favicon.ico', 'https://login.launchpad.net/')
+    ('Google', 'https://www.google.com/favicon.ico', 'https://www.google.com/accounts/o8/id', {'openid_shutdown_ack':'2015-04-20'}),
+    ('Launchpad', 'https://launchpad.net/favicon.ico', 'https://login.launchpad.net/', {})
     ):
     providers[p[0]] = p
 
@@ -155,6 +155,7 @@ class OpenidProviderLogin(Action, Openid):
             self.client.add_error_message(self._('Unsupported provider'))
             return
         provider_id = providers[provider][2]
+        extra = providers[provider][3]
         # For most providers, it would be reasonable to cache the discovery
         # results. However, the risk of login breaking if a provider does change
         # its service URL outweighs the cost of another HTTP request to perform
@@ -171,7 +172,8 @@ class OpenidProviderLogin(Action, Openid):
         realm = self.base+"?@action=openid_return"
         return_to = realm + "&__came_from=%s" % urllib.quote(self.client.path)
         url = openid2rp.request_authentication(services, op_endpoint,
-                                            session.assoc_handle, return_to, realm=realm)
+                                            session.assoc_handle, return_to, realm=realm,
+                                            extra = extra)
         raise Redirect, url
 
 class OpenidReturn(Action, Openid):
@@ -309,7 +311,7 @@ class OpenidRegister(RegisterAction, Openid):
 
 def openid_links(request):
     res = []
-    for prov, icon, url in providers.values():
+    for prov, icon, url, extra in providers.values():
         res.append({'href':request.env['PATH_INFO']+'?@action=openid_login&provider='+prov,
                     'src':icon,
                     'title':prov,
