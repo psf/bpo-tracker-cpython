@@ -1,0 +1,12 @@
+# -*- python -*-
+# Add OpenID Connect registration
+# Usage: addoic provider client_id client_secret
+import sys
+sys.path.insert(1,'/home/roundup/roundup/lib/python2.6/site-packages')
+import roundup.instance
+
+tracker = roundup.instance.open('.')
+db = tracker.open('admin')
+
+reg = db.oic_registration.create(issuer=sys.argv[1], client_id=sys.argv[2], client_secret=sys.argv[3])
+db.commit()
