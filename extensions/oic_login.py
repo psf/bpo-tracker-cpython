@@ -177,6 +177,12 @@ class OICAuthResp(Action, OICMixin):
         name = userinfo['name'].encode('utf-8')
         email = userinfo['email'].encode('utf-8')
         email_verified = userinfo['email_verified'] == 'true'
+
+        # avoid creation of duplicate accounts
+        users = self.db.user.filter(None, {'address': email})
+        if users:
+            raise ValueError, "There is already an account for " + email
+
         # create account
         pw = password.Password(password.generatePassword())
         user = self.db.user.create(username=name,
