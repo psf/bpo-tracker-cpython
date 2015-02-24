@@ -96,7 +96,7 @@ user = Class(db, "user",
              contrib_form_date=Date(),
              openids=String(), # space separated list
              iscommitter=Boolean(),
-             homepage=String(),
+             homepage=String()
              )
 user.setkey("username")
 db.security.addPermission(name='Register', klass='user',
@@ -122,6 +122,23 @@ openid_nonce = Class(db, 'openid_nonce',
                      created=Date(),
                      nonce=String())
 openid_nonce.setkey('nonce')
+
+# OpenID Connect
+oic_session = Class(db, 'oic_session',
+                    sid=String(),
+                    pickle=String())
+oic_session.setkey('sid')
+oic_session.disableJournalling()
+
+oic_account = Class(db, 'oic_account',
+                    user=Link('user', do_journal='no'),
+                    issuer=String(),
+                    subject=String())
+
+oic_registration = Class(db, 'oic_registration',
+                         issuer=String(),
+                         client_id=String(),
+                         client_secret=String())
 
 # FileClass automatically gets this property in addition to the Class ones:
 #   content = String()    [saved to disk in <tracker home>/db/files/]
@@ -389,6 +406,13 @@ p = db.security.addPermission(name='Retire', klass='query', check=edit_query,
 for r in 'User', 'Developer', 'Coordinator':
     db.security.addPermissionToRole(r, p)
 
+# View your own oics
+def view_oic(db, userid, itemid):
+    return db.oic_account.get(itemid, 'user') == userid
+p = db.security.addPermission(name='View', klass='oic_account', check=view_oic,
+    description="User is allowed to view their own oics")
+for r in 'User', 'Developer', 'Coordinator':
+    db.security.addPermissionToRole(r, p)
 
 #
 # ANONYMOUS USER PERMISSIONS

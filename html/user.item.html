@@ -189,6 +189,24 @@ anybody@everywhere.net
 </form>
 </p>
 
+<tal:block define="oics python:db._db.oic_account.filter(None,{'user':context.id})">
+<table class="form" tal:condition="oics">
+<tr><th colspan="3" style="text-align:left">OpenID Connect</th></tr>
+<tr tal:repeat="id oics">
+ <tal:block define="oic python:db.oic_account.getItem(id)">
+  <td tal:content="oic/issuer"/>
+  <td tal:content="oic/subject"/>
+  <td><form tal:attributes="action context/designator" method="post">
+      <input type="hidden" name="@action" value="oic_delete"/>
+      <input type="hidden" name="openid" tal:attributes="value oic/id"/>
+      <input type="submit" value="Drop this ID"/>
+      </form>
+  </td>
+ </tal:block>
+</tr>
+</table>
+</tal:block>
+
 <tal:block tal:condition="not:context/id" i18n:translate="">
 <table class="form">
 <tr>
