@@ -79,7 +79,7 @@ class OICLogin(Action, OICMixin):
             #"client_id": client.client_id,
             "response_type": "code",
             "scope": self.scopes,
-            "openid.realm": self.base,
+            "openid.realm": self.base+"?@action=openid_return",
             #"nonce": hmac.new(_nonce, digestmod=hashlib.sha224),
             "redirect_uri": client.redirect_uris[0]
             }
