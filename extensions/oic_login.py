@@ -5,6 +5,7 @@ from oic.oic.message import RegistrationResponse
 from oic.oic.message import AuthorizationResponse
 import hashlib
 import hmac
+import random
 from UserDict import DictMixin
 from oic.oauth2 import rndstr
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
