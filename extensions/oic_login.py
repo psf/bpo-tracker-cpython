@@ -66,7 +66,7 @@ class OICMixin:
                                           client_secret=provider['client_secret'])
         client.store_registration_info(client_reg)
         return client
-    
+
 
 class OICLogin(Action, OICMixin):
     def handle(self):
@@ -107,7 +107,7 @@ class OICAuthResp(Action, OICMixin):
         if self.form.has_key('__came_from'):
             raise Redirect, self.form['__came_from'].value
         return
-        
+
     def handle(self):
         client = self.init_oic()
         client.redirect_uris=[self.base+'index?@action=oic_authresp']
@@ -146,7 +146,7 @@ class OICAuthResp(Action, OICMixin):
                 assert len(oic_account)==1
                 user = self.db.oic_account.get(oic_account[0], 'user')
                 return self.login(user)
-                
+
             try:
                 openid_id = id_token['openid_id']
                 # find user by OpenID 2, then associate iss and sub
@@ -168,7 +168,7 @@ class OICAuthResp(Action, OICMixin):
                 pass
 
         # New user, request info from provider
-        
+
         # XXX Google insists on GET
         userinfo = client.do_user_info_request(method="GET", state=aresp["state"])
 
