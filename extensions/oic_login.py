@@ -21,6 +21,7 @@ consumer_config = {
 client_config = {
     'client_authn_method':CLIENT_AUTHN_METHOD,
 }
+chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 
 class SessionStore(DictMixin):
     def __init__(self, db):
