@@ -216,7 +216,7 @@ class OICAuthResp(Action, OICMixin):
         # However, the confrego action does not support preserving the OIC parameters,
         # as they live in a different table. This could be fixed by using an alternative
         # confirmation action. Doing so is deferred until need arises
-        raise ValueError, "Your OpenID Connect account is not support. Please contact tracker-discuss@python.org"
+        raise ValueError, "Your OpenID Connect account is not supported. Please contact tracker-discuss@python.org"
 
 class OICDelete(Action):
     def handle(self):
