@@ -210,53 +210,13 @@ class OICAuthResp(Action, OICMixin):
             self.db.commit()
             return self.login(user)
 
-        # email not verified: require email confirmation
-        # generate the one-time-key and store the props for later
-        user_props = {'username':username, 
-                      'realname':name,
-                      'password':password.Password(password.generatePassword()),
-                      'roles':self.db.config['NEW_WEB_USER_ROLES'],
-                      'address':email}
-        for propname, proptype in self.db.user.getprops().iteritems():
-            value = user_props.get(propname, None)
-            if value is None:
-                pass
-            elif isinstance(proptype, hyperdb.Date):
-                user_props[propname] = str(value)
-            elif isinstance(proptype, hyperdb.Interval):
-                user_props[propname] = str(value)
-            elif isinstance(proptype, hyperdb.Password):
-                user_props[propname] = str(value)
-        otks = self.db.getOTKManager()
-        otk = ''.join([random.choice(chars) for x in range(32)])
-        while otks.exists(otk):
-            otk = ''.join([random.choice(chars) for x in range(32)])
-        otks.set(otk, **user_props)
-
-        otks = self.db.getOTKManager()
-        otk = ''.join([random.choice(chars) for x in range(32)])
-        while otks.exists(otk):
-            otk = ''.join([random.choice(chars) for x in range(32)])
-        otks.set(otk, **user_props)
-
-        # Send the email
-        tracker_name = self.db.config.TRACKER_NAME
-        tracker_email = self.db.config.TRACKER_EMAIL
-        subject = 'Complete your registration to %s'%(tracker_name)
-        body = """To complete your registration of the user "%(name)s" with
-%(tracker)s, please visit the following URL:
-
-%(url)s?@action=confrego&otk=%(otk)s
-
-""" % {'name': name, 'tracker': tracker_name,
-        'url': self.base, 'otk': otk}
-        if not self.client.standard_message([user_props['address']], subject,
-                body, (tracker_name, tracker_email)):
-            return
-        self.db.commit()
-
-        # redirect to the "you're almost there" page
-        raise Redirect('%suser?@template=rego_progress'%self.base)
+        # email not verified: fail
+        # In principle, it should be possible to do a email confirmation here
+        # See previous versions of this file for an attempt to do so
+        # However, the confrego action does not support preserving the OIC parameters,
+        # as they live in a different table. This could be fixed by using an alternative
+        # confirmation action. Doing so is deferred until need arises
+        raise ValueError, "Your OpenID Connect account is not support. Please contact tracker-discuss@python.org"
 
 class OICDelete(Action):
     def handle(self):
