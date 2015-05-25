@@ -11,7 +11,7 @@ from oic.oauth2 import rndstr
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from roundup.cgi.actions import Action
 from roundup.cgi.exceptions import *
-from roundup import password
+from roundup import password, hyperdb
 
 HOSTNAME='lap-le.pst.beuth-hochschule.de'
 
@@ -99,7 +99,7 @@ class OICAuthResp(Action, OICMixin):
         self.client.user = self.db.user.get(self.client.userid, 'username')
         # From LoginAction.verifyLogin
         if not self.hasPermission("Web Access"):
-            raise exceptions.LoginError, self._(
+            raise LoginError, self._(
                 "You do not have permission to login")
         # From LoginAction.handle
         self.client.opendb(self.client.user)
@@ -195,6 +195,8 @@ class OICAuthResp(Action, OICMixin):
             suffix += 1
             username = name + str(suffix)
 
+        if email.startswith('martin2'):email_verified=False
+
         # create account
         if email_verified:
             pw = password.Password(password.generatePassword())
@@ -210,7 +212,11 @@ class OICAuthResp(Action, OICMixin):
 
         # email not verified: require email confirmation
         # generate the one-time-key and store the props for later
-        user_props = props[('user', None)]
+        user_props = {'username':username, 
+                      'realname':name,
+                      'password':password.Password(password.generatePassword()),
+                      'roles':self.db.config['NEW_WEB_USER_ROLES'],
+                      'address':email}
         for propname, proptype in self.db.user.getprops().iteritems():
             value = user_props.get(propname, None)
             if value is None:
@@ -250,7 +256,7 @@ class OICAuthResp(Action, OICMixin):
         self.db.commit()
 
         # redirect to the "you're almost there" page
-        raise exceptions.Redirect('%suser?@template=rego_progress'%self.base)
+        raise Redirect('%suser?@template=rego_progress'%self.base)
 
 class OICDelete(Action):
     def handle(self):
