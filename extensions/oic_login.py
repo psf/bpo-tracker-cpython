@@ -195,8 +195,6 @@ class OICAuthResp(Action, OICMixin):
             suffix += 1
             username = name + str(suffix)
 
-        if email.startswith('martin2'):email_verified=False
-
         # create account
         if email_verified:
             pw = password.Password(password.generatePassword())
