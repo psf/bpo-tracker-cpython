@@ -178,7 +178,7 @@ class OICAuthResp(Action, OICMixin):
         family_name = userinfo['family_name'].encode('utf-8')
         name = userinfo['name'].encode('utf-8')
         email = userinfo['email'].encode('utf-8')
-        email_verified = userinfo['email_verified'] == 'true'
+        email_verified = userinfo['email_verified']
 
         # avoid creation of duplicate accounts
         users = self.db.user.filter(None, {'address': email})
@@ -186,19 +186,37 @@ class OICAuthResp(Action, OICMixin):
             raise ValueError, "There is already an account for " + email
 
         # create account
-        pw = password.Password(password.generatePassword())
-        user = self.db.user.create(username=name,
+        if email_verified:
+            pw = password.Password(password.generatePassword())
+            user = self.db.user.create(username=name,
                                        realname=name,
                                        password=pw,
                                        roles=self.db.config['NEW_WEB_USER_ROLES'],
                                        address=email)
-        self.db.oic_account.create(user=user, issuer=iss, subject=sub)
-        if email_verified:
+            self.db.oic_account.create(user=user, issuer=iss, subject=sub)
             # complete login
             self.db.commit()
             return self.login(user)
 
-        # require email confirmation
+        # email not verified: require email confirmation
+        # generate the one-time-key and store the props for later
+        user_props = props[('user', None)]
+        for propname, proptype in self.db.user.getprops().iteritems():
+            value = user_props.get(propname, None)
+            if value is None:
+                pass
+            elif isinstance(proptype, hyperdb.Date):
+                user_props[propname] = str(value)
+            elif isinstance(proptype, hyperdb.Interval):
+                user_props[propname] = str(value)
+            elif isinstance(proptype, hyperdb.Password):
+                user_props[propname] = str(value)
+        otks = self.db.getOTKManager()
+        otk = ''.join([random.choice(chars) for x in range(32)])
+        while otks.exists(otk):
+            otk = ''.join([random.choice(chars) for x in range(32)])
+        otks.set(otk, **user_props)
+
         otks = self.db.getOTKManager()
         otk = ''.join([random.choice(chars) for x in range(32)])
         while otks.exists(otk):
@@ -220,6 +238,9 @@ class OICAuthResp(Action, OICMixin):
                 body, (tracker_name, tracker_email)):
             return
         self.db.commit()
+
+        # redirect to the "you're almost there" page
+        raise exceptions.Redirect('%suser?@template=rego_progress'%self.base)
 
 class OICDelete(Action):
     def handle(self):
