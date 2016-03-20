@@ -329,7 +329,7 @@
    <th i18n:translate="">Author:
        <tal:block define="author_name python:msg.author.realname.plain(unchecked=1)">
          <a tal:condition="python:msg.author.homepage and msg.author.homepage.is_view_ok()"
-            tal:attributes="href msg/author/homepage" tal:content="author_name">
+            tal:attributes="href msg/author/homepage" tal:content="author_name" rel="nofollow">
          </a><tal:x condition="python: not msg.author.homepage or not msg.author.homepage.is_view_ok()"
                     replace="author_name" />
        </tal:block>
