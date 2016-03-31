@@ -63,7 +63,9 @@ def clas_as_json(request, cls):
     for name in names:
         matches = cls.filter(None, {'github': name})
         if matches:
-            value = any(bool(match.contrib_form) for match in matches)
+            # if more users have the same GitHub username, check that
+            # at least one of them has signed the CLA
+            value = any(match.contrib_form for match in matches)
         else:
             value = None
         result[name] = value

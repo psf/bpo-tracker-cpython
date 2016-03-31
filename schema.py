@@ -354,9 +354,11 @@ p = db.security.addPermission(name='View', klass='user',
                     'github'))
 db.security.addPermissionToRole('User', p)
 db.security.addPermissionToRole('Developer', p)
+# Anonymous may view the github username.
+p = db.security.addPermission(name='View', klass='user', properties=('github',))
+db.security.addPermissionToRole('Anonymous', p)
 # Coordinator may view all user properties.
 db.security.addPermissionToRole('Coordinator', 'View', 'user')
-
 # Allow Coordinator to edit any user, including their roles.
 db.security.addPermissionToRole('Coordinator', 'Edit', 'user')
 db.security.addPermissionToRole('Coordinator', 'Web Roles')
