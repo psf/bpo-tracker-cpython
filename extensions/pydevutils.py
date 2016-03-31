@@ -1,4 +1,5 @@
 import re
+import json
 import random
 from roundup.cgi.actions import Action
 from roundup.cgi.exceptions import Redirect
@@ -47,6 +48,29 @@ def issueid_and_action_from_class(cls):
     return None, None
 
 
+def clas_as_json(request, cls):
+    """
+    Generate a JSON object that has the GitHub usernames as keys and as values
+    true if the user signed the CLA, false if not, or none if there is no user
+    associated with the GitHub username.
+    """
+    # pass the names as user?@template=clacheck&github_names=name1,name2
+    names = request.form['github_names'].value.split(',')
+
+    # Using cls.filter(None, {'github': names}) doesn't seem to work
+    # so loop through the names and look them up individually
+    result = {}
+    for name in names:
+        matches = cls.filter(None, {'github': name})
+        if matches:
+            value = any(bool(match.contrib_form) for match in matches)
+        else:
+            value = None
+        result[name] = value
+
+    return json.dumps(result, separators=(',',':'))
+
+
 class RandomIssueAction(Action):
     def handle(self):
         """Redirect to a random open issue."""
@@ -63,4 +87,5 @@ def init(instance):
     instance.registerUtil('clean_ok_message', clean_ok_message)
     instance.registerUtil('issueid_and_action_from_class',
                           issueid_and_action_from_class)
+    instance.registerUtil('clas_as_json', clas_as_json)
     instance.registerAction('random', RandomIssueAction)

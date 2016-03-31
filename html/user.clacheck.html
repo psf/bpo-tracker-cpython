@@ -1,0 +1,4 @@
+<tal:block tal:condition="context/is_view_ok"
+           content="python:utils.clas_as_json(request, context)">
+    {"user1":true,"user2":false,"user3":none}
+</tal:block>
