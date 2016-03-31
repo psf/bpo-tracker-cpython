@@ -90,6 +90,11 @@ define="edit_ok context/is_edit_ok"
  </tr>
  </tal:if>
 
+ <tr tal:condition="context/github/is_view_ok" tal:define="name string:github; label string:GitHub Name; value context/github">
+  <th metal:use-macro="th_label">GitHub Name</th>
+  <td><input name="github" metal:use-macro="normal_input"></td>
+ </tr>
+
  <tr tal:define="name string:organisation; label string:Organisation; value context/organisation">
   <th metal:use-macro="th_label">Organisation</th>
   <td><input name="organisation" metal:use-macro="normal_input"></td>

@@ -19,7 +19,7 @@
 <table class="form" tal:define="
        search_input templates/page/macros/search_input;">
 
-   <tr><th class="header" colspan="5">Search for users</th></tr>
+   <tr><th class="header" colspan="7">Search for users</th></tr>
    <tr>
        <th class="header">Username</th>
        <td tal:define="name string:username">
@@ -29,6 +29,12 @@
        </td>
        <th class="header">Realname</th>
        <td tal:define="name string:realname">
+           <input tal:attributes="value python:request.form.getvalue(name) or nothing;
+                         name name;
+                         id name"/>
+       </td>
+       <th class="header">GitHub</th>
+       <td tal:define="name string:github">
            <input tal:attributes="value python:request.form.getvalue(name) or nothing;
                          name name;
                          id name"/>
@@ -46,6 +52,7 @@
        tal:define="batch request/batch">
 <tr>
  <th i18n:translate="">Username</th>
+ <th>GitHub</th>
  <th i18n:translate="">Real name</th>
  <th i18n:translate="">Organisation</th>
  <th i18n:translate="">Email address</th>
@@ -57,6 +64,7 @@
   <a tal:attributes="href string:user${user/id}"
      tal:content="user/username">username</a><tal:if condition="user/contrib_form"><span tal:attributes="title string:Contributor form received on ${user/contrib_form_date/pretty}">&nbsp;*</span></tal:if>
  </td>
+ <td tal:content="python:user.github.plain() or default">&nbsp;</td>
  <td tal:content="python:user.realname.plain() or default">&nbsp;</td>
  <td tal:content="python:user.organisation.plain() or default">&nbsp;</td>
  <td tal:content="python:user.address.email() or default">&nbsp;</td>

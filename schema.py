@@ -97,6 +97,7 @@ user = Class(db, "user",
              openids=String(), # space separated list
              iscommitter=Boolean(),
              homepage=String(),
+             github=String(),
              )
 user.setkey("username")
 db.security.addPermission(name='Register', klass='user',
@@ -349,7 +350,8 @@ db.security.addPermissionToRole('Developer', 'SB: May Classify')
 p = db.security.addPermission(name='View', klass='user',
         properties=('id', 'username', 'address', 'realname', 'phone',
                     'organisation', 'alternate_addresses', 'timezone',
-                    'roles', 'contrib_form', 'iscommitter', 'homepage'))
+                    'roles', 'contrib_form', 'iscommitter', 'homepage',
+                    'github'))
 db.security.addPermissionToRole('User', p)
 db.security.addPermissionToRole('Developer', p)
 # Coordinator may view all user properties.
@@ -375,7 +377,7 @@ p = db.security.addPermission(name='Edit', klass='user', check=own_record,
                 'phone', 'organisation',
                 'alternate_addresses',
                 'queries', 'timezone',
-                'homepage'))
+                'homepage', 'github'))
                 # Note: 'roles' excluded - users should not be able to edit their own roles.
                 # Also excluded: contrib_form, contrib_form_date, iscommitter
 for r in 'User', 'Developer':
