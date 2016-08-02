@@ -12,7 +12,7 @@ try:
 except ImportError:
     import simplejson as json
 
-url = 'http://hg.python.org/devguide/raw-file/default/experts.rst'
+url = 'https://raw.githubusercontent.com/python/devguide/master/experts.rst'
 
 # possible states
 no_table = 0  # not parsing a table
