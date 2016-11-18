@@ -7,11 +7,24 @@ import hashlib
 import hmac
 import random
 from UserDict import DictMixin
-from oic.oauth2 import rndstr
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from roundup.cgi.actions import Action
 from roundup.cgi.exceptions import *
 from roundup import password, hyperdb
+
+try:
+    from oic.oauth2 import rndstr
+except ImportError:
+    import string
+
+    def rndstr(size=16):
+        """
+        Returns a string of random ascii characters or digits
+        :param size: The length of the string
+        :return: string
+        """
+        _basech = string.ascii_letters + string.digits
+        return "".join([random.choice(_basech) for _ in range(size)])
 
 HOSTNAME='lap-le.pst.beuth-hochschule.de'
 
