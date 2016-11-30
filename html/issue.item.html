@@ -220,6 +220,14 @@
  </td>
 </tr>
 
+<tr tal:condition="context/is_edit_ok">
+ <th><tal:block>GitHub PR</tal:block>:</th>
+ <td colspan="3">
+  <input type="hidden" name="@link@pull_requests" value="pull_request-1">
+  <input type="text" name="pull_request-1@number" size="50">
+ </td>
+</tr>
+
 </table>
 </fieldset>
 <table class="form">
@@ -273,10 +281,31 @@
  </tr>
 </table>
 
+<table class="files" tal:condition="context/pull_requests">
+ <tr><th class="header" colspan="4">Pull Requests</th></tr>
+ <tr>
+  <th>URL</th>
+  <th>Linked</th>
+  <th>Edit</th>
+ </tr>
+ <tr tal:repeat="pull_request python:context.pull_requests.sorted('creation')">
+  <td tal:content="structure python:utils.get_pr_url(pull_request)"></td>
+  <td>
+   <span tal:content="pull_request/creator">creator's name</span>,
+   <span tal:content="python:pull_request.creation.pretty('%Y-%m-%d %H:%M')">creation date</span>
+  </td>
+  <td>
+    <a tal:condition="pull_request/is_edit_ok"
+       tal:attributes="href string:pull_request${pull_request/id}">edit</a>
+  </td>
+ </tr>
+</table>
+
 <p tal:condition="python: context.id and not request.user.contrib_form and
-                  any(file.creator.id == request.user.id for file in context.files)"
+                  (any(file.creator.id == request.user.id for file in context.files) or
+                   any(pr.creator.id == request.user.id for pr in context.pull_requests))"
    id="contribform">
-    In order to accept your patches, core developers have to verify that you
+    In order to accept your patches/pull requests, core developers have to verify that you
     have signed the contributor agreement.<br>
     If you haven't done so yet, please <a href="http://www.python.org/psf/contrib/contrib-form/">
     fill in the contributor agreement form</a>.<br>
@@ -284,7 +313,7 @@
      once it's done your name will have a * next to it.)</p>
 
 <table class="files" tal:condition="context/hgrepos">
- <tr><th class="Header" colspan="4">Repositories containing patches</th></tr>
+ <tr><th class="header" colspan="4">Repositories containing patches</th></tr>
  <tr tal:repeat="hgrepo python:context.hgrepos.sorted('creation')">
   <td>
    <a tal:attributes="href hgrepo/url"

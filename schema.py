@@ -173,6 +173,12 @@ hgrepo = Class(db, "hgrepo",
                patchbranch=String(),
                )
 
+pull_request = Class(db, "pull_request",
+                     number=String(),
+                     title=String(),
+                     )
+pull_request.setlabelprop('id')
+
 # IssueClass automatically gets these properties in addition to the Class ones:
 #   title = String()
 #   messages = Multilink("msg")
@@ -194,7 +200,8 @@ issue = IssueClass(db, "issue",
                    stage=Link('stage'),
                    nosy_count=Number(),
                    message_count=Number(),
-                   hgrepos=Multilink('hgrepo'))
+                   hgrepos=Multilink('hgrepo'),
+                   pull_requests=Multilink('pull_request'))
 
 #
 # TRACKER SECURITY SETTINGS
@@ -222,7 +229,7 @@ for r in 'User', 'Developer', 'Coordinator':
 
 for cl in ('issue_type', 'severity', 'component',
            'version', 'priority', 'stage', 'status', 'resolution',
-           'issue', 'keyword', 'hgrepo'):
+           'issue', 'keyword', 'hgrepo', 'pull_request'):
     db.security.addPermissionToRole('User', 'View', cl)
     db.security.addPermissionToRole('Anonymous', 'View', cl)
 
@@ -231,6 +238,13 @@ def may_edit_hgrepo(db, userid, itemid):
 db.security.addPermissionToRole('User', 'Create', 'hgrepo')
 p = db.security.addPermission(name='Edit', klass='hgrepo', check=may_edit_hgrepo,
                               properties=['url', 'patchbranch'])
+db.security.addPermissionToRole('User', p)
+
+def may_edit_pull_request(db, userid, itemid):
+    return userid == db.pull_request.get(itemid, "creator")
+db.security.addPermissionToRole('User', 'Create', 'pull_request')
+p = db.security.addPermission(name='Edit', klass='pull_request',
+                              check=may_edit_pull_request, properties=['number', 'title'])
 db.security.addPermissionToRole('User', p)
 
 class may_view_spam:
@@ -292,7 +306,7 @@ p = db.security.addPermission(name='Create', klass='issue',
                               properties=('title', 'type',
                                           'components', 'versions',
                                           'severity',
-                                          'messages', 'files', 'nosy', 'hgrepos'),
+                                          'messages', 'files', 'nosy', 'hgrepos', 'pull_requests'),
                               description='User can report and discuss issues')
 db.security.addPermissionToRole('User', p)
 
@@ -300,7 +314,7 @@ p = db.security.addPermission(name='Edit', klass='issue',
                               properties=('title', 'type',
                                           'components', 'versions',
                                           'severity',
-                                          'messages', 'files', 'nosy', 'hgrepos'),
+                                          'messages', 'files', 'nosy', 'hgrepos', 'pull_requests'),
                               description='User can report and discuss issues')
 db.security.addPermissionToRole('User', p)
 
@@ -335,7 +349,7 @@ for cl in ('issue', 'file', 'msg', 'keyword'):
 ##########################
 for cl in ('issue_type', 'severity', 'component',
            'version', 'priority', 'stage', 'status', 'resolution', 'issue',
-           'file', 'msg', 'hgrepo'):
+           'file', 'msg', 'hgrepo', 'pull_request'):
     db.security.addPermissionToRole('Coordinator', 'View', cl)
     db.security.addPermissionToRole('Coordinator', 'Edit', cl)
     db.security.addPermissionToRole('Coordinator', 'Create', cl)
