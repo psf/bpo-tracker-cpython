@@ -234,3 +234,21 @@ see devguide/committing.html#using-several-working-copies
 see <a href="http://docs.python.org/devguide/committing.html#using-several-working-copies">devguide/committing.html#using-several-working-copies</a>
 see devguide/committing#using-several-working-copies
 see <a href="http://docs.python.org/devguide/committing#using-several-working-copies">devguide/committing#using-several-working-copies</a>
+##
+## pull requests
+check my pullrequest 1 on github
+check my <a href="https://github.com/python/cpython/pull/1" title="GitHub PR 1">pullrequest 1</a> on github
+check my pull request 1 on github
+check my <a href="https://github.com/python/cpython/pull/1" title="GitHub PR 1">pull request 1</a> on github
+check my PR 1 on github
+check my <a href="https://github.com/python/cpython/pull/1" title="GitHub PR 1">PR 1</a> on github
+check my PR1 on github
+check my <a href="https://github.com/python/cpython/pull/1" title="GitHub PR 1">PR1</a> on github
+check my PullRequest 123 on github
+check my <a href="https://github.com/python/cpython/pull/123" title="GitHub PR 123">PullRequest 123</a> on github
+check my PULL request 123 on github
+check my <a href="https://github.com/python/cpython/pull/123" title="GitHub PR 123">PULL request 123</a> on github
+check my pR 123 on github
+check my <a href="https://github.com/python/cpython/pull/123" title="GitHub PR 123">pR 123</a> on github
+check my Pr123 on github
+check my <a href="https://github.com/python/cpython/pull/123" title="GitHub PR 123">Pr123</a> on github

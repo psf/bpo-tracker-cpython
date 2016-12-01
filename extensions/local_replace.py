@@ -111,6 +111,10 @@ substitutions = [
 # if the issue number is too big the db will explode -- limit it to 7 digits
 issue_re = re.compile(r'(?P<text>(\#|\b(?<![-/_])issue)\s*(?P<id>1?\d{1,6}))\b', re.I)
 
+# PR number, pull request number, pullrequest number
+pullrequest_re = re.compile(r'(?P<text>(\b(?<![-/_])(PR|pull\s*request))\s*'
+                            r'(?P<pr_no>\d+))\b', re.I)
+
 
 class PyDevStringHTMLProperty(StringHTMLProperty):
     def _hyper_repl(self, match):
@@ -142,6 +146,7 @@ class PyDevStringHTMLProperty(StringHTMLProperty):
             message = cre.sub(replacement, message)
         # finally add links for issues
         message = issue_re.sub(self._linkify_issue, message)
+        message = pullrequest_re.sub(self._linkify_pull_request, message)
         return message
 
     def _linkify_issue(self, match):
@@ -164,6 +169,17 @@ class PyDevStringHTMLProperty(StringHTMLProperty):
             status = 'none'
         return template % dict(issue_id=issue_id, title=title,
                                status=status, text=text)
+
+    def _linkify_pull_request(self, match):
+        """Turn a pullrequest (e.g. 'PR 123') to an HTML link"""
+        template = ('<a href="%(link)s" title="%(title)s">%(text)s</a>')
+        pr_no = match.group('pr_no')
+        text = match.group('text')
+        # TODO: replace with actual title, remember cgi.escape()
+        title = 'GitHub PR {}'.format(pr_no)
+        base_url = 'https://github.com/python/cpython/pull/{}'
+        pr_url = base_url.format(pr_no)
+        return template % dict(link=pr_url, title=title, text=text)
 
 
 noise_changes = re.compile('(nosy_count|message_count)\: \d+\.0( -> \d+\.0)?')
