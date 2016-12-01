@@ -172,14 +172,13 @@ class PyDevStringHTMLProperty(StringHTMLProperty):
 
     def _linkify_pull_request(self, match):
         """Turn a pullrequest (e.g. 'PR 123') to an HTML link"""
-        template = ('<a href="%(link)s" title="%(title)s">%(text)s</a>')
+        template = ('<a href="%(base_url)s%(pr_no)s" '
+                    'title="GitHub PR %(pr_no)s">%(text)s</a>')
         pr_no = match.group('pr_no')
         text = match.group('text')
-        # TODO: replace with actual title, remember cgi.escape()
-        title = 'GitHub PR {}'.format(pr_no)
-        base_url = 'https://github.com/python/cpython/pull/{}'
-        pr_url = base_url.format(pr_no)
-        return template % dict(link=pr_url, title=title, text=text)
+        # TODO: add actual PR title, remember cgi.escape()
+        base_url = 'https://github.com/python/cpython/pull/'
+        return template % dict(base_url=base_url, pr_no=pr_no, text=text)
 
 
 noise_changes = re.compile('(nosy_count|message_count)\: \d+\.0( -> \d+\.0)?')

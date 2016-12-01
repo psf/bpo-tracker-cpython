@@ -252,3 +252,8 @@ check my pR 123 on github
 check my <a href="https://github.com/python/cpython/pull/123" title="GitHub PR 123">pR 123</a> on github
 check my Pr123 on github
 check my <a href="https://github.com/python/cpython/pull/123" title="GitHub PR 123">Pr123</a> on github
+check my PR without number
+check my PR without number
+prompt 3 and Apr 7 shouldn't be linkified
+prompt 3 and Apr 7 shouldn't be linkified
+
