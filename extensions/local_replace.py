@@ -74,10 +74,11 @@ def make_pep_link(match):
 
 seps = r'\b(?<![-/?&;=_])'  # these chars should not precede the targets
 substitutions = [
-    # deadbeeffeed  (hashes with exactly twelve or forty chars)
-    (re.compile(r'%s(?P<revision>[a-fA-F0-9]{40})\b' % seps),
+    # deadbeeffeed  (hg hashes with exactly twelve or forty chars,
+    # git has 10 or more as it grows as time goes on)
+    (re.compile(r'%s(?P<revision>(git|hg)?[a-fA-F0-9]{40})\b' % seps),
      r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
-    (re.compile(r'%s(?P<revision>[a-fA-F0-9]{12})\b' % seps),
+    (re.compile(r'%s(?P<revision>(git|hg)?[a-fA-F0-9]{10,12})\b' % seps),
      r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
 
     # r12345, r 12345, rev12345, rev. 12345, revision12345, revision 12345

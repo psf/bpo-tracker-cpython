@@ -28,6 +28,28 @@ I uploaded <a href="http://pypi.python.org/pypi/ctypesgen/0.r125">http://pypi.py
 ## hg revisions
 http://code.google.com/p/spyderlib/source/detail?spec=svne5d86b685619a470d593aa5f9ee360ba60779bc1&r=323c6c697f045166e384cdc15803d40eebed0a2b
 <a href="http://code.google.com/p/spyderlib/source/detail?spec=svne5d86b685619a470d593aa5f9ee360ba60779bc1&amp;r=323c6c697f045166e384cdc15803d40eebed0a2b">http://code.google.com/p/spyderlib/source/detail?spec=svne5d86b685619a470d593aa5f9ee360ba60779bc1&amp;r=323c6c697f045166e384cdc15803d40eebed0a2b</a>
+41a99a2a7198
+<a href="http://hg.python.org/lookup/41a99a2a7198">41a99a2a7198</a>
+hg41a99a2a7198
+<a href="http://hg.python.org/lookup/hg41a99a2a7198">hg41a99a2a7198</a>
+41a99a2a7198e85c21643a5f1fdb598f07f11f9d
+<a href="http://hg.python.org/lookup/41a99a2a7198e85c21643a5f1fdb598f07f11f9d">41a99a2a7198e85c21643a5f1fdb598f07f11f9d</a>
+hg41a99a2a7198e85c21643a5f1fdb598f07f11f9d
+<a href="http://hg.python.org/lookup/hg41a99a2a7198e85c21643a5f1fdb598f07f11f9d">hg41a99a2a7198e85c21643a5f1fdb598f07f11f9d</a>
+##
+## git revisions
+4581b90a75
+<a href="http://hg.python.org/lookup/4581b90a75">4581b90a75</a>
+git4581b90a75
+<a href="http://hg.python.org/lookup/git4581b90a75">git4581b90a75</a>
+4581b90a75f
+<a href="http://hg.python.org/lookup/4581b90a75f">4581b90a75f</a>
+git4581b90a75f
+<a href="http://hg.python.org/lookup/git4581b90a75f">git4581b90a75f</a>
+4581b90a75f185df5f94af476cfc7e778fd11a24
+<a href="http://hg.python.org/lookup/4581b90a75f185df5f94af476cfc7e778fd11a24">4581b90a75f185df5f94af476cfc7e778fd11a24</a>
+git4581b90a75f185df5f94af476cfc7e778fd11a24
+<a href="http://hg.python.org/lookup/git4581b90a75f185df5f94af476cfc7e778fd11a24">git4581b90a75f185df5f94af476cfc7e778fd11a24</a>
 ##
 ## issues - the lowest issue id on bugs.python.org is #1000, the highest is #1779871
  #1
