@@ -24,6 +24,10 @@
   <td tal:content="structure python:utils.get_pr_url(context)"></td>
  </tr>
  <tr>
+  <th i18n:translate="">Status</th>
+  <td tal:content="structure context/status/field"></td>
+ </tr>
+ <tr>
   <th i18n:translate="">Title</th>
   <td tal:content="structure context/title/field"></td>
  </tr>

@@ -285,11 +285,13 @@
  <tr><th class="header" colspan="4">Pull Requests</th></tr>
  <tr>
   <th>URL</th>
+  <th>Status</th>
   <th>Linked</th>
   <th>Edit</th>
  </tr>
  <tr tal:repeat="pull_request python:context.pull_requests.sorted('creation')">
   <td tal:content="structure python:utils.get_pr_url(pull_request)"></td>
+  <td tal:content="pull_request/status">status</td>
   <td>
    <span tal:content="pull_request/creator">creator's name</span>,
    <span tal:content="python:pull_request.creation.pretty('%Y-%m-%d %H:%M')">creation date</span>

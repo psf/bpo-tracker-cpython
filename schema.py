@@ -176,6 +176,7 @@ hgrepo = Class(db, "hgrepo",
 pull_request = Class(db, "pull_request",
                      number=String(),
                      title=String(),
+                     status=String(),
                      )
 pull_request.setlabelprop('id')
 
