@@ -88,6 +88,10 @@ git4581b90a75f185df5f94af476cfc7e778fd11a24
  #1234567890123
 pyissue1000
 pyissue1000
+issue 1999999
+<a class="open" title="[open] Mock title" href="issue1999999">issue 1999999</a>
+bpo-555555
+<a class="open" title="[open] Mock title" href="issue555555">bpo-555555</a>
 http://mail.python.org/pipermail/python-ideas/2011-October/thread.html#12459
 <a href="http://mail.python.org/pipermail/python-ideas/2011-October/thread.html#12459">http://mail.python.org/pipermail/python-ideas/2011-October/thread.html#12459</a>
 ##
