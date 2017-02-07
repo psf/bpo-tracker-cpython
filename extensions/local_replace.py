@@ -110,7 +110,7 @@ substitutions = [
 
 
 # if the issue number is too big the db will explode -- limit it to 7 digits
-issue_re = re.compile(r'(?P<text>(\#|\b(?<![-/_])issue)\s*(?P<id>1?\d{1,6}))\b', re.I)
+issue_re = re.compile(r'(?P<text>(\#|\b(?<![-/_])(issue|bpo-))\s*(?P<id>1?\d{1,6}))\b', re.I)
 
 # PR number, pull request number, pullrequest number
 pullrequest_re = re.compile(r'(?P<text>(\b(?<![-/_])(PR|pull\s*request))\s*'
