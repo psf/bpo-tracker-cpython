@@ -23,7 +23,8 @@ substitutions = [
 
 
 def make_file_link(match):
-    baseurl = 'http://hg.python.org/cpython/file/default/'
+    """Convert files to links to the GitHub repo."""
+    baseurl = 'https://github.com/python/cpython/blob/master/'
     sep = match.group('sep')
     path = match.group('path')
     npath = path.replace('\\', '/')  # normalize the path separators
@@ -33,7 +34,7 @@ def make_file_link(match):
         if not lnum:
             return '<a href="%s%s">%s%s</a>' % (baseurl, npath, sep, path)
         else:
-            return '<a href="%s%s#l%s">%s%s%s</a>' % (baseurl, npath, lnum[1:],
+            return '<a href="%s%s#L%s">%s%s%s</a>' % (baseurl, npath, lnum[1:],
                                                       sep, path, lnum)
     else:
         # dirs
@@ -44,24 +45,25 @@ def guess_version(path):
     """Search for Python version hints in the file path."""
     match = re.search(r'((?<=[Pp]ython)[23]\d|[23]\.\d)', path)
     if not match:
-        return 'default'
+        return 'master'
     version = match.group(1)
     if '.' not in version:
         version = '.'.join(version)
-    if version in ['2.5', '2.6', '2.7', '3.1', '3.2', '3.3']:
+    if version in ['2.3', '2.4', '2.5', '2.6', '2.7', '3.1', '3.2',
+                   '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.9']:
         return version
-    return 'default'
+    return 'master'
 
 
 def make_traceback_link(match):
     """Convert the file/line in the traceback lines in a link."""
-    baseurl = 'http://hg.python.org/cpython/file/'
+    baseurl = 'https://github.com/python/cpython/blob/'
     path = match.group('path')  # first part of the path
     branch = guess_version(match.group('fullpath'))  # guessed branch
     file = match.group('file')  # second part after Lib/
     nfile = file.replace('\\', '/')  # normalize the path separators
     lnum = match.group('lnum')
-    return ('File "%s<a href="%s%s/Lib/%s#l%s">%s</a>", line %s' %
+    return ('File "%s<a href="%s%s/Lib/%s#L%s">%s</a>", line %s' %
             (path, baseurl, branch, nfile, lnum, file, lnum))
 
 def make_pep_link(match):
