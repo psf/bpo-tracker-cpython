@@ -146,6 +146,8 @@ http://hg.python.org/sandbox/morph-devguide/shortlog/a92d431ef749
 <a href="http://hg.python.org/sandbox/morph-devguide/shortlog/a92d431ef749">http://hg.python.org/sandbox/morph-devguide/shortlog/a92d431ef749</a>
 http://bazaar.launchpad.net/~ipython-dev/ipython/trunk/annotate/head%3A/IPython/testing/_paramtestpy3.py
 <a href="http://bazaar.launchpad.net/~ipython-dev/ipython/trunk/annotate/head%3A/IPython/testing/_paramtestpy3.py">http://bazaar.launchpad.net/~ipython-dev/ipython/trunk/annotate/head%3A/IPython/testing/_paramtestpy3.py</a>
+https://hg.python.org/cpython/rev/769355e031:d0302d8ecbc1
+<a href="https://hg.python.org/cpython/rev/769355e031:d0302d8ecbc1">https://hg.python.org/cpython/rev/769355e031:d0302d8ecbc1</a>
 ##
 ## tracebacks
 File "/usr/lib/python2.7/socket.py", line 553, in create_connection
