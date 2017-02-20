@@ -116,11 +116,14 @@ td.date, th.date {
   white-space: nowrap;
 }
 
-td.patch {
+td.haspatch, td.haspr {
     width: 16px;
+    padding: 0 1px !important;
 }
 
-tr.even td.patch {
+
+tr.even td.haspatch,
+tr.even td.haspr {
     border-left-color: #f0f0f0;
 }
 
