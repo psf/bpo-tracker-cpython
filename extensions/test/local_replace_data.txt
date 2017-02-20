@@ -99,19 +99,13 @@ http://mail.python.org/pipermail/python-ideas/2011-October/thread.html#12459
 Lib/cgi.py
 <a href="https://github.com/python/cpython/blob/master/Lib/cgi.py">Lib/cgi.py</a>
 /Lib/cgi.py
-<a href="https://github.com/python/cpython/blob/master/Lib/cgi.py">/Lib/cgi.py</a>
+/Lib/cgi.py
 see Lib/cgi.py.
 see <a href="https://github.com/python/cpython/blob/master/Lib/cgi.py">Lib/cgi.py</a>.
 see /Lib/cgi.py.
-see <a href="https://github.com/python/cpython/blob/master/Lib/cgi.py">/Lib/cgi.py</a>.
+see /Lib/cgi.py.
 (Lib/cgi.py)
 (<a href="https://github.com/python/cpython/blob/master/Lib/cgi.py">Lib/cgi.py</a>)
-(/Lib/cgi.py)
-(<a href="https://github.com/python/cpython/blob/master/Lib/cgi.py">/Lib/cgi.py</a>)
-/Lib/http
-<a href="https://github.com/python/cpython/blob/master/Lib/http">/Lib/http</a>
-/Lib/http/
-<a href="https://github.com/python/cpython/blob/master/Lib/http/">/Lib/http/</a>
 ##
 ## files with line number - Lib/somefile.py:123, Modules/somemodule.c:123, ...
 see Lib/cgi.py:123,
@@ -120,8 +114,18 @@ see Lib/cgi.py: foo
 see <a href="https://github.com/python/cpython/blob/master/Lib/cgi.py">Lib/cgi.py</a>: foo
 see Lib/cgi.py: 123
 see <a href="https://github.com/python/cpython/blob/master/Lib/cgi.py">Lib/cgi.py</a>: 123
-/Lib/http/:123
-<a href="https://github.com/python/cpython/blob/master/Lib/http/">/Lib/http/</a>:123
+see 3.7/Lib/cgi.py:123,
+see <a href="https://github.com/python/cpython/blob/3.7/Lib/cgi.py#L123">Lib/cgi.py:123</a>,
+see 3.6/Lib/cgi.py: foo
+see <a href="https://github.com/python/cpython/blob/3.6/Lib/cgi.py">Lib/cgi.py</a>: foo
+see 2.7/Lib/cgi.py: 123
+see <a href="https://github.com/python/cpython/blob/2.7/Lib/cgi.py">Lib/cgi.py</a>: 123
+2.6/Lib/http/:123
+<a href="https://github.com/python/cpython/blob/2.6/Lib/http/">Lib/http/</a>:123
+see /3.7/Lib/cgi.py:123,
+see /3.7/Lib/cgi.py:123,
+see 1.7/Lib/cgi.py,
+see 1.7/Lib/cgi.py,
 ##
 ## URLs
 http://svn.python.org/view/python/tags/r265

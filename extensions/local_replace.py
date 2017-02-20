@@ -24,21 +24,20 @@ substitutions = [
 
 def make_file_link(match):
     """Convert files to links to the GitHub repo."""
-    baseurl = 'https://github.com/python/cpython/blob/master/'
-    sep = match.group('sep')
+    baseurl = 'https://github.com/python/cpython/blob/'
+    branch = match.group('v') or 'master/'  # the match includes the '/'
     path = match.group('path')
-    npath = path.replace('\\', '/')  # normalize the path separators
     lnum = match.group('lnum') or ''  # the match includes the ':'
-    if not npath.endswith('/'):
+    url = baseurl + branch + path
+    if not path.endswith('/'):
         # files without and with line number
         if not lnum:
-            return '<a href="%s%s">%s%s</a>' % (baseurl, npath, sep, path)
+            return '<a href="%s">%s</a>' % (url, path)
         else:
-            return '<a href="%s%s#L%s">%s%s%s</a>' % (baseurl, npath, lnum[1:],
-                                                      sep, path, lnum)
+            return '<a href="%s#L%s">%s%s</a>' % (url, lnum[1:], path, lnum)
     else:
         # dirs
-        return '<a href="%s%s">%s%s</a>%s' % (baseurl, npath, sep, path, lnum)
+        return '<a href="%s">%s</a>%s' % (url, path, lnum)
 
 
 def guess_version(path):
@@ -88,9 +87,10 @@ substitutions = [
      r'<a href="http://hg.python.org/lookup/r\g<revision>">\g<revstr>\g<revision></a>'),
 
     # Lib/somefile.py, Lib/somefile.py:123, Modules/somemodule.c:123, ...
-    (re.compile(r'(?P<sep>(?<!\w/)|(?<!\w)/)\b(?P<path>(?:Demo|Doc|Grammar|'
+    (re.compile(r'%s(?P<v>2\.[0-7]/|3\.\d/)?(?P<path>(?:Demo|Doc|Grammar|'
                 r'Include|Lib|Mac|Misc|Modules|Parser|PC|PCbuild|Python|'
-                r'RISCOS|Tools|Objects)/[-.\w/]+[a-zA-Z0-9]/?)(?P<lnum>:\d{1,5})?'),
+                r'RISCOS|Tools|Programs|Objects)/'
+                r'[-.\w/]+[a-zA-Z0-9]/?)(?P<lnum>:\d{1,5})?' % seps),
      make_file_link),
 
     # traceback lines: File "Lib/somefile.py", line 123 in some_func
