@@ -337,10 +337,10 @@ db.security.addPermissionToRole('User', 'SB: May Report Misclassified')
 ##########################
 for cl in ('issue_type', 'severity', 'component',
            'version', 'priority', 'stage', 'status', 'resolution',
-           'issue', 'file', 'msg', 'keyword'):
+           'issue', 'file', 'msg', 'keyword', 'pull_request'):
     db.security.addPermissionToRole('Developer', 'View', cl)
 
-for cl in ('issue', 'file', 'msg', 'keyword'):
+for cl in ('issue', 'file', 'msg', 'keyword', 'pull_request'):
     db.security.addPermissionToRole('Developer', 'Edit', cl)
     db.security.addPermissionToRole('Developer', 'Create', cl)
 
