@@ -26,11 +26,11 @@ class MockDBItem(object):
         self.type = type
 
     def hasnode(self, id):
-        # only issues between 1000 and 2M and prs < 1000 exist
+        # only issues between 1000 and 2M and prs < 1000 exist in the db
         return ((self.type == 'issue' and 1000 <= int(id) < 2000000) or
                 (self.type == 'pull_request' and int(id) < 1000))
 
-    def get(self, id, value):
+    def get(self, id, value, default=None):
         # for issues and prs, the id determines the status:
         #  id%3 == 0: open
         #  id%3 == 1: closed
@@ -45,6 +45,10 @@ class MockDBItem(object):
                 return ['open', 'closed', 'merged'][id%3]
         if self.type == 'status' and value == 'name':
             return ['open', 'closed', 'pending'][id]
+
+    def filter(self, _, filterspec, sort):
+        prid = filterspec['number']
+        return [prid] if self.hasnode(prid) else []
 
 class PyDevMockDatabase(MockDatabase):
     def __init__(self):

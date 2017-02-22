@@ -176,13 +176,32 @@ class PyDevStringHTMLProperty(StringHTMLProperty):
 
     def _linkify_pull_request(self, match):
         """Turn a pullrequest (e.g. 'PR 123') to an HTML link"""
-        template = ('<a href="%(base_url)s%(pr_no)s" '
-                    'title="GitHub PR %(pr_no)s">%(text)s</a>')
+        template = ('<a href="%(base_url)s%(pr_no)s" %(cls)s'
+                    'title="GitHub PR %(pr_no)s%(info)s">%(text)s</a>')
         pr_no = match.group('pr_no')
         text = match.group('text')
-        # TODO: add actual PR title, remember cgi.escape()
+        # find title and status
+        cl = self._db.pull_request
+        # find all the pull_request that refer to GitHub PR pr_no,
+        # with the most recently updated first
+        pr_ids = cl.filter(None, dict(number=pr_no), sort=[('-', 'activity')])
+        title = status = info = cls = ''
+        for pr_id in pr_ids:
+            if not title:
+                title = cl.get(pr_id, 'title', '')
+            if not status:
+                status = cl.get(pr_id, 'status', '')
+            if title and status:
+                # once we get both, escape and add to info
+                status = cgi.escape(status).replace('"', "'")
+                title = cgi.escape(title).replace('"', "'")
+                info = ': [%s] %s' % (status, title)
+                break
+        if status:
+            cls = 'class="%s" ' % ('open' if status == 'open' else 'closed')
         base_url = 'https://github.com/python/cpython/pull/'
-        return template % dict(base_url=base_url, pr_no=pr_no, text=text)
+        return template % dict(base_url=base_url, pr_no=pr_no, cls=cls,
+                               info=info, text=text)
 
 
 noise_changes = re.compile('(nosy_count|message_count)\: \d+\.0( -> \d+\.0)?')

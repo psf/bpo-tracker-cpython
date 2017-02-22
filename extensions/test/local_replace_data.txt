@@ -266,22 +266,40 @@ see devguide/committing#using-several-working-copies
 see <a href="http://docs.python.org/devguide/committing#using-several-working-copies">devguide/committing#using-several-working-copies</a>
 ##
 ## pull requests
+PR1
+<a href="https://github.com/python/cpython/pull/1" class="closed" title="GitHub PR 1: [closed] Mock title">PR1</a>
+PR 2
+<a href="https://github.com/python/cpython/pull/2" class="closed" title="GitHub PR 2: [merged] Mock title">PR 2</a>
+ PR3
+ <a href="https://github.com/python/cpython/pull/3" class="open" title="GitHub PR 3: [open] Mock title">PR3</a>
+ PR 4
+ <a href="https://github.com/python/cpython/pull/4" class="closed" title="GitHub PR 4: [closed] Mock title">PR 4</a>
+pull request 5
+<a href="https://github.com/python/cpython/pull/5" class="closed" title="GitHub PR 5: [merged] Mock title">pull request 5</a>
+ pull request 6
+ <a href="https://github.com/python/cpython/pull/6" class="open" title="GitHub PR 6: [open] Mock title">pull request 6</a>
+PR1000
+<a href="https://github.com/python/cpython/pull/1000" title="GitHub PR 1000">PR1000</a>
+PR 2000
+<a href="https://github.com/python/cpython/pull/2000" title="GitHub PR 2000">PR 2000</a>
+pull request 5555
+<a href="https://github.com/python/cpython/pull/5555" title="GitHub PR 5555">pull request 5555</a>
 check my pullrequest 1 on github
-check my <a href="https://github.com/python/cpython/pull/1" title="GitHub PR 1">pullrequest 1</a> on github
+check my <a href="https://github.com/python/cpython/pull/1" class="closed" title="GitHub PR 1: [closed] Mock title">pullrequest 1</a> on github
 check my pull request 1 on github
-check my <a href="https://github.com/python/cpython/pull/1" title="GitHub PR 1">pull request 1</a> on github
+check my <a href="https://github.com/python/cpython/pull/1" class="closed" title="GitHub PR 1: [closed] Mock title">pull request 1</a> on github
 check my PR 1 on github
-check my <a href="https://github.com/python/cpython/pull/1" title="GitHub PR 1">PR 1</a> on github
+check my <a href="https://github.com/python/cpython/pull/1" class="closed" title="GitHub PR 1: [closed] Mock title">PR 1</a> on github
 check my PR1 on github
-check my <a href="https://github.com/python/cpython/pull/1" title="GitHub PR 1">PR1</a> on github
+check my <a href="https://github.com/python/cpython/pull/1" class="closed" title="GitHub PR 1: [closed] Mock title">PR1</a> on github
 check my PullRequest 123 on github
-check my <a href="https://github.com/python/cpython/pull/123" title="GitHub PR 123">PullRequest 123</a> on github
+check my <a href="https://github.com/python/cpython/pull/123" class="open" title="GitHub PR 123: [open] Mock title">PullRequest 123</a> on github
 check my PULL request 123 on github
-check my <a href="https://github.com/python/cpython/pull/123" title="GitHub PR 123">PULL request 123</a> on github
+check my <a href="https://github.com/python/cpython/pull/123" class="open" title="GitHub PR 123: [open] Mock title">PULL request 123</a> on github
 check my pR 123 on github
-check my <a href="https://github.com/python/cpython/pull/123" title="GitHub PR 123">pR 123</a> on github
+check my <a href="https://github.com/python/cpython/pull/123" class="open" title="GitHub PR 123: [open] Mock title">pR 123</a> on github
 check my Pr123 on github
-check my <a href="https://github.com/python/cpython/pull/123" title="GitHub PR 123">Pr123</a> on github
+check my <a href="https://github.com/python/cpython/pull/123" class="open" title="GitHub PR 123: [open] Mock title">Pr123</a> on github
 check my PR without number
 check my PR without number
 prompt 3 and Apr 7 shouldn't be linkified
