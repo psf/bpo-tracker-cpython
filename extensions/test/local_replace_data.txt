@@ -61,25 +61,23 @@ git4581b90a75f185df5f94af476cfc7e778fd11a24
  # 999
  # 999
 #1000
-<a class="open" title="[open] Mock title" href="issue1000">#1000</a>
+<a class="closed" title="[closed] Mock title" href="issue1000">#1000</a>
  #1000
- <a class="open" title="[open] Mock title" href="issue1000">#1000</a>
+ <a class="closed" title="[closed] Mock title" href="issue1000">#1000</a>
  # 1000
- <a class="open" title="[open] Mock title" href="issue1000"># 1000</a>
+ <a class="closed" title="[closed] Mock title" href="issue1000"># 1000</a>
  #5555
- <a class="open" title="[open] Mock title" href="issue5555">#5555</a>
+ <a class="pending" title="[pending] Mock title" href="issue5555">#5555</a>
  # 5555
- <a class="open" title="[open] Mock title" href="issue5555"># 5555</a>
+ <a class="pending" title="[pending] Mock title" href="issue5555"># 5555</a>
  #555555
  <a class="open" title="[open] Mock title" href="issue555555">#555555</a>
  # 555555
  <a class="open" title="[open] Mock title" href="issue555555"># 555555</a>
  #1999999
- <a class="open" title="[open] Mock title" href="issue1999999">#1999999</a>
+ <a class="closed" title="[closed] Mock title" href="issue1999999">#1999999</a>
  # 1999999
- <a class="open" title="[open] Mock title" href="issue1999999"># 1999999</a>
- #1020
- #1020
+ <a class="closed" title="[closed] Mock title" href="issue1999999"># 1999999</a>
  #2000000
  #2000000
  # 2000000
@@ -89,7 +87,7 @@ git4581b90a75f185df5f94af476cfc7e778fd11a24
 pyissue1000
 pyissue1000
 issue 1999999
-<a class="open" title="[open] Mock title" href="issue1999999">issue 1999999</a>
+<a class="closed" title="[closed] Mock title" href="issue1999999">issue 1999999</a>
 bpo-555555
 <a class="open" title="[open] Mock title" href="issue555555">bpo-555555</a>
 http://mail.python.org/pipermail/python-ideas/2011-October/thread.html#12459

@@ -22,25 +22,34 @@ from test_templating import MockDatabase, TemplatingTestCase
 
 
 class MockDBItem(object):
-    def __init__(self, values):
-        # *values* is a list of ids that are supposed to exist in the db
-        # (note that there's no difference here between issues, msg, etc.)
-        self.ids = map(str, values)
+    def __init__(self, type):
+        self.type = type
 
     def hasnode(self, id):
-        return id in self.ids
+        # only issues between 1000 and 2M and prs < 1000 exist
+        return ((self.type == 'issue' and 1000 <= int(id) < 2000000) or
+                (self.type == 'pull_request' and int(id) < 1000))
 
     def get(self, id, value):
+        # for issues and prs, the id determines the status:
+        #  id%3 == 0: open
+        #  id%3 == 1: closed
+        #  id%3 == 2: pending/merged
+        id = int(id)
         if value == 'title':
             return 'Mock title'
         if value == 'status':
-            return 1
-        if value == 'name':
-            return 'open'
+            if self.type == 'issue':
+                return id%3
+            if self.type == 'pull_request':
+                return ['open', 'closed', 'merged'][id%3]
+        if self.type == 'status' and value == 'name':
+            return ['open', 'closed', 'pending'][id]
 
 class PyDevMockDatabase(MockDatabase):
-    def __init__(self, values):
-        self.issue = self.msg = self.status = MockDBItem(values)
+    def __init__(self):
+        for type in ['issue', 'msg', 'status', 'pull_request']:
+            setattr(self, type, MockDBItem(type))
     def getclass(self, cls):
         return self.issue
 
@@ -48,9 +57,8 @@ class PyDevMockDatabase(MockDatabase):
 class TestPyDevStringHTMLProperty(TemplatingTestCase):
     def test_replacement(self):
         self.maxDiff = None
-        # create a db with a few issue/msg/file ids
-        self.client.db = self._db = PyDevMockDatabase(
-                [1000, 5555, 555555, 1999999, 2000000, 1234567890123])
+        # create the db
+        self.client.db = self._db = PyDevMockDatabase()
         self.client.db.security.hasPermission = lambda *args, **kw: True
         # the test file contains the text on odd lines and the expected
         # result on even ones, with comments starting with '##'
