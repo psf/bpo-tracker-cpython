@@ -3,7 +3,6 @@ config.ini
 db/files
 db/text-index
 db/backend_name
-html/recent-changes.xml
 **.pyc
 **~
 *.swp
