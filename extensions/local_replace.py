@@ -116,7 +116,7 @@ issue_re = re.compile(r'(?P<text>((?<!\w)\#|\b(?<![-/_])(issue|bpo-))'
                       r'\s*(?P<id>1?\d{1,6}))\b', re.I)
 
 # PR number, pull request number, pullrequest number
-pullrequest_re = re.compile(r'(?P<text>(\b(?<![-/_])(PR|pull\s*request))\s*'
+pullrequest_re = re.compile(r'(?P<text>(\b(?<![-/_])(PR-?|GH-?|pull\s*request))\s*'
                             r'(?P<pr_no>\d+))\b', re.I)
 
 
