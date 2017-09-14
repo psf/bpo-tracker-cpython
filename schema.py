@@ -248,13 +248,12 @@ p = db.security.addPermission(name='Edit', klass='pull_request',
                               check=may_edit_pull_request, properties=['number', 'title'])
 db.security.addPermissionToRole('User', p)
 
-class may_view_spam:
-    def __init__(self, klassname):
-        self.klassname = klassname
+def may_view_spam(cl):
+    klassname = cl
 
-    def __call__(self, db, userid, itemid):
+    def may_view_spam_inner(db, userid, itemid):
         cutoff_score = float(db.config.detectors['SPAMBAYES_SPAM_CUTOFF'])
-        klass = db.getclass(self.klassname)
+        klass = db.getclass(klassname)
 
         try:
             score = klass.get(itemid, 'spambayes_score')
@@ -265,6 +264,9 @@ class may_view_spam:
             return False
 
         return True
+
+    return may_view_spam_inner
+
 
 for cl in ('file', 'msg'):
     p = db.security.addPermission(name='View', klass=cl,
