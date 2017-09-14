@@ -158,6 +158,10 @@ debug = yes
 # Settings in this section are used by Postgresql and MySQL backends only
 [rdbms]
 
+# Database backend.
+# Default:
+backend = postgresql
+
 # Name of the database to use.
 # Default: roundup
 name = roundup

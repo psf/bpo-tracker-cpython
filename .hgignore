@@ -2,7 +2,6 @@ syntax: glob
 config.ini
 db/files
 db/text-index
-db/backend_name
 **.pyc
 **~
 *.swp
