@@ -28,7 +28,7 @@ def is_spam(db, msgid):
     property-only change)"""
     if not msgid:
         return False
-    cutoff_score = float(db.config.detectors['SPAMBAYES_SPAM_CUTOFF'])    
+    cutoff_score = float(db.config.detectors['SPAMBAYES_SPAM_CUTOFF'])
 
     msg = db.getnode("msg", msgid)
     if msg.has_key('spambayes_score') and \
@@ -60,7 +60,7 @@ def sendmail(db, cl, nodeid, oldvalues):
     except KeyError:
         pass
 
-    # New submission? 
+    # New submission?
     if oldvalues == None:
         changenote = cl.generateCreateNote(nodeid)
         try:
@@ -100,20 +100,17 @@ def sendmail(db, cl, nodeid, oldvalues):
         url = db.config.TRACKER_WEB + "msg%s" % msgid
         changenote += "\nRemoved message: %s" % url
 
-    authid = db.getuid()
-
     new_messages = determineNewMessages(cl, nodeid, oldvalues)
 
     # Make sure we send a nosy mail even for property-only
-    # changes. 
+    # changes.
     if not new_messages:
         new_messages = [None]
 
     for msgid in [msgid for msgid in new_messages if not is_spam(db, msgid)]:
         try:
             if sendto:
-                cl.send_message(nodeid, msgid, changenote, sendto,
-                            authid=authid)
+                cl.send_message(nodeid, msgid, changenote, sendto)
             nosymessage(db, nodeid, msgid, oldvalues, changenote)
         except roundupdb.MessageSendError, message:
             raise roundupdb.DetectorError, message
