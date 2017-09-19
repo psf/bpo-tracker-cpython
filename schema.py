@@ -271,7 +271,7 @@ def may_view_spam(cl):
 for cl in ('file', 'msg'):
     p = db.security.addPermission(name='View', klass=cl,
                                   description="allowed to see metadata object regardless of spam status",
-                                  properties=('creation', 'activity',
+                                  properties=('id', 'creation', 'activity',
                                               'creator', 'actor',
                                               'name', 'spambayes_score',
                                               'spambayes_misclassified',
