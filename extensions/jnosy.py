@@ -72,7 +72,7 @@ def devs_as_json(cls):
     users = []
     for user in cls.filter(None, {'iscommitter': 1}):
         username = user.username.plain()
-        realname = user.realname.plain(unchecked=1)
+        realname = user.realname.plain()
         if not realname:
             continue
         users.append([username, realname])
