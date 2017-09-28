@@ -82,7 +82,7 @@ status_all string:-1,1,2,3;
             <li><a href="issue?@template=search&amp;status=1" i18n:translate="">Search</a></li>
             <li><a href="issue?@action=random">Random Issue</a></li>
             <li>
-              <form method="post" action="#">
+              <form method="post" tal:attributes="action string:${request/env/PATH_INFO}">
                 <input type="submit" class="form-small" value="Show issue:" i18n:attributes="value"/>
                 <input class="form-small" size="4" type="text" name="@number"/>
                 <input type="hidden" name="@type" value="issue"/>
