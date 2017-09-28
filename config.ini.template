@@ -90,6 +90,13 @@ instant_registration = no
 # Default: yes
 email_registration_confirmation = yes
 
+# Force Roundup to use a particular text indexer.
+# If no indexer is supplied, the first available indexer
+# will be used in the following order:
+# Possible values: xapian, whoosh, native (internal).
+# Default: 
+indexer = native
+
 # Additional stop-words for the full-text indexer specific to
 # your tracker. See the indexer source for the default list of
 # stop-words (eg. A,AND,ARE,AS,AT,BE,BUT,BY, ...)
