@@ -4,9 +4,6 @@
 # See also the nosyreaction.py script (they should probably be merged to a
 # single script).
 
-# Python 2.3 ... 2.6 compatibility:
-from roundup.anypy.sets_ import set
-
 RELEASE_MANAGERS = {
     'Python 2.6': '19',   # barry
     'Python 2.7': '4455', # benjamin.peterson
