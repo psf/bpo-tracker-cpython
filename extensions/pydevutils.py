@@ -78,7 +78,12 @@ class RandomIssueAction(Action):
         """Redirect to a random open issue."""
         issue = self.context['context']
         # use issue._klass to get a list of ids, and not a list of instances
-        issue_ids = issue._klass.filter(None, {'status': 1})
+        issue_ids = issue._klass.filter(None, {'status': '1'})
+        if not issue_ids:
+            raise Redirect(self.db.config.TRACKER_WEB)
+        # call 'random.seed()' to make the randomness return
+        # see issue 644 for details
+        random.seed()
         url = self.db.config.TRACKER_WEB + 'issue' + random.choice(issue_ids)
         raise Redirect(url)
 
