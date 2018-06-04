@@ -230,18 +230,11 @@
 
 </table>
 </fieldset>
-<table class="form">
-<tr tal:condition="context/is_edit_ok">
- <td>
-  &nbsp;
+<div tal:condition="context/is_edit_ok" id="submit_td" style="padding: 10px 0 0 20px;">
   <input type="hidden" name="@template" value="item">
   <input type="hidden" name="@required" value="title">
- </td>
- <td colspan="3" id="submit_td">
   <span tal:replace="structure context/submit">submit button</span>
- </td>
-</tr>
-</table>
+</div>
 </form>
 
 <p tal:condition="context/id" i18n:translate="">
