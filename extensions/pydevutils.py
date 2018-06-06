@@ -81,10 +81,10 @@ class RandomIssueAction(Action):
         issue_ids = issue._klass.filter(None, {'status': '1'})
         if not issue_ids:
             raise Redirect(self.db.config.TRACKER_WEB)
-        # call 'random.seed()' to make the randomness return
-        # see issue 644 for details
-        random.seed()
-        url = self.db.config.TRACKER_WEB + 'issue' + random.choice(issue_ids)
+        # we create our own Random instance so we don't have share the state
+        # of the default Random instance. see issue 644 for details.
+        rand = random.Random()
+        url = self.db.config.TRACKER_WEB + 'issue' + rand.choice(issue_ids)
         raise Redirect(url)
 
 
