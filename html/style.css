@@ -514,6 +514,7 @@ textarea:focus, select:focus {
 }
 
 #submit_td input{
+  margin: .8em 0 0 1.5em;
   padding: .3em .7em;
   font-size: 90%;
 }

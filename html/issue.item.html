@@ -230,7 +230,7 @@
 
 </table>
 </fieldset>
-<div tal:condition="context/is_edit_ok" id="submit_td" style="padding: 10px 0 0 20px;">
+<div tal:condition="context/is_edit_ok" id="submit_td">
   <input type="hidden" name="@template" value="item">
   <input type="hidden" name="@required" value="title">
   <span tal:replace="structure context/submit">submit button</span>
