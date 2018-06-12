@@ -47,10 +47,11 @@ status_all string:-1,1,2,3;
        <input type="submit" id="submit" value="search" name="submit"
               class="input-button"/>
        <input type="radio" name="status" tal:attributes="value status_notresolved;
+              checked python:request.form.getvalue('status') == status_notresolved;
               id string:status_notresolved"/>
        <label for="status_notresolved">open</label>
        <input type="radio" name="status" tal:attributes="value status_all;
-              checked string:checked;
+              checked python:request.form.getvalue('status') != status_notresolved;
               id string:status_all"/>
        <label for="status_all">all</label>
       </div>
