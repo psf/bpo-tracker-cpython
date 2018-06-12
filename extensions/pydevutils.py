@@ -22,8 +22,16 @@ def is_coordinator(request):
     return 'Coordinator' in db.user.get(user, 'roles')
 
 def is_triager(request, userid):
+    # We can't use 'request.client.userid' here because is_coordinator()
+    # is used to determine if the current user is a coordinator. We need
+    # 'userid' to determine if an arbitrary user is a triager.
     db = request.client.db
-    return 'Developer' in db.user.get(userid, 'roles')
+    query = db.user.get(userid, 'roles')
+    # Disabled users have no roles so we need to check if 'userid' has
+    # any roles.
+    if query is None:
+        return False
+    return 'Developer' in query
 
 def clean_ok_message(ok_message):
     """Remove nosy_count and message_count from the ok_message."""
