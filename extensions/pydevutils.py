@@ -67,7 +67,12 @@ def clas_as_json(request, cls):
     associated with the GitHub username.
     """
     # pass the names as user?@template=clacheck&github_names=name1,name2
-    names = request.form['github_names'].value.split(',')
+    names = request.form.get('github_names')
+    if names is None:
+        # we got a request like user?@template=clacheck&github_names=
+        return json.dumps({})  # return an empty JSON object
+
+    names = names.value.split(',')
 
     # Using cls.filter(None, {'github': names}) doesn't seem to work
     # so loop through the names and look them up individually
