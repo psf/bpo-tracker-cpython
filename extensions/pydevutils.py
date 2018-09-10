@@ -74,11 +74,16 @@ def clas_as_json(request, cls):
 
     names = names.split(',')
 
-    # Using cls.filter(None, {'github': names}) doesn't seem to work
-    # so loop through the names and look them up individually
+    # Using cls.filter(None, {'github': names}) with a list of names
+    # doesn't seem to find any result, so loop through the names and
+    # look them up individually.
+    # cls.filter() will also not return exact matches (e.g. filtering
+    # for 'ezio' will find the 'ezio' user, but also 'ezio.melotti'
+    # or 'anotherezio'), so it's necessary to filter out invalid matches.
     result = {}
     for name in names:
-        matches = cls.filter(None, {'github': name})
+        matches = [match for match in cls.filter(None, {'github': name})
+                   if match.github == name]
         if matches:
             # if more users have the same GitHub username, check that
             # at least one of them has signed the CLA
