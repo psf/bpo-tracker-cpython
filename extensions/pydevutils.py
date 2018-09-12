@@ -73,25 +73,18 @@ def clas_as_json(request, cls):
         return json.dumps({})  # return an empty JSON object
 
     names = names.split(',')
-
-    # Using cls.filter(None, {'github': names}) with a list of names
-    # doesn't seem to find any result, so loop through the names and
-    # look them up individually.
-    # cls.filter() will also not return exact matches (e.g. filtering
-    # for 'ezio' will find the 'ezio' user, but also 'ezio.melotti'
-    # or 'anotherezio'), so it's necessary to filter out invalid matches.
+    user = request.client.db.user
     result = {}
     for name in names:
-        matches = [match for match in cls.filter(None, {'github': name})
-                   if match.github == name]
+        # find all users with the given github name (case-insensitive)
+        matches = user.stringFind(github=name)
         if matches:
-            # if more users have the same GitHub username, check that
-            # at least one of them has signed the CLA
-            value = any(match.contrib_form for match in matches)
+            # if we have 1 (or more) user(s), see if at least one signed
+            value = any(user.get(id, 'contrib_form') for id in matches)
         else:
+            # otherwise the user has no associated bpo account
             value = None
         result[name] = value
-
     return json.dumps(result, separators=(',',':'))
 
 
