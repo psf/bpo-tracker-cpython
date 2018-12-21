@@ -1,5 +1,5 @@
 import os, sys
-sys.path.append('/home/roundup/trackers/tracker/rietveld')
+sys.path.append('/srv/roundup/trackers/cpython/rietveld')
 os.environ['DJANGO_SETTINGS_MODULE']='settings'
 import django.core.handlers.wsgi
 import gae2django
