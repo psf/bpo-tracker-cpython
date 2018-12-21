@@ -41,8 +41,6 @@ Options:
 # with all the necessary information.
 
 import sys
-# hardcode the path to roundup
-sys.path.insert(1, '/home/roundup/lib/python2.6/site-packages')
 
 import cgi
 import json
