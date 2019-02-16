@@ -5,15 +5,16 @@
 # single script).
 
 RELEASE_MANAGERS = {
-    'Python 2.6': '19',   # barry
-    'Python 2.7': '4455', # benjamin.peterson
-    'Python 3.1': '4455', # benjamin.peterson
-    'Python 3.2': '93',   # georg.brandl
-    'Python 3.3': '93',   # georg.brandl
-    'Python 3.4': '2731', # larry
-    'Python 3.5': '2731', # larry
-    'Python 3.6': '5248', # ned.deily
-    'Python 3.7': '5248', # ned.deily
+    'Python 2.6': '19',    # barry
+    'Python 2.7': '4455',  # benjamin.peterson
+    'Python 3.1': '4455',  # benjamin.peterson
+    'Python 3.2': '93',    # georg.brandl
+    'Python 3.3': '93',    # georg.brandl
+    'Python 3.4': '2731',  # larry
+    'Python 3.5': '2731',  # larry
+    'Python 3.6': '5248',  # ned.deily
+    'Python 3.7': '5248',  # ned.deily
+    'Python 3.8': '12704', # lukasz.langa 
 }
 
 def autonosy(db, cl, nodeid, newvalues):
