@@ -24,6 +24,8 @@ wordthatendswithr 2222
 wordthatendswithr 2222
 I uploaded http://pypi.python.org/pypi/ctypesgen/0.r125
 I uploaded <a href="http://pypi.python.org/pypi/ctypesgen/0.r125">http://pypi.python.org/pypi/ctypesgen/0.r125</a>
+look at https://github.com/python/cpython/pull/12073/files#r263026496 !
+look at <a href="https://github.com/python/cpython/pull/12073/files#r263026496">https://github.com/python/cpython/pull/12073/files#r263026496</a> !
 ##
 ## hg revisions
 http://code.google.com/p/spyderlib/source/detail?spec=svne5d86b685619a470d593aa5f9ee360ba60779bc1&r=323c6c697f045166e384cdc15803d40eebed0a2b

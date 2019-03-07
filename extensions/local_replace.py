@@ -73,7 +73,7 @@ def make_pep_link(match):
 
 # these regexs have test in tests/test_local_replace.py
 
-seps = r'\b(?<![-/?&;=_:])'  # these chars should not precede the targets
+seps = r'\b(?<![-/?&;=_:#])'  # these chars should not precede the targets
 substitutions = [
     # deadbeeffeed  (hg hashes with exactly twelve or forty chars,
     # git has 10 or more as it grows as time goes on)
