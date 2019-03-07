@@ -41,7 +41,6 @@ Options:
 # with all the necessary information.
 
 import sys
-
 import cgi
 import json
 import os.path
@@ -226,15 +225,16 @@ class Report(object):
                 all_old += 1
                 # check if the issue was closed at the end of the previous
                 # period
-                if issue['last_period_status'] in OPTIONS.resolved:
+                if in_resolved(issue['last_period_status']):
                     closed_old += 1
                 else:
                     open_old += 1
-            # check if the issue is closed now
-            if issue['closed']:
+            # check if the issue is closed at the end of the selected period
+            if in_resolved(issue['sel_period_status']):
                 closed_tot += 1
             else:
                 open_tot += 1
+                # XXX check for the specified period, not the current count
                 if patch_id in issue['keyword_ids']:
                     with_patch += 1
         all_delta = all_tot - all_old
@@ -285,7 +285,7 @@ class Report(object):
         issues_list = []
         # XXX: sort issues by date? id?
         for id,issue in self.issues.iteritems():
-            if issue['closed']:
+            if issue['closed'] and self._in_period(issue['closed_date']):
                 continue  # list only issues that are still open
             reopened = ''
             opener = issue['creator']
@@ -345,7 +345,7 @@ class Report(object):
         issues_list = []
         def newmsg(issue): return issue['msgs_in_period']
         for issue in sorted(self.issues.itervalues(), key=newmsg, reverse=True):
-            if issue['closed'] or newmsg(issue) < 3:
+            if in_resolved(issue['sel_period_status']) or newmsg(issue) < 3:
                 continue  # only open issues with at least 3 new msgs
             issues_list.append({
                 'id': issue['issue_num'],
@@ -486,6 +486,11 @@ class Report(object):
 
 
 
+
+def in_resolved(status):
+    """Check whether the given status is in the set of 'resolved' statuses"""
+    return status in OPTIONS.resolved
+
 def get_issue(issue_id, kws_dict, stages_dict):
     """Get issue attributes and journal from the database."""
     attrs = DB.getnode('issue', issue_id)  # get the current attributes
@@ -509,6 +514,7 @@ def get_issue(issue_id, kws_dict, stages_dict):
         status = None,
         real_status = sid2name(attrs['status']), # Avoid a bug in get_issue_attrs
         last_period_status = None, # the status of the issue before start_date
+        sel_period_status = None, # the status at the end of the selected period
         actor = None,
         activity = None,
         keyword_ids = kwds,
@@ -590,18 +596,24 @@ def get_issue_attrs(issue, helper):
                     issue['closer'] = userid
                     issue['closed_date'] = time
     status_changes.append((old_time, issue['real_status']))
-    # if the status didn't change and this is still None set it to 'open',
-    # leave it to None for new issues
+
+    # if the issue got created before or during the selected period
+    # set 'open' as the initial status, otherwise leave it to None
     if issue['creation'] < dates.from_value:
-        for time, status in status_changes:
-            if time < dates.from_value:
-                issue['last_period_status'] = status
-        if issue['last_period_status'] is None:
-            issue['last_period_status'] = 'open'
+        issue['last_period_status'] = issue['sel_period_status'] = 'open'
+    elif issue['creation'] <= dates.to_value:
+        issue['sel_period_status'] = 'open'
+    # update statuses according to subsequent changes
+    for time, status in status_changes:
+        if time < dates.from_value:
+            issue['last_period_status'] = status
+        if time <= dates.to_value:
+            issue['sel_period_status'] = status
+
     # get these set if not done before
     update(issue, helper)
     last_opened = issue['reopened_date'] or issue['creation']
-    issue['closed'] = issue['status'] in OPTIONS.resolved
+    issue['closed'] = in_resolved(issue['status'])
     duration = issue['activity'] if issue['closed'] else dates.to_value
     issue['duration'] = int((duration - last_opened).as_seconds())
     return issue
