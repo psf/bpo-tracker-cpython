@@ -363,14 +363,24 @@ for cl in ('issue_type', 'severity', 'component',
 db.security.addPermissionToRole('Coordinator', 'SB: May Classify')
 db.security.addPermissionToRole('Developer', 'SB: May Classify')
 
-# Allow Users and Developers to view most user properties.
-p = db.security.addPermission(name='View', klass='user',
-        properties=('id', 'username', 'address', 'realname', 'phone',
-                    'organisation', 'alternate_addresses', 'timezone',
-                    'roles', 'contrib_form', 'iscommitter', 'homepage',
-                    'github'))
-db.security.addPermissionToRole('User', p)
-db.security.addPermissionToRole('Developer', p)
+properties_for_users = (
+    'id', 'username', 'realname', 'phone',
+    'organisation', 'timezone',
+    'roles', 'contrib_form', 'iscommitter', 'homepage',
+    'github',
+)
+# Only Developers can see email addresses of other users.
+properties_for_developers = (
+    'address',
+    'alternate_addresses',
+)
+
+def add_user_permission(properties):
+    return db.security.addPermission(name='View', klass='user', properties=properties)
+
+db.security.addPermissionToRole('User', add_user_permission(properties_for_users))
+db.security.addPermissionToRole('Developer',
+                                add_user_permission(properties_for_users + properties_for_developers))
 # Anonymous may view the github username.
 p = db.security.addPermission(name='View', klass='user', properties=('github',))
 db.security.addPermissionToRole('Anonymous', p)
