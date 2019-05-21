@@ -55,7 +55,6 @@
  <th>GitHub</th>
  <th i18n:translate="">Real name</th>
  <th i18n:translate="">Organisation</th>
- <th tal:condition="context/is_edit_ok" i18n:translate="">Retire</th>
 </tr>
 <tal:block repeat="user batch">
 <tr tal:attributes="class python:['normal', 'alt'][repeat['user'].index%6/3]">
@@ -66,18 +65,10 @@
  <td tal:content="python:user.github.plain() or default">&nbsp;</td>
  <td tal:content="python:user.realname.plain() or default">&nbsp;</td>
  <td tal:content="python:user.organisation.plain() or default">&nbsp;</td>
- <td tal:condition="context/is_retire_ok">
-    <form style="padding:0" method="post"
-          tal:attributes="action string:user${user/id}">
-     <input type="hidden" name="@template" value="index">
-     <input type="hidden" name="@action" value="retire">
-     <input type="submit" value="retire" i18n:attributes="value">
-    </form>
- </td>
 </tr>
 </tal:block>
  <tr tal:condition="batch">
-  <th tal:attributes="colspan python:len(request.columns)">
+  <th colspan="4">
    <table width="100%">
     <tr class="navigation">
      <th>
