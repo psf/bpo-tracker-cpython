@@ -309,7 +309,10 @@ class OICAuthResp(Action, OICMixin):
         users = self.db.user.filter(None, {'address': github_email})
         if users:
             if len(users) > 1:
-                raise ValueError('There are multiple accounts with your GitHub email address')
+                raise ValueError(
+                    'There are multiple accounts (%d) with your GitHub email address %s',
+                    len(users), github_email,
+                )
             logger.debug('BPO user with email address %s found: %s', github_email, users[0])
             # Check if user has previously authenticated with GitHub.
             oic_account = self.db.oic_account.filter(None, {'issuer': github_issuer, 'subject': github_id})
