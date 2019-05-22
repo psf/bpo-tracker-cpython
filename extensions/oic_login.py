@@ -42,7 +42,7 @@ PROVIDER_URL_MAP = {
     PROVIDER_GITHUB: 'https://github.com/settings/developers',
 }
 
-logging.basicConfig(filename='oic_login.log', level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('bpo.extensions.oic_login')
 
 
