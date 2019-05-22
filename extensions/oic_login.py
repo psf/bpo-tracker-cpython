@@ -303,43 +303,46 @@ class OICAuthResp(Action, OICMixin):
         github_email = str(user_info['email'])
 
         logger.debug('GitHub ID=%s, name=%s, email=%s', github_id, github_name, github_email)
-        logger.debug('Checking BPO user with email address %s', github_email)
 
-        # Try to combine with the existing user account first.
-        users = self.db.user.filter(None, {'address': github_email})
-        if users:
-            if len(users) > 1:
-                raise ValueError(
-                    'There are multiple accounts (%d) with your GitHub email address %s' % (len(users), github_email)
-                )
-            logger.debug('BPO user with email address %s found: %s', github_email, users[0])
-            # Check if user has previously authenticated with GitHub.
-            oic_account = self.db.oic_account.filter(None, {'issuer': github_issuer, 'subject': github_id})
-            if oic_account:
-                if len(oic_account) > 1:
-                    raise ValueError('There are multiple records with the same issuer')
-                user = self.db.oic_account.get(oic_account[0], 'user')
-                logger.debug(
-                    'BPO user with email address %s who has already been logged in with GitHub found: %s',
-                    github_email, user,
-                )
-            else:
-                user = users[0]
-                self.db.oic_account.create(user=user, issuer=github_issuer, subject=github_id)
-                self.db.commit()
-                logger.debug('BPO user ID %s with email address %s has linked to GitHub', user, github_email)
-            logger.debug('Trying to log in to BPO with user ID %s and email address %s', user, github_email)
-            return self.login(user)
+        if user_info['email'] is not None:
+            logger.debug('User ID %s does have a public email address', github_id)
+            logger.debug('Checking BPO user with email address %s', github_email)
+
+            # Try to combine with the existing user account first.
+            users = self.db.user.filter(None, {'address': github_email})
+            if users:
+                if len(users) > 1:
+                    raise ValueError(
+                        'There are multiple accounts (%d) with your GitHub email address %s' % (len(users), github_email)
+                    )
+                logger.debug('BPO user with email address %s found: %s', github_email, users[0])
+                # Check if user has previously authenticated with GitHub.
+                oic_account = self.db.oic_account.filter(None, {'issuer': github_issuer, 'subject': github_id})
+                if oic_account:
+                    if len(oic_account) > 1:
+                        raise ValueError('There are multiple records with the same issuer')
+                    user = self.db.oic_account.get(oic_account[0], 'user')
+                    logger.debug(
+                        'BPO user with email address %s who has already been logged in with GitHub found: %s',
+                        github_email, user,
+                    )
+                else:
+                    user = users[0]
+                    self.db.oic_account.create(user=user, issuer=github_issuer, subject=github_id)
+                    self.db.commit()
+                    logger.debug('BPO user ID %s with email address %s has linked to GitHub', user, github_email)
+                logger.debug('Trying to log in to BPO with user ID %s and email address %s', user, github_email)
+                return self.login(user)
 
         # Then check if user has already authenticated with GitHub.
         # TODO: Add user ID to filter
         oic_account = self.db.oic_account.filter(None, {'issuer': github_issuer, 'subject': github_id})
         if oic_account:
-            logger.debug('Found existing linked account: %s', github_email)
+            logger.debug('Found existing linked account: %s (%s)', github_email, github_id)
             if len(oic_account) > 1:
                 raise ValueError('There are multiple records with the same issuer')
             user = self.db.oic_account.get(oic_account[0], 'user')
-            logger.debug('Fetched user ID %s from existing linked account: %s', user, github_email)
+            logger.debug('Fetched user ID %s from existing linked account: %s (%s)', user, github_email, github_id)
             return self.login(user)
 
         # Look for an unused account name.
