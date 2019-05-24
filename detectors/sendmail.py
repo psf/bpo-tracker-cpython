@@ -106,7 +106,7 @@ def sendmail(db, cl, nodeid, oldvalues):
 
     # Silence nosy_count/message_count/pull_requests
     changenote = '\n'.join(
-        line for line in lines if '_count' not in line and
+        line for line in lines if '_count' not in line or
         # Don't strip it if we couldn't find PR in the database.
         (pr_number and'pull_requests' not in line)
     )
