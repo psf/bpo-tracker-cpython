@@ -1,3 +1,5 @@
+import re
+
 from roundup import roundupdb
 
 def determineNewMessages(cl, nodeid, oldvalues):
@@ -35,6 +37,23 @@ def is_spam(db, msgid):
            msg['spambayes_score'] > cutoff_score:
         return True
     return False
+
+
+def extract_pr_number(changenote):
+    """
+    Extract PR number from *changenote*.
+
+    Example input (reformatted for brevity):
+
+        '\n----------\n'
+        'message_count: 2.0 -> 3.0\n'
+        'pull_requests: +20\n
+        'versions: +Python 3.1'
+    """
+    match = re.search(r'pull_requests: \+(\d+)', changenote, flags=re.M|re.S)
+    if match is None:
+        return None
+    return match.group(1)
 
 
 def sendmail(db, cl, nodeid, oldvalues):
@@ -75,9 +94,22 @@ def sendmail(db, cl, nodeid, oldvalues):
         oldfiles = oldvalues.get('files', [])
         oldmsglist = oldvalues.get('messages', [])
 
-    # Silence nosy_count/message_count
     lines = changenote.splitlines()
-    changenote = '\n'.join(line for line in lines if '_count' not in line)
+
+    pr_number = extract_pr_number(changenote)
+    if pr_number is not None:
+        pr_number = db.pull_request.get(pr_number, 'number')
+        if pr_number:
+            lines.append(
+                'pull_request: https://github.com/python/cpython/pull/%s' % pr_number
+            )
+
+    # Silence nosy_count/message_count/pull_requests
+    changenote = '\n'.join(
+        line for line in lines if '_count' not in line and
+        # Don't strip it if we couldn't find PR in the database.
+        (pr_number and'pull_requests' not in line)
+    )
 
     newfiles = db.issue.get(nodeid, 'files', [])
     if oldfiles != newfiles:
