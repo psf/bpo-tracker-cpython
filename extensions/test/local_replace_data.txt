@@ -253,19 +253,23 @@ see <a href="http://www.python.org/dev/peps/pep-0008/">http://www.python.org/dev
 ##
 ##
 see the devguide.
-see the <a href="http://docs.python.org/devguide">devguide</a>.
+see the <a href="http://devguide.python.org">devguide</a>.
 see http://docs.python.org/devguide/.
 see <a href="http://docs.python.org/devguide/">http://docs.python.org/devguide/</a>.
+see http://devguide.python.org/.
+see <a href="http://devguide.python.org/">http://devguide.python.org/</a>.
 see devguide/triaging.
-see <a href="http://docs.python.org/devguide/triaging">devguide/triaging</a>.
+see <a href="http://devguide.python.org/triaging">devguide/triaging</a>.
 see devguide/triaging.html.
-see <a href="http://docs.python.org/devguide/triaging.html">devguide/triaging.html</a>.
+see <a href="http://devguide.python.org/triaging.html">devguide/triaging.html</a>.
 see http://docs.python.org/devguide/committing.html#using-several-working-copies
 see <a href="http://docs.python.org/devguide/committing.html#using-several-working-copies">http://docs.python.org/devguide/committing.html#using-several-working-copies</a>
+see http://devguide.python.org/committing.html#using-several-working-copies
+see <a href="http://devguide.python.org/committing.html#using-several-working-copies">http://devguide.python.org/committing.html#using-several-working-copies</a>
 see devguide/committing.html#using-several-working-copies
-see <a href="http://docs.python.org/devguide/committing.html#using-several-working-copies">devguide/committing.html#using-several-working-copies</a>
+see <a href="http://devguide.python.org/committing.html#using-several-working-copies">devguide/committing.html#using-several-working-copies</a>
 see devguide/committing#using-several-working-copies
-see <a href="http://docs.python.org/devguide/committing#using-several-working-copies">devguide/committing#using-several-working-copies</a>
+see <a href="http://devguide.python.org/committing#using-several-working-copies">devguide/committing#using-several-working-copies</a>
 ##
 ## pull requests
 PR1
@@ -316,4 +320,3 @@ check my PR without number
 check my PR without number
 prompt 3 and Apr 7 shouldn't be linkified
 prompt 3 and Apr 7 shouldn't be linkified
-
