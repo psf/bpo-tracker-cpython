@@ -106,8 +106,8 @@ substitutions = [
      make_pep_link),
 
     # devguide
-    (re.compile(r'%s(devguide(?:/\w+(?:.html)?(?:#[\w-]+)?)?)' % seps),
-     r'<a href="http://docs.python.org/\1">\1</a>'),
+    (re.compile(r'%s(devguide((?:/\w+(.html)?(#[\w-]+)?)?)?)' % seps),
+     r'<a href="http://devguide.python.org\2">\1</a>'),
 ]
 
 
