@@ -3,23 +3,23 @@
 ##
 ## revisions - r12345, r 12345, rev12345, rev 12345, revision12345, revision 12345
 r2222
-<a href="http://hg.python.org/lookup/r2222">r2222</a>
+<a href="https://hg.python.org/lookup/r2222">r2222</a>
  r2222
- <a href="http://hg.python.org/lookup/r2222">r2222</a>
+ <a href="https://hg.python.org/lookup/r2222">r2222</a>
  r 2222
- <a href="http://hg.python.org/lookup/r2222">r 2222</a>
+ <a href="https://hg.python.org/lookup/r2222">r 2222</a>
  r. 2222
- <a href="http://hg.python.org/lookup/r2222">r. 2222</a>
+ <a href="https://hg.python.org/lookup/r2222">r. 2222</a>
  rev2222
- <a href="http://hg.python.org/lookup/r2222">rev2222</a>
+ <a href="https://hg.python.org/lookup/r2222">rev2222</a>
  rev  2222
- <a href="http://hg.python.org/lookup/r2222">rev  2222</a>
+ <a href="https://hg.python.org/lookup/r2222">rev  2222</a>
  rev.  2222
- <a href="http://hg.python.org/lookup/r2222">rev.  2222</a>
+ <a href="https://hg.python.org/lookup/r2222">rev.  2222</a>
  revision2222
- <a href="http://hg.python.org/lookup/r2222">revision2222</a>
+ <a href="https://hg.python.org/lookup/r2222">revision2222</a>
  revision 2222
- <a href="http://hg.python.org/lookup/r2222">revision 2222</a>
+ <a href="https://hg.python.org/lookup/r2222">revision 2222</a>
 wordthatendswithr 2222
 wordthatendswithr 2222
 I uploaded http://pypi.python.org/pypi/ctypesgen/0.r125
@@ -31,27 +31,27 @@ look at <a href="https://github.com/python/cpython/pull/12073/files#r263026496">
 http://code.google.com/p/spyderlib/source/detail?spec=svne5d86b685619a470d593aa5f9ee360ba60779bc1&r=323c6c697f045166e384cdc15803d40eebed0a2b
 <a href="http://code.google.com/p/spyderlib/source/detail?spec=svne5d86b685619a470d593aa5f9ee360ba60779bc1&amp;r=323c6c697f045166e384cdc15803d40eebed0a2b">http://code.google.com/p/spyderlib/source/detail?spec=svne5d86b685619a470d593aa5f9ee360ba60779bc1&amp;r=323c6c697f045166e384cdc15803d40eebed0a2b</a>
 41a99a2a7198
-<a href="http://hg.python.org/lookup/41a99a2a7198">41a99a2a7198</a>
+<a href="https://hg.python.org/lookup/41a99a2a7198">41a99a2a7198</a>
 hg41a99a2a7198
-<a href="http://hg.python.org/lookup/hg41a99a2a7198">hg41a99a2a7198</a>
+<a href="https://hg.python.org/lookup/hg41a99a2a7198">hg41a99a2a7198</a>
 41a99a2a7198e85c21643a5f1fdb598f07f11f9d
-<a href="http://hg.python.org/lookup/41a99a2a7198e85c21643a5f1fdb598f07f11f9d">41a99a2a7198e85c21643a5f1fdb598f07f11f9d</a>
+<a href="https://hg.python.org/lookup/41a99a2a7198e85c21643a5f1fdb598f07f11f9d">41a99a2a7198e85c21643a5f1fdb598f07f11f9d</a>
 hg41a99a2a7198e85c21643a5f1fdb598f07f11f9d
-<a href="http://hg.python.org/lookup/hg41a99a2a7198e85c21643a5f1fdb598f07f11f9d">hg41a99a2a7198e85c21643a5f1fdb598f07f11f9d</a>
+<a href="https://hg.python.org/lookup/hg41a99a2a7198e85c21643a5f1fdb598f07f11f9d">hg41a99a2a7198e85c21643a5f1fdb598f07f11f9d</a>
 ##
 ## git revisions
 4581b90a75
-<a href="http://hg.python.org/lookup/4581b90a75">4581b90a75</a>
+<a href="https://hg.python.org/lookup/4581b90a75">4581b90a75</a>
 git4581b90a75
-<a href="http://hg.python.org/lookup/git4581b90a75">git4581b90a75</a>
+<a href="https://hg.python.org/lookup/git4581b90a75">git4581b90a75</a>
 4581b90a75f
-<a href="http://hg.python.org/lookup/4581b90a75f">4581b90a75f</a>
+<a href="https://hg.python.org/lookup/4581b90a75f">4581b90a75f</a>
 git4581b90a75f
-<a href="http://hg.python.org/lookup/git4581b90a75f">git4581b90a75f</a>
+<a href="https://hg.python.org/lookup/git4581b90a75f">git4581b90a75f</a>
 4581b90a75f185df5f94af476cfc7e778fd11a24
-<a href="http://hg.python.org/lookup/4581b90a75f185df5f94af476cfc7e778fd11a24">4581b90a75f185df5f94af476cfc7e778fd11a24</a>
+<a href="https://hg.python.org/lookup/4581b90a75f185df5f94af476cfc7e778fd11a24">4581b90a75f185df5f94af476cfc7e778fd11a24</a>
 git4581b90a75f185df5f94af476cfc7e778fd11a24
-<a href="http://hg.python.org/lookup/git4581b90a75f185df5f94af476cfc7e778fd11a24">git4581b90a75f185df5f94af476cfc7e778fd11a24</a>
+<a href="https://hg.python.org/lookup/git4581b90a75f185df5f94af476cfc7e778fd11a24">git4581b90a75f185df5f94af476cfc7e778fd11a24</a>
 ##
 ## issues - the lowest issue id on bugs.python.org is #1000, the highest is #1779871
  #1
@@ -227,15 +227,15 @@ see version 1000.
 ##
 ##
 see PEP 8
-see <a href="http://www.python.org/dev/peps/pep-0008/">PEP 8</a>
+see <a href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a>
 see PEP8
-see <a href="http://www.python.org/dev/peps/pep-0008/">PEP8</a>
+see <a href="https://www.python.org/dev/peps/pep-0008/">PEP8</a>
 see pep 8
-see <a href="http://www.python.org/dev/peps/pep-0008/">pep 8</a>
+see <a href="https://www.python.org/dev/peps/pep-0008/">pep 8</a>
 see PEP 008
-see <a href="http://www.python.org/dev/peps/pep-0008/">PEP 008</a>
+see <a href="https://www.python.org/dev/peps/pep-0008/">PEP 008</a>
 see PEP 3000
-see <a href="http://www.python.org/dev/peps/pep-3000/">PEP 3000</a>
+see <a href="https://www.python.org/dev/peps/pep-3000/">PEP 3000</a>
 see PEP 15000
 see PEP 15000
 write a PEP!
@@ -253,23 +253,23 @@ see <a href="http://www.python.org/dev/peps/pep-0008/">http://www.python.org/dev
 ##
 ##
 see the devguide.
-see the <a href="http://devguide.python.org">devguide</a>.
+see the <a href="https://devguide.python.org">devguide</a>.
 see http://docs.python.org/devguide/.
 see <a href="http://docs.python.org/devguide/">http://docs.python.org/devguide/</a>.
 see http://devguide.python.org/.
 see <a href="http://devguide.python.org/">http://devguide.python.org/</a>.
 see devguide/triaging.
-see <a href="http://devguide.python.org/triaging">devguide/triaging</a>.
+see <a href="https://devguide.python.org/triaging">devguide/triaging</a>.
 see devguide/triaging.html.
-see <a href="http://devguide.python.org/triaging.html">devguide/triaging.html</a>.
+see <a href="https://devguide.python.org/triaging.html">devguide/triaging.html</a>.
 see http://docs.python.org/devguide/committing.html#using-several-working-copies
 see <a href="http://docs.python.org/devguide/committing.html#using-several-working-copies">http://docs.python.org/devguide/committing.html#using-several-working-copies</a>
 see http://devguide.python.org/committing.html#using-several-working-copies
 see <a href="http://devguide.python.org/committing.html#using-several-working-copies">http://devguide.python.org/committing.html#using-several-working-copies</a>
 see devguide/committing.html#using-several-working-copies
-see <a href="http://devguide.python.org/committing.html#using-several-working-copies">devguide/committing.html#using-several-working-copies</a>
+see <a href="https://devguide.python.org/committing.html#using-several-working-copies">devguide/committing.html#using-several-working-copies</a>
 see devguide/committing#using-several-working-copies
-see <a href="http://devguide.python.org/committing#using-several-working-copies">devguide/committing#using-several-working-copies</a>
+see <a href="https://devguide.python.org/committing#using-several-working-copies">devguide/committing#using-several-working-copies</a>
 ##
 ## pull requests
 PR1
