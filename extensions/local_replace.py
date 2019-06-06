@@ -9,14 +9,14 @@ from roundup.cgi.templating import register_propclass, StringHTMLProperty
 substitutions = [
     #  r12345, r 12345, rev12345, rev 12345, revision12345, revision 12345
     (re.compile(r'\b(?<![/?&;])(?P<revstr>r(ev(ision)?)?\s*)(?P<revision>\d+)'),
-     r'<a href="http://svn.python.org/view?rev=\g<revision>'
+     r'<a href="https://svn.python.org/view?rev=\g<revision>'
      r'&view=rev">\g<revstr>\g<revision></a>'),
 
     # Lib/somefile.py, Modules/somemodule.c, Doc/somedocfile.rst, ...
     (re.compile(r'(?P<sep>(?<!\w/)|(?<!\w)/)(?P<path>(?:Demo|Doc|Grammar|'
                 r'Include|Lib|Mac|Misc|Modules|Parser|PC|PCbuild|Python|'
                 'RISCOS|Tools|Objects)/[-.a-zA-Z0-9_/]+[a-zA-Z0-9]/?)'),
-     r'<a href="http://svn.python.org/view/python/branches/'
+     r'<a href="https://svn.python.org/view/python/branches/'
      r'py3k/\g<path>">\g<sep>\g<path></a>'),
 ]
 '''
@@ -68,7 +68,7 @@ def make_traceback_link(match):
 def make_pep_link(match):
     text = match.group(0)
     pepnum = match.group(1).zfill(4)
-    return '<a href="http://www.python.org/dev/peps/pep-%s/">%s</a>' % (pepnum, text)
+    return '<a href="https://www.python.org/dev/peps/pep-%s/">%s</a>' % (pepnum, text)
 
 
 # these regexs have test in tests/test_local_replace.py
@@ -78,13 +78,13 @@ substitutions = [
     # deadbeeffeed  (hg hashes with exactly twelve or forty chars,
     # git has 10 or more as it grows as time goes on)
     (re.compile(r'%s(?P<revision>(git|hg)?[a-fA-F0-9]{40})\b' % seps),
-     r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
+     r'<a href="https://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
     (re.compile(r'%s(?P<revision>(git|hg)?[a-fA-F0-9]{10,12})\b' % seps),
-     r'<a href="http://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
+     r'<a href="https://hg.python.org/lookup/\g<revision>">\g<revision></a>'),
 
     # r12345, r 12345, rev12345, rev. 12345, revision12345, revision 12345
     (re.compile(r'%s(?P<revstr>r\.?(ev\.?(ision)?)?\s*)(?P<revision>\d{4,})' % seps),
-     r'<a href="http://hg.python.org/lookup/r\g<revision>">\g<revstr>\g<revision></a>'),
+     r'<a href="https://hg.python.org/lookup/r\g<revision>">\g<revstr>\g<revision></a>'),
 
     # Lib/somefile.py, Lib/somefile.py:123, Modules/somemodule.c:123, ...
     (re.compile(r'%s(?P<v>2\.[0-7]/|3\.\d/)?(?P<path>(?:Demo|Doc|Grammar|'
@@ -107,7 +107,7 @@ substitutions = [
 
     # devguide
     (re.compile(r'%s(devguide((?:/\w+(.html)?(#[\w-]+)?)?)?)' % seps),
-     r'<a href="http://devguide.python.org\2">\1</a>'),
+     r'<a href="https://devguide.python.org\2">\1</a>'),
 ]
 
 
