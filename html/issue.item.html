@@ -166,12 +166,12 @@
         tal:replace="structure python:db.user.classhelp('username,realname,address', property='nosy')" />
  </th>
  <td>
-     <span tal:replace="structure context/nosy/field" />
-     <span id="add_me_to_nosy" style="display: none"
+     <span tal:attributes="id string:nosy_list" tal:replace="structure context/nosy/field" />
+     <span id="add_remove_from_nosy" style="display: none"
         tal:define="current_user request/user/username"
-        tal:condition="python:request.user.username != 'anonymous' and current_user not in str(context.nosy).split(', ')"
-        tal:attributes="onclick string:add_to_nosy('$current_user')"
-        onclick="add_to_nosy(the_current_username)"></span>
+        tal:condition="python:request.user.username != 'anonymous'"
+        tal:attributes="onclick string:change_nosy('$current_user');user current_user"
+        onclick="change_nosy(the_current_username)"></span>
  </td>
 </tr>
 <tr>

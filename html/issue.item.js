@@ -2,45 +2,57 @@ $(document).ready(function () {
     // create the input button and use it to replace the span/placeholder --
     // users without javascript won't notice anything.
     // This might eventually be replaced by jquery
-    var node_id = 'add_me_to_nosy';
-    var add_me_span = document.getElementById(node_id);
-    if (add_me_span == null) {
-        // we are already in the nosy or we are not logged in
-        return;
+    var node_id = 'add_remove_from_nosy';
+    var user_span = document.getElementById(node_id);
+    if (user_span == null) {
+        return;  // we are not logged in
     }
-    var add_me_button = document.createElement('input');
-    var add_me_parent = add_me_span.parentNode;
-    add_me_button.type = 'button';
-    add_me_button.value = '+';
-    add_me_button.title = 'Add me to the nosy list (remember to Submit Changes)';
-    add_me_button.onclick = add_me_span.onclick;
-    add_me_button.style.display = 'inline';
-    add_me_parent.replaceChild(add_me_button, add_me_span);
-    add_me_button.id = node_id;
+    // create button
+    var button = document.createElement('input');
+    button.type = 'button';
+    button.onclick = user_span.onclick;
+    button.style.display = 'inline';
+    // replace placeholder span with button
+    var button_parent = user_span.parentNode;
+    button_parent.replaceChild(button, user_span);
+    button.id = node_id;
+    // update +/- value
+    var user = user_span.getAttribute("user")
+    update_nosy_button(user);
 })
 
 
-function add_to_nosy(user) {
-    var add_me_button = document.getElementById('add_me_to_nosy');
-    var nosy = document.getElementsByName('nosy')[0];
-    // remove spaces at the beginning/end of the string and around the commas
-    var nosy_text = nosy.value.replace(/^[\s,]*|[\s,]*$/g, '').replace(/\s*,\s*/g, ',');
-    if (nosy_text == "") {
-        // nosy_list is empty, add the user
-        nosy.value = user;
+function update_nosy_button(user) {
+    // change the value of the button to + or -
+    var button = document.getElementById('add_remove_from_nosy');
+    var nosy = document.getElementById('nosy_list');
+    if (nosy.value.split(",").includes(user)) {
+        button.value = '-';
+        button.title = 'Remove';
     }
     else {
-        re = new RegExp("(^|,)" + user + "(,|$)");
-        if (!re.test(nosy_text)) {
-            // make sure the user is not in nosy and then add it at the beginning
-            nosy.value = user + ',' + nosy_text;
-        }
+        button.value = '+';
+        button.title = 'Add';
     }
-    // hide the button and resize the list to fill the void
-    var new_width = nosy.offsetWidth + add_me_button.offsetWidth;
-    add_me_button.style.display = 'none';
-    nosy.style.display = 'inline';
-    nosy.style.width = new_width + "px";
+    button.title += ' me from the nosy list (remember to Submit Changes)';
+}
+
+
+function change_nosy(user) {
+    // add or remove the user from the nosy list
+    var button = document.getElementById('add_remove_from_nosy');
+    var nosy = document.getElementById('nosy_list');
+    // remove spaces at the beginning/end of the string and around the commas
+    var nosy_text = nosy.value.replace(/^[\s,]*|[\s,]*$/g, '').replace(/\s*,\s*/g, ',');
+    var user_list = nosy_text.length>0 ? nosy_text.split(",") : []
+    if (user_list.includes(user)) {
+        user_list.splice(user_list.indexOf(user), 1);  // remove user
+    }
+    else {
+        user_list.unshift(user);  // add user at the beginning
+    }
+    nosy.value = user_list.join(',');
+    update_nosy_button(user);
 }
 
 
