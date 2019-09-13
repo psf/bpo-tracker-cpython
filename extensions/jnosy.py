@@ -64,7 +64,7 @@ def experts_as_json():
     return json.dumps(data, separators=(',',':'))
 
 
-def devs_as_json(cls):
+def committers_as_json(cls):
     """
     Generate a JSON object that contains the username and realname of all
     the committers.
@@ -79,6 +79,22 @@ def devs_as_json(cls):
     return json.dumps(users, separators=(',',':'))
 
 
+def devs_as_json(cls):
+    """
+    Generate a JSON object that contains the username and realname of all
+    the user with the Developer role that are not committers.
+    """
+    users = []
+    for user in cls.filter(None, {'roles': 'Developer', 'iscommitter': 0}):
+        username = user.username.plain()
+        realname = user.realname.plain()
+        if not realname:
+            continue
+        users.append([username, realname])
+    return json.dumps(users, separators=(',',':'))
+
+
 def init(instance):
     instance.registerUtil('experts_as_json', experts_as_json)
+    instance.registerUtil('committers_as_json', committers_as_json)
     instance.registerUtil('devs_as_json', devs_as_json)

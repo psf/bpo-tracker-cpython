@@ -176,9 +176,10 @@ $(document).ready(function() {
 
 
 $(document).ready(function() {
-    /* Add an autocomplete to the nosy list that searches the term in two lists:
-         1) the list of developers (both the user and the real name);
-         2) the list of experts in the devguide;
+    /* Add an autocomplete to the nosy list that searches the term in 3 lists:
+         1) the list of committers (both the user and the real name);
+         2) the list of triagers (both the user and the real name);
+         3) the list of experts in the devguide;
        See also the "categories" and "multiple values" examples at
        http://jqueryui.com/demos/autocomplete/. */
 
@@ -266,16 +267,17 @@ $(document).ready(function() {
         var supports_html5_storage = false;
     }
 
-    // this object receives the entries for the devs and experts and
-    // when it has both it calls add_autocomplete
+    // this object receives the entries for committers, devs, and experts
+    // and calls add_autocomplete once they are all set
     var data = {
+        committers: null,
         devs: null,
         experts: null,
         add: function(data, type) {
-            // type is either 'devs' or 'experts'
+            // type is either 'committers', 'devs', or 'experts'
             this[type] = data;
-            if (this.devs && this.experts)
-                add_autocomplete(this.devs.concat(this.experts))
+            if (this.committers && this.devs && this.experts)
+                add_autocomplete(this.committers.concat(this.devs, this.experts))
         }
     };
 
@@ -296,7 +298,7 @@ $(document).ready(function() {
     */
     function get_json(file, callback) {
         // Get the JSON from either the HTML5 storage or the server.
-        //   file is either 'devs' or 'experts',
+        //   file is either 'committers', 'devs', or 'experts',
         //   the callback is called once the json is retrieved
         var json;
         if (supports_html5_storage &&
@@ -310,11 +312,18 @@ $(document).ready(function() {
             // the JSON to the server
             $.getJSON('user?@template='+file, function(rawdata) {
                 var objects = []; // array of objs with label, value, category
-                if (file == 'devs') {
-                    // save devs as 'Name Surname (user.name)'
+                if (file == 'committers') {
+                    // save committers as 'Name Surname (user.name)'
                     $.each(rawdata, function(index, names) {
                         objects.push({label: names[1] + ' (' + names[0] + ')',
-                                      value: names[0], category: 'Developer'});
+                                      value: names[0], category: 'Core Developers'});
+                    });
+                }
+                else if (file == 'devs') {
+                    // save triager as 'Name Surname (user.name)'
+                    $.each(rawdata, function(index, names) {
+                        objects.push({label: names[1] + ' (' + names[0] + ')',
+                                      value: names[0], category: 'Triagers'});
                     });
                 }
                 else {
@@ -336,11 +345,12 @@ $(document).ready(function() {
         }
     }
 
-    // request the JSON.  This will get it from the HTML5 storage if it's there
-    // or request it to the server if it's not,  The JSON will be passed to the
-    // data object, that will wait to get both the files before calling the
+    // request the JSONs.  This will get it from the HTML5 storage if it's there
+    // or request it from the server if it's not,  The JSON will be passed to
+    // the data object, that will wait to get all the files before calling the
     // add_autocomplete function.
     get_json('experts', data.add);
+    get_json('committers', data.add);
     get_json('devs', data.add);
 });
 

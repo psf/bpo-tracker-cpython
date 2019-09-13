@@ -162,8 +162,6 @@
    <a href="http://docs.python.org/devguide/triaging.html#nosy-list"
       target="_blank" i18n:translate="">Nosy List</a><!--
         <span tal:condition="context/nosy_count" tal:replace="python: ' (%d)' % context.nosy_count" /> -->:
-  <span tal:condition="context/nosy/is_edit_ok"
-        tal:replace="structure python:db.user.classhelp('username,realname,address', property='nosy')" />
  </th>
  <td>
      <span tal:attributes="id string:nosy_list" tal:replace="structure context/nosy/field" />
