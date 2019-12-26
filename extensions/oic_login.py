@@ -98,12 +98,10 @@ class OICLogin(Action, OICMixin):
             #"nonce": hmac.new(_nonce, digestmod=hashlib.sha224),
             "redirect_uri": client.redirect_uris[0]
             }
-        result = client.do_authorization_request(state=client.state,
-                                                 request_args=args)
-        if result.status_code == 302:
-            raise Redirect, result.headers['location']
-        else:
-            return "Could not contact Google" + repr(result.content)
+        auth_req = client.construct_AuthorizationRequest(request_args=args)
+        login_url = auth_req.request(client.authorization_endpoint)
+
+        raise Redirect, login_url
 
 
 class OICAuthResp(Action, OICMixin):
