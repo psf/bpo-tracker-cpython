@@ -68,6 +68,14 @@ def updatenosy(db, cl, nodeid, newvalues):
                 for recipient in msg.get(msgid, 'recipients'):
                     new_nosy.add(recipient)
 
+    # add creator of PR to the nosy list
+    if 'pull_requests' in newvalues:
+        prs = newvalues['pull_requests']
+        for pr in prs:
+            probj = db.pull_request.getnode(pr)
+            if probj:
+                new_nosy.add(probj.creator)
+
     if current_nosy != new_nosy:
         # that's it, save off the new nosy list
         newvalues['nosy'] = list(new_nosy)
