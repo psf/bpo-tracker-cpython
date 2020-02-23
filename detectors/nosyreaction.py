@@ -70,9 +70,17 @@ def updatenosy(db, cl, nodeid, newvalues):
 
     # add creator of PR to the nosy list
     if 'pull_requests' in newvalues:
+        if nodeid is not None:
+            current_prs = cl.get(nodeid, 'pull_requests')
+        else:
+            current_prs = []
         prs = newvalues['pull_requests']
-        for pr in prs:
-            probj = db.pull_request.getnode(pr)
+        # we only care about when a new PR is linked, so don't do
+        # anything when a PR is unlinked
+        if len(prs) > len(current_prs):
+            # we only want to use the latest linked PR
+            latest_pr = prs[-1]
+            probj = db.pull_request.getnode(latest_pr)
             if probj:
                 new_nosy.add(probj.creator)
 
