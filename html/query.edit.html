@@ -53,11 +53,8 @@ function post_to_url(path, params, method) {
     <th>&nbsp;</th>
 </tr>
 
-<!-- RDM20140305: We ought to be able to use a filterspec here and below
-     instead of a condition, but I couldn't get it to work. -->
-<tr tal:define="queries python:db.query.filter()"
-     tal:repeat="query queries">
- <tal:block tal:condition="python:query.creator == uid and not path('query/is_retired')">
+<tr tal:repeat="query mine">
+ <tal:block condition="not:query/is_retired">
  <td><a tal:attributes="href string:${query/klass}?${query/url}"
         tal:content="query/name">query</a></td>
 
@@ -86,9 +83,23 @@ function post_to_url(path, params, method) {
  </td>
 
  <td>
-  <input type="button" value="Delete" i18n:attributes="value"
+  <input type="button" value="Retire" i18n:attributes="value"
   tal:attributes="onClick python:'''retire('%s')'''%query.id">
   </td>
+ </tal:block>
+</tr>
+
+<tr tal:repeat="query mine">
+ <tal:block condition="query/is_retired">
+ <td><a tal:attributes="href string:${query/klass}?${query/url}"
+        tal:content="query/name">query</a></td>
+
+ <td metal:use-macro="template/macros/include" />
+
+ <td colspan="3">
+     Query is retired. You can select "remove" and press "Submit Changes" to
+     remove it from "Your Queries" in the sidebar.
+ </td>
  </tal:block>
 </tr>
 
