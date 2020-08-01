@@ -20,7 +20,11 @@
 #
 #$Id: userauditor.py,v 1.3 2006/09/18 03:24:38 tobias-herp Exp $
 
+import re
 import urlparse
+
+valid_username = re.compile(r'^[a-z0-9_.-]+$', re.IGNORECASE)
+
 
 def audit_user_fields(db, cl, nodeid, newvalues):
     ''' Make sure user properties are valid.
@@ -28,6 +32,13 @@ def audit_user_fields(db, cl, nodeid, newvalues):
         - email address has no spaces in it
         - roles specified exist
     '''
+    if 'username' in newvalues:
+        if not valid_username.match(newvalues['username']):
+            raise ValueError(
+                'Username must consist only of the letters a-z (any case), '
+                'digits 0-9 and the symbols: ._-'
+            )
+
     if newvalues.has_key('address') and ' ' in newvalues['address']:
         raise ValueError, 'Email address must not contain spaces'
 

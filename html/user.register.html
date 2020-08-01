@@ -19,7 +19,10 @@
  </tr>
  <tr>
   <th class="required" i18n:translate="">Login Name</th>
-  <td tal:content="structure context/username/field">username</td>
+  <td>
+   <span tal:content="structure python:context.username.field(pattern='^[A-Za-z0-9_.-]+$', required='')">username</span>
+   Login name must consist only of the letters a-z (any case), digits 0-9 and the symbols: ._-
+  </td>
  </tr>
  <tr>
   <th class="required" i18n:translate="">Login Password</th>
