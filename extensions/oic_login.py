@@ -197,14 +197,15 @@ class OICAuthResp(Action, OICMixin):
             raise ValueError, "There is already an account for " + email
 
         # Look for unused account name
-        username = name
+        initial_username = email.split("@")[0]
+        username = initial_username
         suffix = 1
         while True:
             user = self.db.user.filter(None, {'username':username})
             if not user:
                 break
             suffix += 1
-            username = name + str(suffix)
+            username = initial_username + str(suffix)
 
         # create account
         if email_verified:
