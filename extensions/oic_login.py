@@ -191,10 +191,22 @@ class OICAuthResp(Action, OICMixin):
         email = userinfo['email'].encode('utf-8')
         email_verified = userinfo['email_verified']
 
-        # avoid creation of duplicate accounts
+        # If email is verified and there is already an account with the same
+        # email, try to associate it. Otherwise, avoid creation of duplicate
+        # accounts.
         users = self.db.user.filter(None, {'address': email})
         if users:
-            raise ValueError, "There is already an account for " + email
+            if len(users) == 1 and email_verified:
+                user = users[0]
+                self.db.oic_account.create(user=user, issuer=iss, subject=sub)
+                self.db.commit()
+                self.client.add_ok_message(
+                    'You account has been successfully associated with your Google '
+                    'account.'
+                )
+                return self.login(user)
+            else:
+                raise ValueError('There is already an account for %s' % email)
 
         # Look for unused account name
         initial_username = email.split("@")[0]

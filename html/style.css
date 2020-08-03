@@ -320,6 +320,25 @@ table.messages td pre {
  word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
+table.openids {
+  border-spacing: 0;
+  border-collapse: separate;
+  width: 100%;
+}
+
+table.openids th {
+  border-bottom: 1px solid #afafaf;
+  font-weight: bold;
+  text-align: left;
+}
+
+table.openids th.header {
+  padding-top: 10px;
+  border-bottom: 1px solid gray;
+  font-weight: bold;
+  background-color: white;
+  color: #707040;
+}
 
 /* style for file displays */
 table.files {

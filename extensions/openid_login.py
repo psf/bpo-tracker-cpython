@@ -308,14 +308,6 @@ class OpenidRegister(RegisterAction, Openid):
         self.form.value.append(cgi.MiniFieldStorage('@confirm@password', pwd))
         return RegisterAction.handle(self)
 
-def openid_links(request):
-    res = []
-    for prov, icon, url, extra in providers.values():
-        res.append({'href':request.env['PATH_INFO']+'?@action=openid_login&provider='+prov,
-                    'src':icon,
-                    'title':prov,
-                    'alt':prov})
-    return res
 
 def init(instance):
     instance.registerAction('login', OpenidLogin) # override standard login action
@@ -323,4 +315,3 @@ def init(instance):
     instance.registerAction('openid_return', OpenidReturn)
     instance.registerAction('openid_delete', OpenidDelete)
     instance.registerAction('openid_register', OpenidRegister)
-    instance.registerUtil('openid_links', openid_links)

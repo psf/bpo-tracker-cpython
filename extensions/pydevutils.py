@@ -103,6 +103,22 @@ class RandomIssueAction(Action):
         raise Redirect(url)
 
 
+def openid_links(request):
+    providers = [
+        ('Google', 'oic_login', 'https://www.google.com/favicon.ico'),
+        ('Launchpad', 'openid_login', 'https://launchpad.net/favicon.ico'),
+    ]
+    links = []
+    for name, action, icon, in providers:
+        links.append({
+            'href': request.env['PATH_INFO'] + '?@action=' + action + '&provider=' + name,
+            'src': icon,
+            'title': name,
+            'alt': name,
+        })
+    return links
+
+
 def init(instance):
     instance.registerUtil('is_history_ok', is_history_ok)
     instance.registerUtil('is_coordinator', is_coordinator)
@@ -112,3 +128,4 @@ def init(instance):
                           issueid_and_action_from_class)
     instance.registerUtil('clas_as_json', clas_as_json)
     instance.registerAction('random', RandomIssueAction)
+    instance.registerUtil('openid_links', openid_links)
