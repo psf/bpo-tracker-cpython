@@ -3,8 +3,6 @@
 from oic.oic.consumer import Consumer
 from oic.oic.message import RegistrationResponse
 from oic.oic.message import AuthorizationResponse
-import hashlib
-import hmac
 import random
 from UserDict import DictMixin
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
@@ -25,8 +23,6 @@ except ImportError:
         """
         _basech = string.ascii_letters + string.digits
         return "".join([random.choice(_basech) for _ in range(size)])
-
-HOSTNAME='lap-le.pst.beuth-hochschule.de'
 
 consumer_config = {
     'debug': True
@@ -128,9 +124,6 @@ class OICAuthResp(Action, OICMixin):
         aresp = client.parse_response(AuthorizationResponse, info=self.client.env['QUERY_STRING'],
                                       sformat="urlencoded")
 
-        code = aresp["code"]
-        #assert aresp["state"] == client.state
-
         args = {
             "code": aresp["code"],
             "redirect_uri": client.redirect_uris[0],
@@ -185,8 +178,6 @@ class OICAuthResp(Action, OICMixin):
         # XXX Google insists on GET
         userinfo = client.do_user_info_request(method="GET", state=aresp["state"])
 
-        given_name = userinfo['given_name'].encode('utf-8')
-        family_name = userinfo['family_name'].encode('utf-8')
         name = userinfo['name'].encode('utf-8')
         email = userinfo['email'].encode('utf-8')
         email_verified = userinfo['email_verified']
