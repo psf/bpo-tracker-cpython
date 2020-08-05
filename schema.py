@@ -441,8 +441,14 @@ for r in 'User', 'Developer', 'Coordinator':
 # View your own oics
 def view_oic(db, userid, itemid):
     return db.oic_account.get(itemid, 'user') == userid
+def edit_oic(db, userid, itemid):
+    return db.oic_account.get(itemid, 'user') == userid
 p = db.security.addPermission(name='View', klass='oic_account', check=view_oic,
     description="User is allowed to view their own oics")
+for r in 'User', 'Developer', 'Coordinator':
+    db.security.addPermissionToRole(r, p)
+p = db.security.addPermission(name='Retire', klass='oic_account', check=edit_oic,
+    description="User is allowed to retire their own oics")
 for r in 'User', 'Developer', 'Coordinator':
     db.security.addPermissionToRole(r, p)
 
