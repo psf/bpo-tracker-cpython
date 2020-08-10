@@ -24,6 +24,19 @@ except ImportError:
         _basech = string.ascii_letters + string.digits
         return "".join([random.choice(_basech) for _ in range(size)])
 
+
+PROVIDER_GOOGLE = 'Google'
+PROVIDER_GITHUB = 'GitHub'
+PROVIDER_URL_MAP = {
+    'Google': 'https://accounts.google.com',
+    'GitHub': 'https://github.com/settings/developers',
+}
+
+def select_provider(form):
+    if 'provider' in form:
+        return form['provider'].value
+    raise ValueError('Provider could not be found.')
+
 consumer_config = {
     'debug': True
 }
@@ -62,15 +75,28 @@ class SessionStore(DictMixin):
         return res
 
 class OICMixin:
-    # XXX this somehow needs to be generalized if more OIC provider are supported
-    provider = "https://accounts.google.com"
-    def init_oic(self):
-        self.scopes = ["openid","profile","email"]
+
+    def init_oic(self, provider_name):
+        if provider_name not in PROVIDER_URL_MAP:
+            raise ValueError('Invalid provider: %s', provider_name)
+        provider = PROVIDER_URL_MAP[provider_name]
+        self.scopes = ['openid', 'profile', 'email']
         db = SessionStore(self.db)
         client = Consumer(db, consumer_config, client_config=client_config)
         client.allow['issuer_mismatch'] = True
-        client.provider_info = client.provider_config(self.provider)
-        providers = self.db.oic_registration.filter(None, {'issuer':self.provider})
+
+        # Github does not support dynamically resolving OpenID configuration.
+        if provider_name == PROVIDER_GITHUB:
+            self.scopes = ['user:email', 'read:user']
+            client.provider_info = {
+                'authorization_endpoint': 'https://github.com/login/oauth/authorize',
+                'token_endpoint': 'https://github.com/login/oauth/access_token',
+            }
+            client.handle_provider_config(client.provider_info, 'GitHub')
+        else:
+            client.provider_info = client.provider_config(provider)
+
+        providers = self.db.oic_registration.filter(None, {'issuer': provider})
         assert len(providers) == 1
         provider = self.db.oic_registration.getnode(providers[0])
         client_reg = RegistrationResponse(client_id=provider['client_id'],
@@ -78,12 +104,20 @@ class OICMixin:
         client.store_registration_info(client_reg)
         return client
 
+    def redirect_uri(self, provider):
+        redirect_uri = self.base + 'index?@action=oic_authresp'
+        # Avoid breaking existing Google callback URLs which will not have
+        # provider tagged along.
+        if provider != PROVIDER_GOOGLE:
+            redirect_uri += '&provider=' + provider
+        return redirect_uri
 
 class OICLogin(Action, OICMixin):
     def handle(self):
-        client = self.init_oic()
-        client.redirect_uris=[self.base+'index?@action=oic_authresp']
-
+        provider = select_provider(self.client.form)
+        client = self.init_oic(provider)
+        redirect_uri = self.redirect_uri(provider)
+        client.redirect_uris = [redirect_uri]
         client.state = rndstr()
         _nonce = rndstr()
         args = {
@@ -118,8 +152,10 @@ class OICAuthResp(Action, OICMixin):
         return
 
     def handle(self):
-        client = self.init_oic()
-        client.redirect_uris=[self.base+'index?@action=oic_authresp']
+        provider = select_provider(self.client.form)
+        client = self.init_oic(provider)
+        redirect_uri = self.redirect_uri(provider)
+        client.redirect_uris = [redirect_uri]
 
         aresp = client.parse_response(AuthorizationResponse, info=self.client.env['QUERY_STRING'],
                                       sformat="urlencoded")
@@ -134,8 +170,13 @@ class OICAuthResp(Action, OICMixin):
         resp = client.do_access_token_request(scope=self.scopes,
                                               state=aresp["state"],
                                               request_args=args,
-                                              authn_method="client_secret_post"
+                                              authn_method="client_secret_post",
+                                              headers={"Accept": "application/json"},
                                               )
+
+        if provider == PROVIDER_GITHUB:
+            return self.on_github_response(client, resp)
+
         try:
             id_token = resp['id_token']
         except KeyError:
@@ -230,6 +271,92 @@ class OICAuthResp(Action, OICMixin):
         # as they live in a different table. This could be fixed by using an alternative
         # confirmation action. Doing so is deferred until need arises
         raise ValueError, "Your OpenID Connect account is not supported. Please contact tracker-discuss@python.org"
+
+    def on_github_response(self, client, response):
+        if 'access_token' not in response:
+            raise ValueError('Invalid response from GitHub.')
+
+        # Grab their info from the GitHub API.
+        token = response['access_token']
+        user_info = client.http_request(
+            'https://api.github.com/user',
+            method='GET',
+            headers={
+                'Authorization': 'token {}'.format(token),
+                'User-Agent': 'bugs.python.org',
+                'Accept': 'application/json',
+            },
+        )
+
+        if user_info.status_code != 200:
+            raise ValueError('Could not fetch user information from GitHub.')
+
+        user_info = user_info.json()
+
+        # Login existing integrated accounts directly.
+        github_issuer = PROVIDER_URL_MAP[PROVIDER_GITHUB]
+        github_id = str(user_info['id'])
+        oic_account = self.db.oic_account.filter(None, {'issuer': github_issuer, 'subject': github_id})
+        if oic_account:
+            if len(oic_account) > 1:
+                raise ValueError(
+                    'There are multiple records with the same issuer. Please '
+                    'open a new issue at https://github.com/python/bugs.python.org.'
+                )
+            user = self.db.oic_account.get(oic_account[0], 'user')
+            return self.login(user)
+
+        github_username = user_info['login']
+        github_name = user_info['name']
+        github_email = user_info['email']
+
+        if github_email is None:
+            raise ValueError(
+                'Your email address couldn\'t be fetched from your GitHub '
+                'profile. Please make it public at https://github.com/settings/emails.'
+            )
+
+        users = self.db.user.filter(None, {'address': github_email})
+        if users:
+            if len(users) > 1:
+                raise ValueError(
+                    'There are multiple records with the same email address %s.' % github_email
+                )
+            user = users[0]
+            self.db.oic_account.create(user=user, issuer=github_issuer, subject=github_id)
+            self.db.user.set(user, github=github_username)
+            self.db.commit()
+            self.client.add_ok_message(
+                'You account has been successfully associated with your GitHub '
+                'account.'
+            )
+            return self.login(user)
+
+        username = self.generate_username(github_username)
+        passwd = password.Password(password.generatePassword())
+        user = self.db.user.create(
+            username=username,
+            realname=github_name,
+            github=github_username,
+            password=passwd,
+            roles=self.db.config['NEW_WEB_USER_ROLES'],
+            address=github_email,
+        )
+        self.db.oic_account.create(user=user, issuer=github_issuer, subject=github_id)
+        self.db.commit()
+        return self.login(user)
+
+    def generate_username(self, username):
+        new_username = username
+        suffix = 1
+        while True:
+            user = self.db.user.filter(None, {'username': new_username})
+            if not user:
+                break
+            suffix += 1
+            new_username = '%s%d' % (username, suffix)
+        return new_username
+
 
 class OICDelete(Action):
     def handle(self):

@@ -106,6 +106,7 @@ class RandomIssueAction(Action):
 def openid_links(request):
     providers = [
         ('Google', 'oic_login', 'https://www.google.com/favicon.ico'),
+        ('GitHub', 'oic_login', 'https://www.github.com/favicon.ico'),
         ('Launchpad', 'openid_login', 'https://launchpad.net/favicon.ico'),
     ]
     links = []
