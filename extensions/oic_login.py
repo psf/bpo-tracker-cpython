@@ -35,7 +35,8 @@ PROVIDER_URL_MAP = {
 def select_provider(form):
     if 'provider' in form:
         return form['provider'].value
-    raise ValueError('Provider could not be found.')
+    # Fallback to Google if provider doesn't exist in the form.
+    return PROVIDER_GOOGLE
 
 consumer_config = {
     'debug': True
