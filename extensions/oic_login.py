@@ -314,7 +314,8 @@ class OICAuthResp(Action, OICMixin):
         if github_email is None:
             raise ValueError(
                 'Your email address couldn\'t be fetched from your GitHub '
-                'profile. Please make it public at https://github.com/settings/emails.'
+                'profile. Please make it public in the "Public email" section of '
+                'https://github.com/settings/profile.'
             )
 
         users = self.db.user.filter(None, {'address': github_email})
