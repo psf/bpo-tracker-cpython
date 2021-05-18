@@ -14,7 +14,9 @@ RELEASE_MANAGERS = {
     'Python 3.5': '2731',  # larry
     'Python 3.6': '5248',  # ned.deily
     'Python 3.7': '5248',  # ned.deily
-    'Python 3.8': '12704', # lukasz.langa 
+    'Python 3.8': '12704', # lukasz.langa
+    'Python 3.9': '12704', # lukasz.langa
+    'Python 3.10': '26865', # pablogsal
 }
 
 def autonosy(db, cl, nodeid, newvalues):
