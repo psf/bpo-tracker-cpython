@@ -42,16 +42,13 @@ def make_file_link(match):
 
 def guess_version(path):
     """Search for Python version hints in the file path."""
-    match = re.search(r'((?<=[Pp]ython)[23]\d|[23]\.\d)', path)
+    match = re.search(r'((?<=[Pp]ython)[23]\d\d?|[23]\.\d\d?)', path)
     if not match:
-        return 'master'
+        return 'main'
     version = match.group(1)
     if '.' not in version:
-        version = '.'.join(version)
-    if version in ['2.3', '2.4', '2.5', '2.6', '2.7', '3.1', '3.2',
-                   '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.9']:
-        return version
-    return 'master'
+        version = '.'.join((version[0], version[1:]))
+    return version
 
 
 def make_traceback_link(match):
