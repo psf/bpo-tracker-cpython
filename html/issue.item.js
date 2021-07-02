@@ -28,13 +28,13 @@ function update_nosy_button(user) {
     var nosy = document.getElementById('nosy_list');
     if (nosy.value.split(",").includes(user)) {
         button.value = '-';
-        button.title = 'Remove';
+        button.title = 'Remove me from';
     }
     else {
         button.value = '+';
-        button.title = 'Add';
+        button.title = 'Add me to';
     }
-    button.title += ' me from the nosy list (remember to Submit Changes)';
+    button.title += ' the nosy list (remember to Submit Changes)';
 }
 
 
