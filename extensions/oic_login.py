@@ -227,7 +227,7 @@ class OICAuthResp(Action, OICMixin):
         # If email is verified and there is already an account with the same
         # email, try to associate it. Otherwise, avoid creation of duplicate
         # accounts.
-        users = self.db.user.filter(None, {'address': email})
+        users = self.db.user.stringFind(address=email)
         if users:
             if len(users) == 1 and email_verified:
                 user = users[0]
@@ -318,7 +318,7 @@ class OICAuthResp(Action, OICMixin):
                 'https://github.com/settings/profile.'
             )
 
-        users = self.db.user.filter(None, {'address': github_email})
+        users = self.db.user.stringFind(address=github_email)
         if users:
             if len(users) > 1:
                 raise ValueError(
