@@ -234,7 +234,7 @@ class OICAuthResp(Action, OICMixin):
                 self.db.oic_account.create(user=user, issuer=iss, subject=sub)
                 self.db.commit()
                 self.client.add_ok_message(
-                    'You account has been successfully associated with your Google '
+                    'Your account has been successfully associated with your Google '
                     'account.'
                 )
                 return self.login(user)
@@ -329,7 +329,7 @@ class OICAuthResp(Action, OICMixin):
             self.db.user.set(user, github=github_username)
             self.db.commit()
             self.client.add_ok_message(
-                'You account has been successfully associated with your GitHub '
+                'Your account has been successfully associated with your GitHub '
                 'account.'
             )
             return self.login(user)
