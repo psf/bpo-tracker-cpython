@@ -17,7 +17,9 @@ RELEASE_MANAGERS = {
     'Python 3.8': '12704', # lukasz.langa
     'Python 3.9': '12704', # lukasz.langa
     'Python 3.10': '26865', # pablogsal
+    'Python 3.11': '26865', # pablogsal
 }
+
 
 def autonosy(db, cl, nodeid, newvalues):
     components = newvalues.get('components', [])
@@ -74,4 +76,3 @@ def autonosy(db, cl, nodeid, newvalues):
 def init(db):
     db.issue.audit('create', autonosy)
     db.issue.audit('set', autonosy)
-
