@@ -210,15 +210,6 @@
 </tr>
 
 <tr tal:condition="context/is_edit_ok">
- <th><a href="http://docs.python.org/devguide/triaging.html#mercurial-repository"
-      target="_blank" i18n:translate="">Remote hg repo</a>:</th>
- <td colspan="3">
-  <input type="hidden" name="@link@hgrepos" value="hgrepo-1">
-   <input name="hgrepo-1@url" size="50">
- </td>
-</tr>
-
-<tr tal:condition="context/is_edit_ok">
  <th><tal:block>GitHub PR</tal:block>:</th>
  <td colspan="3">
   <input type="hidden" name="@link@pull_requests" value="pull_request-1">
@@ -328,14 +319,6 @@
     <input type="submit" value="Remove">
    </form>
   </td>
-  <td>
-   <form style="padding:0" method="post" tal:condition="context/is_edit_ok"
-         tal:attributes="action string:issue${context/id}">
-   <input type="hidden" name="@action" value="create_patch">
-    <input type="hidden" name="@repo" tal:attributes="value hgrepo/id">
-    <input type="submit" value="Create Patch" i18n:attributes="value">
-   </form>
- </td>
  </tr>
 </table>
 
