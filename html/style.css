@@ -620,7 +620,6 @@ li#menu-shortcuts-help span {
 
 #migration-notice {
     background-color: #e0e0e0;
-    border: 2px solid red;
     margin-bottom: 1em;
     display: flex;
     align-items: center;
