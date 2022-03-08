@@ -616,6 +616,21 @@ li#menu-shortcuts-help span {
     cursor: help;
 }
 
+/* styles for migration-related banners */
+
+#migration-notice {
+    background-color: #e0e0e0;
+    margin-bottom: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#migration-images {
+    display: flex;
+    align-items: center;
+    padding-right: 1em;
+    column-gap: .5em;
+}
 
 /* styles for printing */
 @media print {
