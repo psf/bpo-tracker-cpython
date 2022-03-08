@@ -202,7 +202,8 @@ issue = IssueClass(db, "issue",
                    nosy_count=Number(),
                    message_count=Number(),
                    hgrepos=Multilink('hgrepo'),
-                   pull_requests=Multilink('pull_request'))
+                   pull_requests=Multilink('pull_request'),
+                   github=String())
 
 #
 # TRACKER SECURITY SETTINGS
