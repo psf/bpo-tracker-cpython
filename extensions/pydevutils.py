@@ -106,14 +106,17 @@ class RandomIssueAction(Action):
 class Redirect2GitHubAction(Action):
     def handle(self):
         """Redirect to the corresponding GitHub issue."""
-        # pass the bpo id as issue?@action=redirect&bpo=ID
+        # This action is invoked by opening /issue?@action=redirect&bpo=ID
+        # If ID is a valid bpo issue ID linked to its corresponding GitHub
+        # issue, the action will automatically redirect the browser to the
+        # GitHub issue, if not, it will show an error message.
         issue = self.context['context']
         request = self.context['request']
         bpo_id = request.form.getvalue('bpo')
         if not bpo_id:
             return 'Please provide a bpo issue id with `&bpo=ID` in the URL.'
         try:
-            bpo_id = int(bpo_id)
+            bpo_id = int(bpo_id)  # make sure it's just a number
         except ValueError:
             return 'Please provide a valid bpo issue id.'
         try:
