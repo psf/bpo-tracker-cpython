@@ -103,6 +103,32 @@ class RandomIssueAction(Action):
         raise Redirect(url)
 
 
+class Redirect2GitHubAction(Action):
+    def handle(self):
+        """Redirect to the corresponding GitHub issue."""
+        # This action is invoked by opening /issue?@action=redirect&bpo=ID
+        # If ID is a valid bpo issue ID linked to its corresponding GitHub
+        # issue, the action will automatically redirect the browser to the
+        # GitHub issue, if not, it will show an error message.
+        issue = self.context['context']
+        request = self.context['request']
+        bpo_id = request.form.getvalue('bpo')
+        if not bpo_id:
+            return 'Please provide a bpo issue id with `&bpo=ID` in the URL.'
+        try:
+            bpo_id = int(bpo_id)  # make sure it's just a number
+        except ValueError:
+            return 'Please provide a valid bpo issue id.'
+        try:
+            gh_id = issue._klass.get(bpo_id, 'github')
+        except IndexError:
+            return 'There is no bpo issue with id {}.'.format(bpo_id)
+        if not gh_id:
+            return 'There is no GitHub id for bpo-{}.'.format(bpo_id)
+        url = 'https://www.github.com/python/cpython/issues/{}'.format(gh_id)
+        raise Redirect(url)
+
+
 def openid_links(request):
     providers = [
         ('Google', 'oic_login', 'https://www.google.com/favicon.ico'),
@@ -129,4 +155,5 @@ def init(instance):
                           issueid_and_action_from_class)
     instance.registerUtil('clas_as_json', clas_as_json)
     instance.registerAction('random', RandomIssueAction)
+    instance.registerAction('redirect', Redirect2GitHubAction)
     instance.registerUtil('openid_links', openid_links)
