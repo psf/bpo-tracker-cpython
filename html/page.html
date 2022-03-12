@@ -277,9 +277,15 @@ status_all string:-1,1,2,3;
         <img width="32" src="@@file/gh-icon.png" />
     </div>
     <p>This issue tracker will soon become read-only and move to GitHub.<br />
+    For a smoother transition, remember to
+    <tal:block tal:condition="python:request.user.username == 'anonymous'">
+        log in and link your GitHub username to your profile.</tal:block>
+    <tal:block tal:condition="python:request.user.username != 'anonymous'">
+        link your GitHub username to <a tal:attributes="href string:user${request/user/id}">your profile</a>.</tal:block><br />
     For more information, <a title="Github Issues Migration is coming soon"
     href="https://discuss.python.org/t/github-issues-migration-is-coming-soon/13791">
-    see this post about the migration.</a></p>
+    see this post about the migration.</a>
+    </p>
 </div>
  <p tal:condition="options/error_message | nothing" class="error-message"
     tal:repeat="m options/error_message" tal:content="structure string:$m" />
