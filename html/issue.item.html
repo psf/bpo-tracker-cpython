@@ -46,6 +46,17 @@
       onSubmit="return submit_once()" enctype="multipart/form-data"
       tal:attributes="action context/designator">
 
+<div tal:condition="context/github" id="gh-issue-link">
+    <a tal:define="gh_url string:https://github.com/python/cpython/issues/${context/github}"
+       tal:attributes="href gh_url">
+        <img width="32" src="@@file/gh-icon.png" />
+        <p>
+            <span>This issue has been migrated to GitHub:</span>
+            <tal:block tal:replace="gh_url" />
+        </p>
+    </a>
+</div>
+
 <fieldset><legend>classification</legend>
 <table class="form">
 <tr>
