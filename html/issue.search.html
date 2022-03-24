@@ -9,7 +9,7 @@
       tal:attributes="action request/classname">
 
 <table class="form" tal:define="
-   cols python:request.columns or 'id activity title status assignedto'.split();
+   cols python:request.columns or 'id github activity title status assignedto'.split();
    sort_on python:request.sort and request.sort[0] or nothing;
    sort_desc python:sort_on and sort_on[0] == '-' or '-';
    sort_on python:(sort_on and sort_on[1]) or (not request.nodeid and 'activity') or '';
@@ -62,6 +62,13 @@
 
 <tr tal:define="name string:id">
   <th i18n:translate="">ID:</th>
+  <td metal:use-macro="search_input"></td>
+  <td metal:use-macro="column_input"></td>
+  <td metal:use-macro="sort_input"></td>
+  <td>&nbsp;</td>
+</tr>
+<tr tal:define="name string:github">
+  <th i18n:translate="">GitHub ID:</th>
   <td metal:use-macro="search_input"></td>
   <td metal:use-macro="column_input"></td>
   <td metal:use-macro="sort_input"></td>
