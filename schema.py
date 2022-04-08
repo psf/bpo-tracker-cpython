@@ -8,6 +8,10 @@
 #   creator = Link('user')
 #   actor = Link('user')
 
+# NOTE: this tracker is now read-only.
+# Coordinators can still edit fields, and users can still edit their profiles.
+# All the related changes are marked with a 'read-only' note.
+
 # Issue Type
 issue_type = Class(db, 'issue_type',
                    name=String(),
@@ -100,8 +104,9 @@ user = Class(db, "user",
              github=String(),
              )
 user.setkey("username")
-db.security.addPermission(name='Register', klass='user',
-                          description='User is allowed to register new user')
+# read-only: registration is no longer allowed
+# db.security.addPermission(name='Register', klass='user',
+#                           description='User is allowed to register new user')
 
 openid_discovery = Class(db, 'openid_discovery',
                          url=String(), # key
@@ -235,19 +240,20 @@ for cl in ('issue_type', 'severity', 'component',
     db.security.addPermissionToRole('User', 'View', cl)
     db.security.addPermissionToRole('Anonymous', 'View', cl)
 
-def may_edit_hgrepo(db, userid, itemid):
-    return userid == db.hgrepo.get(itemid, "creator")
-db.security.addPermissionToRole('User', 'Create', 'hgrepo')
-p = db.security.addPermission(name='Edit', klass='hgrepo', check=may_edit_hgrepo,
-                              properties=['url', 'patchbranch'])
-db.security.addPermissionToRole('User', p)
-
-def may_edit_pull_request(db, userid, itemid):
-    return userid == db.pull_request.get(itemid, "creator")
-db.security.addPermissionToRole('User', 'Create', 'pull_request')
-p = db.security.addPermission(name='Edit', klass='pull_request',
-                              check=may_edit_pull_request, properties=['number', 'title'])
-db.security.addPermissionToRole('User', p)
+# read-only: users can't create or edit HG repos or PRs
+# def may_edit_hgrepo(db, userid, itemid):
+#     return userid == db.hgrepo.get(itemid, "creator")
+# db.security.addPermissionToRole('User', 'Create', 'hgrepo')
+# p = db.security.addPermission(name='Edit', klass='hgrepo', check=may_edit_hgrepo,
+#                               properties=['url', 'patchbranch'])
+# db.security.addPermissionToRole('User', p)
+#
+# def may_edit_pull_request(db, userid, itemid):
+#     return userid == db.pull_request.get(itemid, "creator")
+# db.security.addPermissionToRole('User', 'Create', 'pull_request')
+# p = db.security.addPermission(name='Edit', klass='pull_request',
+#                               check=may_edit_pull_request, properties=['number', 'title'])
+# db.security.addPermissionToRole('User', p)
 
 def may_view_spam(cl):
     klassname = cl
@@ -285,7 +291,8 @@ for cl in ('file', 'msg'):
     db.security.addPermissionToRole('Anonymous', p)
     db.security.addPermissionToRole('User', p)
 
-    db.security.addPermissionToRole('User', 'Create', cl)
+    # read-only: users can't reply to issues or attach files
+    # db.security.addPermissionToRole('User', 'Create', cl)
 
     p = db.security.addPermission(name='View', klass=cl,
                                   description="Allowed to see content of object regardless of spam status",
@@ -300,36 +307,37 @@ for cl in ('file', 'msg'):
 
     db.security.addPermissionToRole('Anonymous', spamcheck)
 
-def may_edit_file(db, userid, itemid):
-    return userid == db.file.get(itemid, "creator")
-p = db.security.addPermission(name='Edit', klass='file', check=may_edit_file,
-    description="User is allowed to remove their own files")
-db.security.addPermissionToRole('User', p)
+# read-only: users can't edit these things anymore
+# def may_edit_file(db, userid, itemid):
+#     return userid == db.file.get(itemid, "creator")
+# p = db.security.addPermission(name='Edit', klass='file', check=may_edit_file,
+#     description="User is allowed to remove their own files")
+# db.security.addPermissionToRole('User', p)
 
-p = db.security.addPermission(name='Create', klass='issue',
-                              properties=('title', 'type',
-                                          'components', 'versions',
-                                          'severity',
-                                          'messages', 'files', 'nosy', 'hgrepos', 'pull_requests'),
-                              description='User can report and discuss issues')
-db.security.addPermissionToRole('User', p)
+# p = db.security.addPermission(name='Create', klass='issue',
+#                               properties=('title', 'type',
+#                                           'components', 'versions',
+#                                           'severity',
+#                                           'messages', 'files', 'nosy', 'hgrepos', 'pull_requests'),
+#                               description='User can report and discuss issues')
+# db.security.addPermissionToRole('User', p)
 
-p = db.security.addPermission(name='Edit', klass='issue',
-                              properties=('title', 'type',
-                                          'components', 'versions',
-                                          'severity',
-                                          'messages', 'files', 'nosy', 'hgrepos', 'pull_requests'),
-                              description='User can report and discuss issues')
-db.security.addPermissionToRole('User', p)
+# p = db.security.addPermission(name='Edit', klass='issue',
+#                               properties=('title', 'type',
+#                                           'components', 'versions',
+#                                           'severity',
+#                                           'messages', 'files', 'nosy', 'hgrepos', 'pull_requests'),
+#                               description='User can report and discuss issues')
+# db.security.addPermissionToRole('User', p)
 
 # Allow users to close issues they created
-def close_own_issue(db, userid, itemid):
-    return userid == db.issue.get(itemid, 'creator')
-p = db.security.addPermission(name='Edit', klass='issue',
-                              properties=('status', 'resolution'),
-                              description='User can close issues he created',
-                              check=close_own_issue)
-db.security.addPermissionToRole('User', p)
+# def close_own_issue(db, userid, itemid):
+#     return userid == db.issue.get(itemid, 'creator')
+# p = db.security.addPermission(name='Edit', klass='issue',
+#                               properties=('status', 'resolution'),
+#                               description='User can close issues he created',
+#                               check=close_own_issue)
+# db.security.addPermissionToRole('User', p)
 
 db.security.addPermissionToRole('User', 'SB: May Report Misclassified')
 
@@ -343,9 +351,10 @@ for cl in ('issue_type', 'severity', 'component',
            'issue', 'file', 'msg', 'keyword', 'pull_request'):
     db.security.addPermissionToRole('Developer', 'View', cl)
 
-for cl in ('issue', 'file', 'msg', 'keyword', 'pull_request'):
-    db.security.addPermissionToRole('Developer', 'Edit', cl)
-    db.security.addPermissionToRole('Developer', 'Create', cl)
+# read-only: developers can't edit these classes anymore
+# for cl in ('issue', 'file', 'msg', 'keyword', 'pull_request'):
+#     db.security.addPermissionToRole('Developer', 'Edit', cl)
+#     db.security.addPermissionToRole('Developer', 'Create', cl)
 
 
 ##########################
@@ -410,6 +419,7 @@ p = db.security.addPermission(name='Edit', klass='user', check=own_record,
                 'homepage', 'github'))
                 # Note: 'roles' excluded - users should not be able to edit their own roles.
                 # Also excluded: contrib_form, contrib_form_date, iscommitter
+                # read-only: users can still edit their info
 for r in 'User', 'Developer':
     db.security.addPermissionToRole(r, p)
 
@@ -471,7 +481,8 @@ db.security.addPermissionToRole('Anonymous', 'Web Access')
 # Assign the appropriate permissions to the anonymous user's Anonymous
 # Role. Choices here are:
 # - Allow anonymous users to register
-db.security.addPermissionToRole('Anonymous', 'Register', 'user')
+# read-only: new accounts can't be created anymore
+# db.security.addPermissionToRole('Anonymous', 'Register', 'user')
 
 # Allow anonymous users access to view issues (and the related, linked
 # information).
