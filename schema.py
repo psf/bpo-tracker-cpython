@@ -376,7 +376,7 @@ db.security.addPermissionToRole('Developer', 'SB: May Classify')
 properties_for_users = (
     'id', 'username', 'realname', 'phone',
     'organisation', 'timezone',
-    'roles', 'contrib_form', 'iscommitter', 'homepage',
+    'roles', 'contrib_form', 'contrib_form_date', 'iscommitter', 'homepage',
     'github',
 )
 # Only Developers can see email addresses of other users.
