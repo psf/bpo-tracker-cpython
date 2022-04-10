@@ -106,7 +106,7 @@ class Openid:
             self.db.commit()
         
 class OpenidLogin(LoginAction, Openid):
-    'Extended versoin of LoginAction, supporting OpenID identifiers in username field.'
+    'Extended version of LoginAction, supporting OpenID identifiers in username field.'
     def handle(self):
         if 'openid_identifier' in self.form:
             username = self.form['openid_identifier'].value
