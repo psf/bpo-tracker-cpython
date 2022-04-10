@@ -274,14 +274,12 @@ status_all string:-1,1,2,3;
     <div id="migration-images">
         <img width="32" src="@@file/python-logo-small.png" />
         ➜
-        <img width="32" src="@@file/gh-icon.png" />
+        <a href="https://github.com/python/cpython/issues"><img width="32" src="@@file/gh-icon.png" /></a>
     </div>
-    <p>This issue tracker <b>is being migrated to GitHub</b>, and is currently <b>read-only</b>.<br />
-    During the migration it is not possible to create issues, edit them, or add comments.<br />
-    For more information, <a title="GitHub Issues Migration: status update"
-    href="https://discuss.python.org/t/github-issues-migration-status-update/14573">
-    see this post about the status of the migration.</a>
-    </p>
+    <p>This issue tracker <b>has been migrated to <a href="https://github.com/python/cpython/issues">GitHub</a></b>,
+    and is currently <b>read-only</b>.<br />
+    For more information, <a title="GitHub FAQs" href="https://devguide.python.org/gh-faq/">
+    see the GitHub FAQs in the Python's Developer Guide.</a></p>
 </div>
  <p tal:condition="options/error_message | nothing" class="error-message"
     tal:repeat="m options/error_message" tal:content="structure string:$m" />
