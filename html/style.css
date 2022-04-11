@@ -633,6 +633,23 @@ li#menu-shortcuts-help span {
     column-gap: .5em;
 }
 
+#gh-issue-link {
+    background-color: #e0e0e0;
+    margin-bottom: 1em;
+}
+#gh-issue-link a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: .5em;
+}
+#gh-issue-link span {
+    display: block;
+}
+#gh-issue-link a:not(:hover) span {
+    color: black;
+}
+
 /* styles for printing */
 @media print {
 

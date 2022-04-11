@@ -19,8 +19,8 @@
 <body
 tal:define="
 kw_create python:request.user.hasPermission('Create', 'keyword');
-columns string:id,activity,title,creator,status;
-columns_showall string:id,activity,title,creator,assignee,status,type;
+columns string:id,github,activity,title,creator,status;
+columns_showall string:id,github,activity,title,creator,assignee,status,type;
 status_notresolved string:-1,1,3;
 status_all string:-1,1,2,3;
 ">
@@ -103,7 +103,7 @@ status_all string:-1,1,2,3;
                   '@sort': '-activity',
                   '@group': 'status',
                   '@filter': 'creator',
-                  '@columns': 'id,activity,title,status',
+                  '@columns': 'id,github,activity,title,status',
                   '@search_text': '',
                   'creator': request.user.id,
                   '@dispname': i18n.gettext('Created by you'),
@@ -118,7 +118,7 @@ status_all string:-1,1,2,3;
                   '@sort': '-activity',
                   '@group': 'status',
                   '@filter': 'nosy',
-                  '@columns': 'id,activity,title,status,creator',
+                  '@columns': 'id,github,activity,title,status,creator',
                   '@search_text': '',
                   'nosy': request.user.id,
                   '@dispname': i18n.gettext('Followed by you'),
@@ -134,7 +134,7 @@ status_all string:-1,1,2,3;
                   '@sort': '-activity',
                   '@group': 'status',
                   '@filter': 'assignee',
-                  '@columns': 'id,activity,title,creator,status',
+                  '@columns': 'id,github,activity,title,creator,status',
                   '@search_text': '',
                   'assignee': request.user.id,
                   '@dispname': i18n.gettext('Assigned to you'),

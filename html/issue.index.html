@@ -25,6 +25,7 @@
   <tr>
    <th tal:condition="request/show/severity" i18n:translate="">Severity</th>
    <th tal:condition="request/show/id" i18n:translate="">ID</th>
+   <th tal:condition="request/show/github" title="GitHub ID" i18n:translate="">GH</th>
    <th tal:condition="request/show/creation" i18n:translate="">Creation</th>
    <th tal:condition="request/show/activity" i18n:translate="">Activity</th>
    <th tal:condition="request/show/actor" i18n:translate="">Actor</th>
@@ -56,6 +57,10 @@
    <td tal:condition="request/show/severity"
        tal:content="python:i.severity.plain() or default">&nbsp;</td>
    <td tal:condition="request/show/id" tal:content="i/id">&nbsp;</td>
+   <td tal:condition="request/show/github">
+    <a tal:attributes="href string:https://github.com/python/cpython/issues/${i/github}"
+		tal:content="python:str(i.github) or '-'">GH ID</a>
+   </td>
    <td class="date" tal:condition="request/show/creation"
        tal:content="i/creation/reldate">&nbsp;</td>
    <td class="date" tal:condition="request/show/activity"
