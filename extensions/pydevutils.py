@@ -125,14 +125,14 @@ class Redirect2GitHubAction(Action):
             return 'There is no bpo issue with id {}.'.format(bpo_id)
         if not gh_id:
             return 'There is no GitHub id for bpo-{}.'.format(bpo_id)
-        url = 'https://www.github.com/python/cpython/issues/{}'.format(gh_id)
+        url = 'https://github.com/python/cpython/issues/{}'.format(gh_id)
         raise Redirect(url)
 
 
 def openid_links(request):
     providers = [
         ('Google', 'oic_login', 'https://www.google.com/favicon.ico'),
-        ('GitHub', 'oic_login', 'https://www.github.com/favicon.ico'),
+        ('GitHub', 'oic_login', 'https://github.com/favicon.ico'),
         ('Launchpad', 'openid_login', 'https://launchpad.net/favicon.ico'),
     ]
     links = []
